@@ -126,7 +126,7 @@ function(vcpkg_build_autotools)
                     message(FATAL_ERROR
                         "  Command failed: ${_eb_COMMAND}\n"
                         "  Working Directory: ${_eb_WORKING_DIRECTORY}\n"
-                        "  See logs for more information:\n"
+                        "  stdout ${out_contents}\n stderr: ${err_contents}"
                         ${STRINGIFIED_LOGS})
                 endif()
             endif()

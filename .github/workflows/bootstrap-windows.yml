@@ -1,0 +1,16 @@
+name: CI-windows
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/setup-python@v1
+      with:
+        python-version: '3.x'
+    - uses: actions/checkout@v1
+    - name: Bootstrap the ports on windows
+      run: python scripts/buildtools/vcpkg.py --triplet x64-windows-static-vs2019 --ports-dir . --clean-after-build

@@ -1,0 +1,15 @@
+name: CI-osx
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Bootstrap the ports on OSX
+      run: |
+        brew install nasm
+        python3 scripts/buildtools/vcpkg.py --triplet x64-osx --ports-dir .

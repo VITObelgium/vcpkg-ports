@@ -1,0 +1,15 @@
+name: CI-linux
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install nasm
+      run: sudo apt-get install nasm
+    - name: Bootstrap the ports
+      run: python3 scripts/buildtools/vcpkg.py --triplet x64-linux --ports-dir .

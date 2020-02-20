@@ -1,15 +1,15 @@
 include(vcpkg_common_functions)
 set(VERSION_MAJOR 62)
-set(VERSION_MINOR 1)
+set(VERSION_MINOR 2)
 set(PACKAGE icu4c-${VERSION_MAJOR}_${VERSION_MINOR}-src.tgz)
-set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR})
+set(VERSION ${VERSION_MAJOR}-${VERSION_MINOR})
 
 vcpkg_download_distfile(
 	ARCHIVE
-    URLS "http://download.icu-project.org/files/icu4c/${VERSION}/${PACKAGE}"
+    URLS "https://github.com/unicode-org/icu/releases/download/release-${VERSION}/${PACKAGE}"
     FILENAME "${PACKAGE}"
     TIMEOUT 3000
-    SHA512 8295f2754fb6907e2cc8f515dccca05530963b544e89a2b8e323cd0ddfdbbe0c9eba8b367c1dbc04d7bb906b66b1003fd545ca05298939747c832c9d4431cf2a
+    SHA512 78d3bc6de194ca2f5fe56ea22475a412ec0e1c6dafe1a43eb024c851d61b8cd585e948d0be2f30e61c4cb9cb7eb6c80aa05d7bce9361a5ab62364149b44488ca
 )
 vcpkg_extract_source_archive_ex(
     OUT_SOURCE_PATH SOURCE_PATH
@@ -26,8 +26,10 @@ if (UNIX OR MINGW)
             --disable-shared
             --enable-draft=no
             --enable-tools=yes
-            --enable-tests=no
-            --enable-samples=no
+            --disable-tests
+            --disable-samples
+            --disable-extras
+            --disable-layoutex
             --with-data-packaging=static
     )
 

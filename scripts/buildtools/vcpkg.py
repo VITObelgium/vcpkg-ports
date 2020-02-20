@@ -33,7 +33,7 @@ def _vcpkg_executable_path():
     if vcpkg_path.exists():
         return vcpkg_path.as_posix()
 
-    return shutil.which("vcpkg")
+    return None
 
 
 def _create_vcpkg_command(triplet, vcpkg_args):
@@ -72,10 +72,7 @@ def find_cmake_binary():
 def bootstrap_vcpkg():
     cmake_bin = find_cmake_binary()
     bootstrap_path = pathlib.Path(vcpkg_root_dir()) / "bootstrap.cmake"
-    subprocess.check_output(
-        [cmake_bin, "-P", bootstrap_path.as_posix()],
-        shell=False,
-    )
+    subprocess.check_output([cmake_bin, "-P", bootstrap_path.as_posix()], shell=False)
 
 
 def run_vcpkg(triplet, vcpkg_args):
@@ -343,7 +340,9 @@ def build_project(
         raise RuntimeError("Build failed: {}".format(e))
 
 
-def build_project_release(project_dir, triplet=None, cmake_args=[], build_name=None, install_dir=None):
+def build_project_release(
+    project_dir, triplet=None, cmake_args=[], build_name=None, install_dir=None
+):
     if not git_status_is_clean():
         raise RuntimeError("Git status is not clean")
 
@@ -440,10 +439,14 @@ def build_argparser():
 
 if __name__ == "__main__":
     try:
-        parser = argparse.ArgumentParser(description="Bootstrap vcpkg ports.", parents=[bootstrap_argparser()])
+        parser = argparse.ArgumentParser(
+            description="Bootstrap vcpkg ports.", parents=[bootstrap_argparser()]
+        )
         args = parser.parse_args()
 
-        bootstrap(args.ports_dir, args.triplet, clean_after_build=args.clean_after_build)
+        bootstrap(
+            args.ports_dir, args.triplet, clean_after_build=args.clean_after_build
+        )
     except KeyboardInterrupt:
         print("Interrupted")
         sys.exit(-1)

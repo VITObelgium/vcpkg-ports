@@ -1,0 +1,78 @@
+include(FindPackageHandleStandardArgs)
+
+find_path(Soci_INCLUDE_DIR
+    NAMES soci/soci.h
+    HINTS ${Soci_ROOT_DIR}/include ${Soci_INCLUDEDIR}
+)
+
+find_library(Soci_core_LIBRARY NAMES soci_core soci_core_4_0 libsoci_core_4_0 HINTS ${Soci_ROOT_DIR}/lib)
+find_library(Soci_core_LIBRARY_DEBUG NAMES soci_cored soci_core_4_0d libsoci_core_4_0d HINTS ${Soci_ROOT_DIR}/lib)
+
+find_package_handle_standard_args(Soci
+    FOUND_VAR Soci_FOUND
+    REQUIRED_VARS Soci_INCLUDE_DIR Soci_core_LIBRARY
+)
+
+mark_as_advanced(
+    Soci_ROOT_DIR 
+    Soci_INCLUDE_DIR
+    Soci_core_LIBRARY
+    Soci_core_LIBRARY_DEBUG
+)
+
+if(Soci_FOUND AND NOT TARGET soci::core)
+    add_library(soci::core STATIC IMPORTED)
+    set_target_properties(soci::core PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES "${Soci_INCLUDE_DIR}"
+        IMPORTED_LOCATION "${Soci_core_LIBRARY}"
+    )
+
+    if(Soci_core_LIBRARY_DEBUG)
+        set_target_properties(soci::core PROPERTIES
+            IMPORTED_LOCATION_DEBUG "${Soci_core_LIBRARY_DEBUG}"
+        )
+    endif()
+endif()
+
+if (@WITH_SQLITE3@)
+    find_package(sqlite3 CONFIG QUIET REQUIRED)
+    
+    find_library(Soci_sqlite3_LIBRARY NAMES soci_sqlite3 soci_sqlite3_4_0 libsoci_sqlite3_4_0 HINTS ${Soci_ROOT_DIR}/lib)
+    find_library(Soci_sqlite3_LIBRARY_DEBUG NAMES soci_sqlite3d soci_sqlite3_4_0d libsoci_sqlite3_4_0d HINTS ${Soci_ROOT_DIR}/lib)
+
+    add_library(soci::sqlite3 STATIC IMPORTED)
+    set_target_properties(soci::sqlite3 PROPERTIES
+        INTERFACE_LINK_LIBRARIES "sqlite3;soci::core"
+        IMPORTED_LOCATION "${Soci_sqlite3_LIBRARY}"
+    )
+
+    if(Soci_sqlite3_LIBRARY_DEBUG)
+        set_target_properties(soci::sqlite3 PROPERTIES
+            IMPORTED_LOCATION_DEBUG "${Soci_sqlite3_LIBRARY_DEBUG}"
+        )
+    endif()
+endif ()
+
+if (@WITH_POSTGRESQL@)
+    find_package(PostgreSQL QUIET REQUIRED)
+    find_library(Soci_postgresql_LIBRARY NAMES soci_postgresql soci_postgresql_4_0 libsoci_postgresql_4_0 HINTS ${Soci_ROOT_DIR}/lib)
+    find_library(Soci_postgresql_LIBRARY_DEBUG NAMES soci_postgresqld soci_postgresql_4_0d libsoci_postgresql_4_0d HINTS ${Soci_ROOT_DIR}/lib)
+
+    add_library(soci::postgresql STATIC IMPORTED)
+    set_target_properties(soci::postgresql PROPERTIES
+        INTERFACE_LINK_LIBRARIES "PostgreSQL::PostgreSQL;soci::core"
+        IMPORTED_LOCATION "${Soci_postgresql_LIBRARY}"
+    )
+
+    if(Soci_postgresql_LIBRARY_DEBUG)
+        set_target_properties(soci::postgresql PROPERTIES
+            IMPORTED_LOCATION_DEBUG "${Soci_postgresql_LIBRARY_DEBUG}"
+        )
+    endif()
+
+    if (WIN32)
+        set_property(TARGET soci::postgresql APPEND PROPERTY INTERFACE_LINK_LIBRARIES Secur32.lib)
+    elseif (UNIX AND NOT APPLE)
+        set_property(TARGET soci::postgresql APPEND PROPERTY INTERFACE_LINK_LIBRARIES -lresolv)
+    endif ()
+endif ()

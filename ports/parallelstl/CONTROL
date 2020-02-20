@@ -1,0 +1,4 @@
+Source: parallelstl
+Version: 20190321-1
+Description: An implementation of the C++ standard library algorithms with support for execution policies
+Build-Depends: tbb

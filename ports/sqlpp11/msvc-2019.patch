@@ -1,0 +1,23 @@
+diff -Naur a/include/sqlpp11/select_column_list.h b/include/sqlpp11/select_column_list.h
+--- a/include/sqlpp11/select_column_list.h	2019-04-18 09:15:31.000000000 +0200
++++ b/include/sqlpp11/select_column_list.h	2019-04-26 15:47:07.071286100 +0200
+@@ -268,15 +268,15 @@
+ 
+       // Execute
+       template <typename Db, typename Composite>
+-      auto _run(Db& db, const Composite& composite) const -> result_t<decltype(db.select(composite)), _result_row_t<Db>>
++      auto _run(Db& db, const Composite& composite) const //-> result_t<decltype(db.select(composite)), _result_row_t<Db>>
+       {
+-        return {db.select(composite), get_dynamic_names()};
++        return result_t<decltype(db.select(composite)), _result_row_t<Db>>{db.select(composite), get_dynamic_names()};
+       }
+ 
+       template <typename Db>
+-      auto _run(Db& db) const -> result_t<decltype(db.select(std::declval<_statement_t>())), _result_row_t<Db>>
++      auto _run(Db& db) const //-> result_t<decltype(db.select(std::declval<_statement_t>())), _result_row_t<Db>>
+       {
+-        return {db.select(_get_statement()), get_dynamic_names()};
++        return result_t<decltype(db.select(std::declval<_statement_t>())), _result_row_t<Db>>{db.select(_get_statement()), get_dynamic_names()};
+       }
+ 
+       // Prepare

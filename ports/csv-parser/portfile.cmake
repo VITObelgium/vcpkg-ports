@@ -1,0 +1,12 @@
+include(vcpkg_common_functions)
+vcpkg_from_github(
+    OUT_SOURCE_PATH SOURCE_PATH
+    REPO vincentlaucsb/csv-parser
+    REF 1.2.3
+    SHA512 a6e953ec811d0c0d407d29fc77ff86709fa6e67474639ef5581609a39b2d1582423a450a8ba86a861922965a0816a30ed85c8bae56661f38247b75e4a750514f
+    HEAD_REF master
+)
+
+file(INSTALL ${SOURCE_PATH}/single_include/csv.hpp DESTINATION ${CURRENT_PACKAGES_DIR}/include)
+file(INSTALL ${CMAKE_CURRENT_LIST_DIR}/FindCsvParser.cmake DESTINATION ${CURRENT_PACKAGES_DIR}/share/cmake)
+file(INSTALL ${SOURCE_PATH}/LICENSE DESTINATION ${CURRENT_PACKAGES_DIR}/share/${PORT} RENAME copyright)

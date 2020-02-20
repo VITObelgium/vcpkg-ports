@@ -1,0 +1,29 @@
+set(VCPKG_TARGET_ARCHITECTURE x64)
+set(VCPKG_CRT_LINKAGE static)
+set(VCPKG_LIBRARY_LINKAGE static)
+
+set(VCPKG_CMAKE_SYSTEM_NAME Darwin)
+set(CMAKE_OSX_DEPLOYMENT_TARGET 10.15 CACHE STRING "")
+
+set(LLVM_ROOT /usr/local/opt/llvm)
+set(CMAKE_C_COMPILER ${LLVM_ROOT}/bin/clang CACHE STRING "")
+set(CMAKE_ASM_COMPILER ${LLVM_ROOT}/bin/clang CACHE STRING "")
+set(CMAKE_CXX_COMPILER ${LLVM_ROOT}/bin/clang++ CACHE STRING "")
+
+set(CMAKE_C_VISIBILITY_PRESET hidden)
+set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
+
+set(OpenMP_C "${CMAKE_C_COMPILER}")
+set(OpenMP_C_FLAGS "-fopenmp=libomp -Wno-unused-command-line-argument" CACHE STRING "")
+set(OpenMP_C_LIB_NAMES "omp" "gomp" "iomp5" CACHE STRING "")
+set(OpenMP_CXX "${CMAKE_CXX_COMPILER}" CACHE STRING "")
+set(OpenMP_CXX_FLAGS "-fopenmp=libomp -Wno-unused-command-line-argument" CACHE STRING "")
+set(OpenMP_CXX_LIB_NAMES "omp" CACHE STRING "")
+set(OpenMP_omp_LIBRARY "${LLVM_ROOT}/lib/libomp.dylib" CACHE STRING "")
+
+set(CMAKE_FIND_ROOT_PATH "${LLVM_ROOT}" CACHE STRING "")
+if (NOT VCPKG_ALLOW_SYSTEM_LIBS)
+    set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+    set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+endif ()

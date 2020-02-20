@@ -1,0 +1,33 @@
+diff -Naur a/src/zstr.hpp b/src/zstr.hpp
+--- a/src/zstr.hpp	2017-01-25 18:21:53.000000000 +0100
++++ b/src/zstr.hpp	2019-10-24 10:06:33.428940600 +0200
+@@ -179,9 +179,9 @@
+                     // run inflate() on input
+                     if (not zstrm_p) zstrm_p = new detail::z_stream_wrapper(true);
+                     zstrm_p->next_in = reinterpret_cast< decltype(zstrm_p->next_in) >(in_buff_start);
+-                    zstrm_p->avail_in = in_buff_end - in_buff_start;
++                    zstrm_p->avail_in = static_cast<uInt>(in_buff_end - in_buff_start);
+                     zstrm_p->next_out = reinterpret_cast< decltype(zstrm_p->next_out) >(out_buff_free_start);
+-                    zstrm_p->avail_out = (out_buff + buff_size) - out_buff_free_start;
++                    zstrm_p->avail_out =  static_cast<uInt>((out_buff + buff_size) - out_buff_free_start);
+                     int ret = inflate(zstrm_p, Z_NO_FLUSH);
+                     // process return code
+                     if (ret != Z_OK and ret != Z_STREAM_END) throw Exception(zstrm_p, ret);
+@@ -248,7 +248,7 @@
+         while (true)
+         {
+             zstrm_p->next_out = reinterpret_cast< decltype(zstrm_p->next_out) >(out_buff);
+-            zstrm_p->avail_out = buff_size;
++            zstrm_p->avail_out = static_cast<uInt>(buff_size);
+             int ret = deflate(zstrm_p, flush);
+             if (ret != Z_OK and ret != Z_STREAM_END and ret != Z_BUF_ERROR) throw Exception(zstrm_p, ret);
+             std::streamsize sz = sbuf_p->sputn(out_buff, reinterpret_cast< decltype(out_buff) >(zstrm_p->next_out) - out_buff);
+@@ -283,7 +283,7 @@
+     virtual std::streambuf::int_type overflow(std::streambuf::int_type c = traits_type::eof())
+     {
+         zstrm_p->next_in = reinterpret_cast< decltype(zstrm_p->next_in) >(pbase());
+-        zstrm_p->avail_in = pptr() - pbase();
++        zstrm_p->avail_in =  static_cast<uInt>(pptr() - pbase());
+         while (zstrm_p->avail_in > 0)
+         {
+             int r = deflate_loop(Z_NO_FLUSH);

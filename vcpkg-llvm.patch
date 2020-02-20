@@ -1,0 +1,43 @@
+From ece5da68778a8b809a25e27d78d22ba19c22455f Mon Sep 17 00:00:00 2001
+From: Dirk Vanden Boer <dirk.vandenboer@vito.be>
+Date: Wed, 3 Jul 2019 15:15:49 +0200
+Subject: [PATCH] Coffreader: do not error on libraries built using clang
+
+---
+ toolsrc/src/vcpkg/base/cofffilereader.cpp | 23 ++++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
+
+diff --git a/toolsrc/src/vcpkg/base/cofffilereader.cpp b/toolsrc/src/vcpkg/base/cofffilereader.cpp
+index cb75e08475..abb81905d2 100644
+--- a/toolsrc/src/vcpkg/base/cofffilereader.cpp
++++ b/toolsrc/src/vcpkg/base/cofffilereader.cpp
+@@ -276,15 +276,20 @@ namespace vcpkg::CoffFileReader
+         marker.advance_by(ArchiveMemberHeader::HEADER_SIZE + first_linker_member_header.member_size());
+         marker.seek_to_marker(fs);
+ 
+-        const ArchiveMemberHeader second_linker_member_header = ArchiveMemberHeader::read(fs);
+-        Checks::check_exit(VCPKG_LINE_INFO,
+-                           second_linker_member_header.name().substr(0, 2) == "/ ",
+-                           "Could not find proper second linker member");
+-        // The first 4 bytes contains the number of archive members
+-        const auto archive_member_count = read_value_from_stream<uint32_t>(fs);
+-        const OffsetsArray offsets = OffsetsArray::read(fs, archive_member_count);
+-        marker.advance_by(ArchiveMemberHeader::HEADER_SIZE + second_linker_member_header.member_size());
+-        marker.seek_to_marker(fs);
++        // Check if this is already the long name section (when using clang on windows)
++        OffsetsArray offsets;
++        if (peek_value_from_stream<uint16_t>(fs) != 0x2F2F)
++        {
++            const ArchiveMemberHeader second_linker_member_header = ArchiveMemberHeader::read(fs);
++            Checks::check_exit(VCPKG_LINE_INFO,
++                            second_linker_member_header.name().substr(0, 2) == "/ ",
++                            "Could not find proper second linker member");
++            // The first 4 bytes contains the number of archive members
++            const auto archive_member_count = read_value_from_stream<uint32_t>(fs);
++            offsets = OffsetsArray::read(fs, archive_member_count);
++            marker.advance_by(ArchiveMemberHeader::HEADER_SIZE + second_linker_member_header.member_size());
++            marker.seek_to_marker(fs);
++        }
+ 
+         const bool has_longname_member_header = peek_value_from_stream<uint16_t>(fs) == 0x2F2F;
+         if (has_longname_member_header)

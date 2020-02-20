@@ -1,0 +1,16 @@
+diff -Naur a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt	2017-01-15 18:29:40.000000000 +0100
++++ b/CMakeLists.txt	2019-11-25 19:34:57.000000000 +0100
+@@ -230,6 +230,7 @@
+ # Example binaries
+ #============================================================================
+ 
++if (BUILD_EXAMPLES)
+ add_executable(example test/example.c)
+ target_link_libraries(example zlib)
+ add_test(example example)
+@@ -247,3 +248,4 @@
+     target_link_libraries(minigzip64 zlib)
+     set_target_properties(minigzip64 PROPERTIES COMPILE_FLAGS "-D_FILE_OFFSET_BITS=64")
+ endif()
++endif()

@@ -1,0 +1,9 @@
+buildtrees
+packages
+installed
+downloads
+scripts/buildtools/__pycache__
+*.pyc
+.vscode/cquery_cached_index
+.vscode/ipch
+bin

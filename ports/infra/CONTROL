@@ -1,0 +1,56 @@
+Source: infra
+Version: 0.9.26
+Description: c++ infrastructure classes (logging, string operations, ...)
+Build-Depends: fmt, date
+
+Feature: gdal
+Description: Gdal c++ wrapper
+Build-Depends: gdal, gsl
+
+Feature: charset
+Description: Chacacter encoding utilities
+Build-Depends: icu
+
+Feature: log
+Description: Support logging functionality
+Build-Depends: spdlog
+
+Feature: xml
+Description: Support xml parser interface
+Build-Depends: pugixml
+
+Feature: numeric
+Description: Support numeric utilities
+Build-Depends: eigen3
+
+Feature: ui
+Description: Ui components
+Build-Depends: qt5
+
+Feature: qml
+Description: Ui qml components
+Build-Depends: qt5[qml]
+
+Feature: location
+Description: Ui qml location components
+Build-Depends: qt5[qml,location], gdal
+
+Feature: sqlite
+Description: Sqlite database utilities
+Build-Depends: sqlpp11-connector-sqlite3
+
+Feature: postgres
+Description: Postgresql database utilities
+Build-Depends: sqlpp11-connector-postgresql
+
+Feature: xlsx
+Description: xlsx export support for tableviews
+Build-Depends: libxlsxwriter
+
+Feature: process
+Description: Support process launching utilities
+Build-Depends: reproc
+
+Feature: testutils
+Description: Unit test utilities
+Build-Depends: doctest

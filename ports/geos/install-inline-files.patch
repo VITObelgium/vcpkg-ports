@@ -1,0 +1,45 @@
+From e8404cc61a3fc5174fcea9faaafda15da831bab0 Mon Sep 17 00:00:00 2001
+From: Pierre Gergondet <pierre.gergondet@gmail.com>
+Date: Fri, 13 Dec 2019 15:43:22 +0800
+Subject: [PATCH] Install inl files if DISABLE_GEOS_INLINE is OFF
+
+---
+ CMakeLists.txt         | 7 +++++++
+ include/CMakeLists.txt | 6 +++++-
+ 2 files changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index c893feafc..b78ca54b6 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -309,6 +309,13 @@ install(DIRECTORY
+   "${CMAKE_CURRENT_BINARY_DIR}/include/geos"
+   DESTINATION include
+   FILES_MATCHING PATTERN "*.h")
++if(NOT DISABLE_GEOS_INLINE)
++  install(DIRECTORY
++    "${CMAKE_CURRENT_LIST_DIR}/include/geos"
++    "${CMAKE_CURRENT_BINARY_DIR}/include/geos"
++    DESTINATION include
++    FILES_MATCHING PATTERN "*.inl")
++endif()
+ install(FILES "${CMAKE_CURRENT_BINARY_DIR}/capi/geos_c.h"
+   DESTINATION include)
+ 
+diff --git a/include/CMakeLists.txt b/include/CMakeLists.txt
+index df8cd4d37..0456baaa5 100644
+--- a/include/CMakeLists.txt
++++ b/include/CMakeLists.txt
+@@ -8,7 +8,11 @@
+ # by the Free Software Foundation.
+ # See the COPYING file for more information.
+ ################################################################################
+-file(GLOB_RECURSE _headers ${CMAKE_CURRENT_LIST_DIR}/*.h  CONFIGURE_DEPEND)
++if(DISABLE_GEOS_INLINE)
++  file(GLOB_RECURSE _headers ${CMAKE_CURRENT_LIST_DIR}/*.h  CONFIGURE_DEPEND)
++else()
++  file(GLOB_RECURSE _headers ${CMAKE_CURRENT_LIST_DIR}/*.h  ${CMAKE_CURRENT_LIST_DIR}/*.inl CONFIGURE_DEPEND)
++endif()
+ target_sources(geos PRIVATE ${_headers})
+ unset(_headers)
+ 

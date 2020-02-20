@@ -1,0 +1,35 @@
+From c1364256d3d47612ca0435e24dc6d67090d9c26c Mon Sep 17 00:00:00 2001
+From: Even Rouault <even.rouault@spatialys.com>
+Date: Tue, 11 Feb 2020 23:08:41 +0100
+Subject: [PATCH] GNMGenericNetwork::CopyLayer(): fix memory leak related to
+ previous commit
+
+---
+ gnm/gnmgenericnetwork.cpp | 14 +++-----------
+ 1 file changed, 3 insertions(+), 11 deletions(-)
+
+diff --git a/gnm/gnmgenericnetwork.cpp b/gnm/gnmgenericnetwork.cpp
+index 14dd5d9e148..385f1a9c6b1 100644
+--- a/gnm/gnmgenericnetwork.cpp
++++ b/gnm/gnmgenericnetwork.cpp
+@@ -1388,17 +1388,9 @@ int GNMGenericNetwork::TestCapability( const char * pszCap )
+ OGRLayer *GNMGenericNetwork::CopyLayer(OGRLayer *poSrcLayer,
+                                        const char *pszNewName, char **papszOptions)
+ {
+-    if(CSLFindName(papszOptions, "DST_SRSWKT") == -1)
+-    {
+-        papszOptions = CSLAddNameValue(papszOptions, "DST_SRSWKT",
+-                                       GetProjectionRef());
+-    }
+-    else
+-    {
+-        papszOptions = CSLSetNameValue(papszOptions, "DST_SRSWKT",
+-                                       GetProjectionRef());
+-    }
+-    return GDALDataset::CopyLayer(poSrcLayer, pszNewName, papszOptions);
++    CPLStringList aosOptions(CSLDuplicate(papszOptions));
++    aosOptions.SetNameValue("DST_SRSWKT", GetProjectionRef());
++    return GDALDataset::CopyLayer(poSrcLayer, pszNewName, aosOptions.List());
+ }
+ 
+ int GNMGenericNetwork::CloseDependentDatasets()

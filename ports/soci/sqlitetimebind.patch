@@ -1,0 +1,68 @@
+From c44581f15d71d08374e3432f12a0394b5de5db3b Mon Sep 17 00:00:00 2001
+From: Dirk Vanden Boer <dirk.vdb@gmail.com>
+Date: Sat, 23 Nov 2019 16:56:42 +0100
+Subject: [PATCH] Fixed std::tm bind for sqlite backend
+
+---
+ src/backends/sqlite3/statement.cpp |  5 ++++-
+ tests/sqlite3/test-sqlite3.cpp     | 29 +++++++++++++++++++++++++++++
+ 2 files changed, 33 insertions(+), 1 deletion(-)
+
+diff --git a/src/backends/sqlite3/statement.cpp b/src/backends/sqlite3/statement.cpp
+index 0acd619e..cb7a68bc 100644
+--- a/src/backends/sqlite3/statement.cpp
++++ b/src/backends/sqlite3/statement.cpp
+@@ -265,9 +265,12 @@ sqlite3_statement_backend::bind_and_execute(int number)
+                 switch (col.type_)
+                 {
+                     case dt_string:
+-                    case dt_date:
+                         bindRes = sqlite3_bind_text(stmt_, pos, col.buffer_.constData_, static_cast<int>(col.buffer_.size_), NULL);
+                         break;
++                    
++                    case dt_date:
++                        bindRes = sqlite3_bind_text(stmt_, pos, col.buffer_.constData_, static_cast<int>(col.buffer_.size_), SQLITE_TRANSIENT);
++                        break;
+ 
+                     case dt_double:
+                         bindRes = sqlite3_bind_double(stmt_, pos, col.double_);
+diff --git a/tests/sqlite3/test-sqlite3.cpp b/tests/sqlite3/test-sqlite3.cpp
+index 2746bda7..7e8bda66 100644
+--- a/tests/sqlite3/test-sqlite3.cpp
++++ b/tests/sqlite3/test-sqlite3.cpp
+@@ -272,6 +272,35 @@ TEST_CASE("SQLite last insert id", "[sqlite][last-insert-id]")
+     CHECK(id == 42);
+ }
+ 
++struct table_creator_for_std_tm_bind : table_creator_base
++{
++    table_creator_for_std_tm_bind(soci::session & sql)
++        : table_creator_base(sql)
++    {
++        sql << "create table soci_test(date datetime)";
++        sql << "insert into soci_test (date) values ('2017-04-04 00:00:00')";
++        sql << "insert into soci_test (date) values ('2017-04-04 12:00:00')";
++        sql << "insert into soci_test (date) values ('2017-04-05 00:00:00')";
++    }
++};
++
++TEST_CASE("SQLite std::tm bind", "[sqlite][std-tm-bind]")
++{
++    soci::session sql(backEnd, connectString);
++    table_creator_for_std_tm_bind tableCreator(sql);
++
++    std::tm datetime;
++    std::istringstream ss("2017-04-04 12:00:00");
++    ss >> std::get_time(&datetime, "%Y-%m-%d %H:%M:%S");
++
++    soci::rowset<std::tm> rs = (sql.prepare << "select date from soci_test where date=:dt", soci::use(datetime));
++
++    std::vector<std::tm> result;
++    std::copy(rs.begin(), rs.end(), std::back_inserter(result));
++    REQUIRE(result.size() == 1);
++    CHECK(std::mktime(&result.front()) == std::mktime(&datetime));
++}
++
+ // DDL Creation objects for common tests
+ struct table_creator_one : public table_creator_base
+ {

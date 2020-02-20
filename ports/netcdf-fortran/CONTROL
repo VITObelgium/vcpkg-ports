@@ -1,0 +1,4 @@
+Source: netcdf-fortran
+Version: 4.5.2
+Build-Depends: netcdf-c
+Description: netcdf fortran bindings.

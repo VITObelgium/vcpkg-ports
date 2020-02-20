@@ -1,0 +1,12 @@
+diff -Naur a/config-msvc.h b/config-msvc.h
+--- a/config-msvc.h	2015-07-01 08:59:16.000000000 +0200
++++ b/config-msvc.h	2019-12-16 15:34:33.251639400 +0100
+@@ -163,7 +163,7 @@
+ /* #undef OMIT_EPSG */
+ 
+ /* Should be defined in order to disable FREEXL support. */
+-/* #undef OMIT_FREEXL */
++#cmakedefine OMIT_FREEXL 1
+ 
+ /* Should be defined in order to disable GEOCALLBACKS support. */
+ #define OMIT_GEOCALLBACKS 1

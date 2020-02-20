@@ -1,0 +1,26 @@
+get_filename_component(libspatialite_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+include(CMakeFindDependencyMacro)
+
+list(APPEND CMAKE_MODULE_PATH ${libspatialite_CMAKE_DIR})
+
+find_dependency(Threads REQUIRED)
+find_dependency(Iconv REQUIRED)
+find_dependency(LibXml2 REQUIRED)
+find_dependency(GEOS CONFIG REQUIRED)
+find_dependency(Sqlite3 CONFIG REQUIRED)
+find_dependency(ZLIB REQUIRED)
+find_dependency(ZLIB REQUIRED)
+find_dependency(PROJ4 REQUIRED)
+find_dependency(Threads REQUIRED)
+
+if (@ENABLE_FREEXL@)
+    find_package(Freexl REQUIRED)
+endif ()
+
+list(REMOVE_AT CMAKE_MODULE_PATH -1)
+
+if(NOT TARGET libspatialite::spatialite)
+    include("${libspatialite_CMAKE_DIR}/libspatialiteTargets.cmake")
+endif()
+
+set(spatialite_LIBRARIES libspatialite::spatialite)

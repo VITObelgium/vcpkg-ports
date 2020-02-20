@@ -1,0 +1,25 @@
+diff -Naur a/capi/CMakeLists.txt b/capi/CMakeLists.txt
+--- a/capi/CMakeLists.txt	2019-10-08 18:20:34.000000000 +0200
++++ b/capi/CMakeLists.txt	2019-12-16 15:04:20.001723600 +0100
+@@ -16,7 +16,7 @@
+ target_include_directories(geos_c
+   PUBLIC
+     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+-    $<INSTALL_INTERFACE:include/geos>)
++)
+ 
+ # Copy these over so they match the @VARIABLES@ used by autoconf
+ # in geos_c.h.in
+diff -Naur a/include/CMakeLists.txt b/include/CMakeLists.txt
+--- a/include/CMakeLists.txt	2019-10-08 18:20:34.000000000 +0200
++++ b/include/CMakeLists.txt	2019-12-16 15:04:33.581547600 +0100
+@@ -15,8 +15,7 @@
+ target_include_directories(geos
+   PUBLIC
+     $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>
+-    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+-    $<INSTALL_INTERFACE:include/geos>)
++    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>)
+ 
+ set(VERSION ${GEOS_VERSION})
+ set(VERSION_MAJOR ${GEOS_VERSION_MAJOR})

@@ -1,0 +1,14 @@
+diff -Naur a/qtbase/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in b/qtbase/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in
+--- a/qtbase/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in	2020-02-16 12:10:37.135246000 +0100
++++ b/qtbase/mkspecs/features/data/cmake/Qt5BasicConfig.cmake.in	2020-02-18 22:05:49.112983200 +0100
+@@ -109,6 +109,10 @@
+             elseif(_flag MATCHES \"^-L(.*)$\")
+                 # Handle -Lfoo flags by putting their paths in the search path used by find_library above
+                 list(APPEND _search_paths \"${CMAKE_MATCH_1}\")
++            elseif (WIN32 AND \"${CMAKE_CXX_COMPILER_ID}\" STREQUAL \"Clang\" AND _flag MATCHES \"^(.*)[.]lib$\")
++                # the lld-link linker does not like flags like userenv.lib replace zith -luserenv
++                string(REPLACE \".lib\" \"\" _flag \"-l${_flag}\")
++                list(APPEND _link_flags ${_flag})
+             else()
+                 # Handle all remaining flags by simply passing them to the linker
+                 list(APPEND _link_flags ${_flag})

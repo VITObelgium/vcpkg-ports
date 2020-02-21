@@ -1,8 +1,0 @@
-Source: gdx
-Version: 0.9.6
-Description: c++ raster library
-Build-Depends: infra[log,gdal],eigen3
-
-Feature: testutils
-Description: Unit test utilities
-Build-Depends: doctest, gtest

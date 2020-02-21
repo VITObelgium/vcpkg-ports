@@ -1,4 +1,0 @@
-Source: mapview
-Version: 0.4.2
-Description: mapviewer component
-Build-Depends: infra[log],infra[gdal],infra[ui],mapboxgl-native,qt5[ssl]

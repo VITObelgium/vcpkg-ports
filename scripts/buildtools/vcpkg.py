@@ -149,17 +149,26 @@ def cmake_build(build_dir, config=None, target=None):
     subprocess.check_call(args)
 
 
-def vcpkg_install_ports(triplet, ports, clean_after_build=False):
+def vcpkg_install_ports(triplet, ports, clean_after_build=False, overlay_ports=None):
     args = ["install", "--recurse"]
     if clean_after_build:
         args.append("--clean-after-build")
+
+    if overlay_ports:
+        args.append(f"--overlay-ports={overlay_ports}")
 
     args += ports
     run_vcpkg(triplet, args)
 
 
-def vcpkg_upgrade_ports(triplet):
+def vcpkg_upgrade_ports(triplet, clean_after_build=False, overlay_ports=None):
     args = ["upgrade", "--no-dry-run"]
+    if clean_after_build:
+        args.append("--clean-after-build")
+
+    if overlay_ports:
+        args.append(f"--overlay-ports={overlay_ports}")
+
     run_vcpkg(triplet, args)
 
 
@@ -277,7 +286,7 @@ def bootstrap_argparser():
     return parser
 
 
-def bootstrap(ports_dir, triplet=None, additional_ports=[], clean_after_build=False):
+def bootstrap(ports_dir, triplet=None, additional_ports=[], clean_after_build=False, overlay_ports=None):
     if triplet is None:
         triplet = prompt_for_triplet()
 
@@ -287,8 +296,8 @@ def bootstrap(ports_dir, triplet=None, additional_ports=[], clean_after_build=Fa
     ports_to_install.extend(additional_ports)
 
     try:
-        vcpkg_upgrade_ports(triplet)
-        vcpkg_install_ports(triplet, ports_to_install, clean_after_build)
+        vcpkg_upgrade_ports(triplet, clean_after_build, overlay_ports)
+        vcpkg_install_ports(triplet, ports_to_install, clean_after_build, overlay_ports)
     except subprocess.CalledProcessError as e:
         raise RuntimeError("Bootstrap failed: {}".format(e))
 

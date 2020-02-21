@@ -1,14 +1,11 @@
-include(vcpkg_common_functions)
-
 set(MAJOR 3)
 set(MINOR 0)
-set(REVISION 22)
+set(REVISION 23)
 set(VERSION v${MAJOR}.${MINOR}.${REVISION})
 set(PACKAGE_NAME ${PORT}-${VERSION})
 set(PACKAGE ${PACKAGE_NAME}.tar.bz2)
 
-set(Python_ADDITIONAL_VERSIONS 2.7 3.5)
-find_package(PythonInterp REQUIRED)
+vcpkg_find_acquire_program(PYTHON3)
 
 # Extract source into architecture specific directory, because GDALs' build currently does not
 # support out of source builds.
@@ -18,7 +15,7 @@ set(SOURCE_PATH_RELEASE ${CURRENT_BUILDTREES_DIR}/src-${TARGET_TRIPLET}-release/
 vcpkg_download_distfile(ARCHIVE
     URLS "https://github.com/${PORT}/${PORT}/releases/download/${VERSION}/${PACKAGE}"
     FILENAME "${PACKAGE}"
-    SHA512 a558d5e52b249b439d7c4b574d909d781c877d91d3b1e707938fb9856661542c2d7b36742c394e5a0a38d88cf9f65078093dcc4190e5d3a5672c0ef054eb6358
+    SHA512 d901e092c8d876bc21f0e8cb713a6d102308983652f21f4fb5f120c50616724b692bcf0abe66ffecf1f0aa8a60e0f9b803be85eb0eee83c477895082559b38c9
 )
 
 foreach(BUILD_TYPE debug release)
@@ -127,7 +124,7 @@ set(SCONS_OPTIONS_DBG
 message(STATUS "Configuring ${TARGET_TRIPLET}-rel")
 message(STATUS "${SCONS_OPTIONS_REL}")
 vcpkg_execute_required_process(
-    COMMAND ${PYTHON_EXECUTABLE} scons/scons.py configure
+    COMMAND ${PYTHON3} scons/scons.py configure
     "${SCONS_OPTIONS_REL}"
     WORKING_DIRECTORY ${SOURCE_PATH_RELEASE}
     LOGNAME scons-configure-${TARGET_TRIPLET}-release
@@ -135,39 +132,36 @@ vcpkg_execute_required_process(
 
 message(STATUS "Configuring ${TARGET_TRIPLET}-dbg")
 vcpkg_execute_required_process(
-    COMMAND ${PYTHON_EXECUTABLE} scons/scons.py configure
+    COMMAND ${PYTHON3} scons/scons.py configure
     "${SCONS_OPTIONS_DBG}"
     WORKING_DIRECTORY ${SOURCE_PATH_DEBUG}
     LOGNAME scons-configure-${TARGET_TRIPLET}-debug
 )
 
-include(ProcessorCount)
-ProcessorCount(NUM_CORES)
-
 message(STATUS "Building ${TARGET_TRIPLET}-rel")
 vcpkg_execute_required_process(
-    COMMAND ${PYTHON_EXECUTABLE} scons/scons.py --jobs=${NUM_CORES}
+    COMMAND ${PYTHON3} scons/scons.py --jobs=${VCPKG_CONCURRENCY}
     WORKING_DIRECTORY ${SOURCE_PATH_RELEASE}
     LOGNAME scons-build-${TARGET_TRIPLET}-release
 )
 
 message(STATUS "Building ${TARGET_TRIPLET}-dbg")
 vcpkg_execute_required_process(
-    COMMAND ${PYTHON_EXECUTABLE} scons/scons.py --jobs=${NUM_CORES}
+    COMMAND ${PYTHON3} scons/scons.py --jobs=${VCPKG_CONCURRENCY}
     WORKING_DIRECTORY ${SOURCE_PATH_DEBUG}
     LOGNAME scons-build-${TARGET_TRIPLET}-debug
 )
 
 message(STATUS "Installing ${TARGET_TRIPLET}-rel")
 vcpkg_execute_required_process(
-    COMMAND ${PYTHON_EXECUTABLE} scons/scons.py install
+    COMMAND ${PYTHON3} scons/scons.py install
     WORKING_DIRECTORY ${SOURCE_PATH_RELEASE}
     LOGNAME scons-install-${TARGET_TRIPLET}-release
 )
 
 message(STATUS "Installing ${TARGET_TRIPLET}-dbg")
 vcpkg_execute_required_process(
-    COMMAND ${PYTHON_EXECUTABLE} scons/scons.py install
+    COMMAND ${PYTHON3} scons/scons.py install
     WORKING_DIRECTORY ${SOURCE_PATH_DEBUG}
     LOGNAME scons-install-${TARGET_TRIPLET}-debug
 )

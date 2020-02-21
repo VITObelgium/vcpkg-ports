@@ -44,7 +44,7 @@ sqlpp11
 sqlpp11-connector-sqlite3
 sqlpp11-connector-postgresql
 soci[sqlite3,postgresql]
-#mapnik[gdal]
+mapnik[gdal]
 tbb
 trompeloeil
 parallelstl

@@ -161,10 +161,8 @@ def vcpkg_install_ports(triplet, ports, clean_after_build=False, overlay_ports=N
     run_vcpkg(triplet, args)
 
 
-def vcpkg_upgrade_ports(triplet, clean_after_build=False, overlay_ports=None):
+def vcpkg_upgrade_ports(triplet, overlay_ports=None):
     args = ["upgrade", "--no-dry-run"]
-    if clean_after_build:
-        args.append("--clean-after-build")
 
     if overlay_ports:
         args.append(f"--overlay-ports={overlay_ports}")
@@ -296,7 +294,7 @@ def bootstrap(ports_dir, triplet=None, additional_ports=[], clean_after_build=Fa
     ports_to_install.extend(additional_ports)
 
     try:
-        vcpkg_upgrade_ports(triplet, clean_after_build, overlay_ports)
+        vcpkg_upgrade_ports(triplet, overlay_ports)
         vcpkg_install_ports(triplet, ports_to_install, clean_after_build, overlay_ports)
     except subprocess.CalledProcessError as e:
         raise RuntimeError("Bootstrap failed: {}".format(e))

@@ -75,7 +75,7 @@ set(BASH ${MSYS_ROOT}/usr/bin/bash.exe)
 set(AUTOMAKE_DIR ${MSYS_ROOT}/usr/share/automake-1.15)
 file(COPY ${AUTOMAKE_DIR}/config.guess ${AUTOMAKE_DIR}/config.sub DESTINATION ${SOURCE_PATH}/icu/source)
 
-set(CONFIGURE_OPTIONS "--host=i686-pc-mingw32 --disable-samples --disable-tests --with-data-packaging=static")
+set(CONFIGURE_OPTIONS "--host=i686-pc-mingw32 --disable-samples --disable-tests --with-data-packaging=static --enable-extras=no --enable-layoutex=no")
 
 if(VCPKG_LIBRARY_LINKAGE STREQUAL dynamic)
     set(CONFIGURE_OPTIONS "${CONFIGURE_OPTIONS} --disable-static --enable-shared")

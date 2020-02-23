@@ -5,6 +5,7 @@ set(VERSION v${MAJOR}.${MINOR}.${REVISION})
 set(PACKAGE_NAME ${PORT}-${VERSION})
 set(PACKAGE ${PACKAGE_NAME}.tar.bz2)
 
+vcpkg_fail_port_install(ON_TARGET "Windows" MESSAGE "Mapnik is not supported on windows")
 vcpkg_find_acquire_program(PYTHON3)
 
 # Extract source into architecture specific directory, because GDALs' build currently does not

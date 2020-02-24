@@ -25,3 +25,4 @@ trompeloeil
 typesafe
 vc
 zlib
+mapnik[gdal](osx|linux)

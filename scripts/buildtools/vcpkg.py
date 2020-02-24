@@ -4,6 +4,7 @@ import subprocess
 import sys
 import pathlib
 import os
+import re
 import shutil
 import sysconfig
 
@@ -218,14 +219,52 @@ def select_ports_file(ports_dir, triplet):
     raise RuntimeError("No ports file found in '{}'".format(ports_dir))
 
 
-def read_ports_from_ports_file(ports_file):
+def platform_for_triplet(triplet):
+    if 'osx' in triplet:
+        return 'osx'
+    if 'linux' in triplet:
+        return 'linux'
+    if 'mingw' in triplet:
+        return 'mingw'
+    if 'windows' in triplet:
+        return 'windows'
+
+    raise RuntimeError(f"Unepected triplet: {triplet}")
+
+
+def platform_matches_filter(platform, filter_array):
+    for filter in filter_array:
+        if filter.startswith('!'):
+            if platform != filter[1:]:
+                return True
+        elif filter == platform:
+            return True
+
+    return False
+
+
+def read_ports_from_ports_file(ports_file, triplet):
+    # portname[feature1, feature2](osx|windows)
+    # portname[feature1, feature2](!windows)
+    regex = r"([a-z0-9\-]+(?:\[\S*\])?)(?:\((\S+)\))?"
+
+    requested_platform = platform_for_triplet(triplet)
+    
     ports_to_install = []
     with open(ports_file) as f:
         content = f.readlines()
         for line in content:
             line = line.strip()
             if not line.startswith("#"):
-                ports_to_install.append(line)
+                match = re.match(regex, line)
+                if match:
+                    port = match.group(1)
+                    filters = match.group(2)
+                    if filters:
+                        if platform_matches_filter(requested_platform, filters.split('|')):
+                            ports_to_install.append(port)
+                    else:
+                        ports_to_install.append(port)
 
     return ports_to_install
 
@@ -290,8 +329,10 @@ def bootstrap(ports_dir, triplet=None, additional_ports=[], clean_after_build=Fa
 
     ports_file = select_ports_file(ports_dir, triplet)
     print("Using ports defined in: {}".format(os.path.abspath(ports_file)))
-    ports_to_install = read_ports_from_ports_file(ports_file)
+    ports_to_install = read_ports_from_ports_file(ports_file, triplet)
     ports_to_install.extend(additional_ports)
+    if len(ports_to_install) == 0:
+        return
 
     try:
         vcpkg_upgrade_ports(triplet, overlay_ports)

@@ -12,8 +12,8 @@ These ports are tweaked to create fully static binaries.
 ## Getting started
 #### Installing the required packages
 e.g. Debian based system
-```apt-get install git curl unzip tar cmake build-essential```
+```apt-get install git curl unzip tar cmake python3 build-essential```
 #### Build the vcpkg binary
 ```cmake -P bootstrap.cmake```
 #### Install packages
-```./bin/vcpkg cmake install gdal[spatialite]```
+```./bin/vcpkg install gdal[spatialite]```

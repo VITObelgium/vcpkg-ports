@@ -8,3 +8,12 @@ Recipes for building third party software libraries for easy cmake integration.
 This is a subset of the ports of https://github.com/microsoft/vcpkg focused mainly on geospatial analysis and scientific computing.
 
 These ports are tweaked to create fully static binaries.
+
+## Getting started
+#### Installing the required packages
+e.g. Debian based system
+```apt-get install git curl unzip tar cmake build-essential```
+#### Build the vcpkg binary
+```cmake -P bootstrap.cmake```
+#### Install packages
+```./bin/vcpkg cmake install gdal[spatialite]```

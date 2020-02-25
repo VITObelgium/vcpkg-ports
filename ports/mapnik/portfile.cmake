@@ -28,6 +28,7 @@ foreach(BUILD_TYPE debug release)
         PATCHES
         ${CMAKE_CURRENT_LIST_DIR}/mapnik-render-link.patch
         ${CMAKE_CURRENT_LIST_DIR}/tiff-link.patch
+        ${CMAKE_CURRENT_LIST_DIR}/icu-link.patch
         ${CMAKE_CURRENT_LIST_DIR}/config-path.patch
         ${CMAKE_CURRENT_LIST_DIR}/gdallib-detection.patch
     )

@@ -70,6 +70,23 @@ def find_cmake_binary():
     return shutil.which("cmake")
 
 
+def find_ninja_binary():
+    dlenv = os.environ.get("VCPKG_DOWNLOADS")
+    if dlenv:
+        vcpkg_downloads_dir = pathlib.Path(dlenv) / "tools"
+    else:
+        vcpkg_downloads_dir = pathlib.Path(vcpkg_root_dir()) / "downloads" / "tools"
+
+    # first find ninja in the vcpkg downloads dir
+    for ninja_dir in vcpkg_downloads_dir.glob("ninja*/"):
+        ninja = shutil.which("ninja", path=ninja_dir.as_posix())
+        if ninja:
+            return ninja
+
+    # find ninja on the system
+    return shutil.which("ninja")
+
+
 def bootstrap_vcpkg():
     cmake_bin = find_cmake_binary()
     bootstrap_path = pathlib.Path(vcpkg_root_dir()) / "bootstrap.cmake"
@@ -117,9 +134,16 @@ def cmake_configure(
         args.append("Visual Studio 15 2017 Win64")
         args.extend(["-T", "v141,host=x64"])
     else:
-        args.append("Ninja")
+        generator = "Ninja"
+        args.append(generator)
         # do not append build type for msvc builds, otherwise debug libraries are not found (multi-config build)
         args.append("-DCMAKE_BUILD_TYPE=Release")
+
+    if generator == "Ninja":
+        ninja_bin = find_ninja_binary()
+        if not ninja_bin:
+            raise RuntimeError("ninja executable could not be found")
+        args.append(f"-DCMAKE_MAKE_PROGRAM={ninja_bin}")
 
     if triplet is not None:
         args.append("-DVCPKG_TARGET_TRIPLET={}".format(triplet))

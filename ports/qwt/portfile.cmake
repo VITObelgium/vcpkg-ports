@@ -1,13 +1,11 @@
-include(vcpkg_common_functions)
-
 if (VCPKG_TARGET_IS_OSX)
     set(VCPKG_BUILD_TYPE release)
 endif ()
 
 vcpkg_download_distfile(ARCHIVE
-    URLS "https://sourceforge.net/projects/qwt/files/qwt/6.1.3/qwt-6.1.3.zip"
-    FILENAME "qwt-6.1.3.zip"
-    SHA512 8f249e23d50f71d14fca37776ea40d8d6931db14d9602e03a343bfb7a9bf55502202103135b77f583c3890a7924220e8a142a01c448dbde311860d89a3b10fc8
+    URLS "https://sourceforge.net/projects/qwt/files/qwt/6.1.4/qwt-6.1.4.zip"
+    FILENAME "qwt-6.1.4.zip"
+    SHA512 711256ec4d1d54d201650e9c63b584b17a61dbedde5a581e0b6227fdbee149cdbe2a889aa58f67777125b6471fc1fe248992ec845eb6481a2dfc2c4276701d7f
 )
 
 vcpkg_extract_source_archive_ex(

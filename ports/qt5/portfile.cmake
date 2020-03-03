@@ -38,7 +38,11 @@ vcpkg_extract_source_archive_ex(
         lld-link-win.patch
         fix-cmake-qtplugins-debug-config.patch
         qquickitemgrabber.patch
+        opengles2-without-dynamic.patch
 )
+
+set(BUILD_DIR_REL ${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-rel)
+set(BUILD_DIR_DBG ${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-dbg)
 
 if (MINGW AND NOT CMAKE_CROSSCOMPILING)
     set (FILES_TO_FIX
@@ -118,8 +122,10 @@ set(QT_OPTIONS
     -no-dbus
     -no-icu
     -no-glib
+    -no-gif
     -no-webp
     -no-cups
+    -no-angle
     -system-zlib
     -system-libpng
     -system-libjpeg
@@ -174,7 +180,7 @@ set(BUILD_COMMAND make -j${NUM_CORES})
 set(EXEC_COMMAND)
 
 set(PLATFORM_OPTIONS)
-if(VCPKG_CMAKE_SYSTEM_NAME STREQUAL "WindowsStore" OR NOT DEFINED VCPKG_CMAKE_SYSTEM_NAME)
+if(VCPKG_TARGET_IS_WINDOWS)
     find_program(JOM jom)
     if (JOM)
         set(BUILD_COMMAND ${JOM})
@@ -184,19 +190,15 @@ if(VCPKG_CMAKE_SYSTEM_NAME STREQUAL "WindowsStore" OR NOT DEFINED VCPKG_CMAKE_SY
     endif ()
 
     if("angle" IN_LIST FEATURES)
-        list(APPEND PLATFORM_OPTIONS -angle)
+        list(APPEND PLATFORM_OPTIONS -opengl es2)
     else ()
         list(APPEND PLATFORM_OPTIONS -opengl desktop)
     endif()
 
     set(CONFIG_SUFFIX .bat)
-    #if(VCPKG_PLATFORM_TOOLSET MATCHES "v142")
-    #    list(APPEND QT_OPTIONS -platform win32-msvc2019)
-    #elseif(VCPKG_PLATFORM_TOOLSET MATCHES "v141")
-        list(APPEND QT_OPTIONS -platform win32-msvc2017)
-    #endif()
+    set(PLATFORM -platform win32-msvc2017)
     list(APPEND PLATFORM_OPTIONS -mp)
-elseif(VCPKG_CMAKE_SYSTEM_NAME STREQUAL "Linux")
+elseif(VCPKG_TARGET_IS_LINUX)
     if (HOST MATCHES "x86_64-unknown-linux-gnu")
         set(PLATFORM -platform linux-g++-cluster)
         list(APPEND PLATFORM_OPTIONS -no-opengl -sysroot ${CMAKE_SYSROOT})
@@ -207,7 +209,7 @@ elseif(VCPKG_CMAKE_SYSTEM_NAME STREQUAL "Linux")
     endif ()
     list(APPEND PLATFORM_OPTIONS -no-pch -c++std c++17)
     #-device-option CROSS_COMPILE=${CROSS}
-elseif(VCPKG_CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+elseif(VCPKG_TARGET_IS_OSX)
     list(APPEND PLATFORM_OPTIONS -c++std c++17 -no-pch)
 
     # change the minumum deployment target so the c++17 features become available
@@ -234,8 +236,6 @@ elseif (MINGW)
     set(EXEC_COMMAND sh)
 endif()
 
-list(APPEND QT_OPTIONS ${PLATFORM} ${PLATFORM_OPTIONS})
-
 set (CMAKE_FIND_ROOT_PATH_MODE_LIBRARY_BACKUP ${CMAKE_FIND_ROOT_PATH_MODE_LIBRARY})
 set (CMAKE_FIND_ROOT_PATH_MODE_LIBRARY NEVER)
 find_library(ZLIB_RELEASE NAMES z zlib PATHS "${CURRENT_INSTALLED_DIR}/lib" NO_DEFAULT_PATH)
@@ -254,7 +254,6 @@ find_library(PCRE2_DEBUG NAMES pcre2-16 pcre2-16d PATHS "${CURRENT_INSTALLED_DIR
 #find_library(HARFBUZZ_DEBUG NAMES harfbuzz PATHS "${CURRENT_INSTALLED_DIR}/debug/lib" NO_DEFAULT_PATH)
 
 set(QT_OPTIONS_REL
-    ${QT_OPTIONS}
     -release
     -L ${CURRENT_INSTALLED_DIR}/lib
     -prefix ${CURRENT_INSTALLED_DIR}
@@ -271,11 +270,10 @@ set(QT_OPTIONS_REL
     #"FREETYPE_LIBS=${FREETYPE_RELEASE} ${BZ2_RELEASE} ${LIBPNG_RELEASE} ${ZLIB_RELEASE}"
     #"ICU_LIBS=${ICU_RELEASE}"
     #"QMAKE_LIBS_PRIVATE+=${BZ2_RELEASE}"
-    "QMAKE_LIBS_PRIVATE+=${LIBPNG_RELEASE}"       
+    "QMAKE_LIBS_PRIVATE+=${LIBPNG_RELEASE}"
 )
 
 set(QT_OPTIONS_DBG
-    ${QT_OPTIONS}
     -debug
     -L ${CURRENT_INSTALLED_DIR}/debug/lib
     -prefix ${CURRENT_INSTALLED_DIR}
@@ -295,7 +293,6 @@ set(QT_OPTIONS_DBG
     #"FREETYPE_LIBS=${FREETYPE_DEBUG} ${BZ2_DEBUG} ${LIBPNG_DEBUG} ${ZLIB_DEBUG}"
     #"ICU_LIBS=${ICU_DEBUG}"
     #"QMAKE_LIBS_PRIVATE+=${BZ2_DEBUG}"
-    "QMAKE_LIBS_PRIVATE+=${LIBPNG_DEBUG}"
 )
 
 if("sql" IN_LIST FEATURES)
@@ -324,32 +321,46 @@ if("tiff" IN_LIST FEATURES)
     list(APPEND QT_OPTIONS_DBG "TIFF_LIBS=${TIFF_DEBUG} ${LZMA_DEBUG} ${ZLIB_DEBUG}")
 endif()
 
-set (CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ${CMAKE_FIND_ROOT_PATH_MODE_LIBRARY_BACKUP})
+if ("angle" IN_LIST FEATURES)
+    unset(PLATFORM)
+    set(GL_LIBDIR ${CURRENT_INSTALLED_DIR}/lib)
+    configure_file(${CMAKE_CURRENT_LIST_DIR}/qmake-msvc.conf.in ${SOURCE_PATH}/qtbase/mkspecs/msvc-angle-rel/qmake.conf)
+    file(COPY ${SOURCE_PATH}/qtbase/mkspecs/win32-msvc/qplatformdefs.h DESTINATION ${SOURCE_PATH}/qtbase/mkspecs/msvc-angle-rel)
+    list(APPEND QT_OPTIONS_REL -platform msvc-angle-rel)
+    
+    set(GL_LIBDIR ${CURRENT_INSTALLED_DIR}/debug/lib)
+    set(GL_DEBUG_POSTFIX d)
+    configure_file(${CMAKE_CURRENT_LIST_DIR}/qmake-msvc.conf.in ${SOURCE_PATH}/qtbase/mkspecs/msvc-angle-dbg/qmake.conf)
+    file(COPY ${SOURCE_PATH}/qtbase/mkspecs/win32-msvc/qplatformdefs.h DESTINATION ${SOURCE_PATH}/qtbase/mkspecs/msvc-angle-dbg)
+    list(APPEND QT_OPTIONS_DBG -platform msvc-angle-dbg)
+endif ()
 
-file(REMOVE_RECURSE ${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-rel ${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-dbg)
+list(APPEND QT_OPTIONS ${PLATFORM} ${PLATFORM_OPTIONS})
+set (CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ${CMAKE_FIND_ROOT_PATH_MODE_LIBRARY_BACKUP})
+file(REMOVE_RECURSE ${BUILD_DIR_REL} ${BUILD_DIR_DBG})
 
 set(ENV{PKG_CONFIG_LIBDIR} "${CURRENT_INSTALLED_DIR}/lib/pkgconfig")
 message(STATUS "Configuring ${TARGET_TRIPLET}-dbg")
 if(VCPKG_VERBOSE)
-    STRING(JOIN " " QT_ARGS ${QT_OPTIONS_DBG})
+    STRING(JOIN " " QT_ARGS ${QT_OPTIONS} ${QT_OPTIONS_DBG})
     message(STATUS "${SOURCE_PATH}/configure${CONFIG_SUFFIX} ${QT_ARGS}")
 endif()
-file(MAKE_DIRECTORY ${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-dbg)
+file(MAKE_DIRECTORY ${BUILD_DIR_DBG})
 vcpkg_execute_required_process(
-    COMMAND ${EXEC_COMMAND} ${SOURCE_PATH}/configure${CONFIG_SUFFIX} ${QT_OPTIONS_DBG}
-    WORKING_DIRECTORY ${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-dbg
+    COMMAND ${EXEC_COMMAND} ${SOURCE_PATH}/configure${CONFIG_SUFFIX} ${QT_OPTIONS} ${QT_OPTIONS_DBG}
+    WORKING_DIRECTORY ${BUILD_DIR_DBG}
     LOGNAME qt-configure-${TARGET_TRIPLET}-debug
 )
 
 message(STATUS "Configuring ${TARGET_TRIPLET}-rel")
 if(VCPKG_VERBOSE)
-    STRING(JOIN " " QT_ARGS ${QT_OPTIONS_REL})
+    STRING(JOIN " " QT_ARGS ${QT_OPTIONS} ${QT_OPTIONS_REL})
     message(STATUS "${SOURCE_PATH}/configure${CONFIG_SUFFIX} ${QT_ARGS}")
 endif ()
-file(MAKE_DIRECTORY ${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-rel)
+file(MAKE_DIRECTORY ${BUILD_DIR_REL})
 vcpkg_execute_required_process(
-    COMMAND ${EXEC_COMMAND} ${SOURCE_PATH}/configure${CONFIG_SUFFIX} ${QT_OPTIONS_REL}
-    WORKING_DIRECTORY ${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-rel
+    COMMAND ${EXEC_COMMAND} ${SOURCE_PATH}/configure${CONFIG_SUFFIX} ${QT_OPTIONS} ${QT_OPTIONS_REL}
+    WORKING_DIRECTORY ${BUILD_DIR_REL}
     LOGNAME qt-configure-${TARGET_TRIPLET}-release
 )
 
@@ -357,22 +368,22 @@ message(STATUS "Building ${TARGET_TRIPLET}-dbg")
 # build the binary target not included in all (otherwise the install step fails)
 vcpkg_execute_required_process(
     COMMAND ${BUILD_COMMAND} binary
-    WORKING_DIRECTORY ${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-dbg/qtbase/qmake
+    WORKING_DIRECTORY ${BUILD_DIR_DBG}/qtbase/qmake
 )
 vcpkg_execute_required_process(
     COMMAND ${BUILD_COMMAND} install
-    WORKING_DIRECTORY ${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-dbg
+    WORKING_DIRECTORY ${BUILD_DIR_DBG}
     LOGNAME qt-build-${TARGET_TRIPLET}-debug
 )
 
 message(STATUS "Building ${TARGET_TRIPLET}-rel")
 vcpkg_execute_required_process(
     COMMAND ${BUILD_COMMAND} binary
-    WORKING_DIRECTORY ${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-rel/qtbase/qmake
+    WORKING_DIRECTORY ${BUILD_DIR_REL}/qtbase/qmake
 )
 vcpkg_execute_required_process(
     COMMAND ${BUILD_COMMAND} install
-    WORKING_DIRECTORY ${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-rel
+    WORKING_DIRECTORY ${BUILD_DIR_REL}
     LOGNAME qt-build-${TARGET_TRIPLET}-release
 )
 
@@ -396,6 +407,22 @@ file(REMOVE_RECURSE
     ${CURRENT_PACKAGES_DIR}/debug/share
     ${CURRENT_PACKAGES_DIR}/bin
 )
+
+if (VCPKG_TARGET_IS_WINDOWS AND "angle" IN_LIST FEATURES)
+    # egl library names get added to the prl files without path
+    # turn it into an absolute path
+    file(GLOB_RECURSE PRL_FILES ${CURRENT_PACKAGES_DIR}/*.prl)
+    foreach(PRL_FILE ${PRL_FILES})
+        vcpkg_replace_string(${PRL_FILE} " libEGL.lib " " $$[QT_INSTALL_LIBS]/libEGL.lib ")
+        vcpkg_replace_string(${PRL_FILE} ";libEGL.lib;" ";$$[QT_INSTALL_LIBS]/libEGL.lib;")
+        vcpkg_replace_string(${PRL_FILE} " libGLESv2.lib " " $$[QT_INSTALL_LIBS]/libGLESv2.lib ")
+        vcpkg_replace_string(${PRL_FILE} ";libGLESv2.lib;" ";$$[QT_INSTALL_LIBS]/libGLESv2.lib;")
+        vcpkg_replace_string(${PRL_FILE} " libEGLd.lib " " $$[QT_INSTALL_LIBS]/libEGLd.lib ")
+        vcpkg_replace_string(${PRL_FILE} ";libEGLd.lib;" ";$$[QT_INSTALL_LIBS]/libEGLd.lib;")
+        vcpkg_replace_string(${PRL_FILE} " libGLESv2d.lib " " $$[QT_INSTALL_LIBS]/libGLESv2d.lib ")
+        vcpkg_replace_string(${PRL_FILE} ";libGLESv2d.lib;" ";$$[QT_INSTALL_LIBS]/libGLESv2d.lib;")
+    endforeach()
+endif ()
 
 # bootstrap libs are only used for the tools and cause errors on windows as they link to a different crt
 file(REMOVE

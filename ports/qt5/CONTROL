@@ -5,6 +5,7 @@ Build-Depends: zlib, freetype (linux), harfbuzz (linux), libjpeg-turbo, libpng, 
 
 Feature: angle
 Description: enable angle for gl rendering (windows only)
+Build-Depends: angle
 
 Feature: qml
 Description: qml support

@@ -2,4 +2,4 @@ Source: qwt
 Version: 6.1.4
 Homepage: https://sourceforge.net/projects/qwt
 Description: Qt widgets library for technical applications
-Build-Depends: qt5[tools]
+Build-Depends: qt5

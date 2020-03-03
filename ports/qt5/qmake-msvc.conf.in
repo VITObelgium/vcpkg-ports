@@ -1,0 +1,15 @@
+#
+# qmake configuration for win32-msvc with angle
+#
+
+include(../win32-msvc/qmake.conf)
+
+QMAKE_CFLAGS += -DANGLE_EXPORT= -DKHRONOS_STATIC
+QMAKE_CXXFLAGS += -DANGLE_EXPORT= -DKHRONOS_STATIC
+
+LIBEGL_NAME             = libEGL@GL_DEBUG_POSTFIX@
+LIBGLESV2_NAME          = libEGL@GL_DEBUG_POSTFIX@
+QMAKE_LIBS_EGL          = gdi32.lib user32.lib d3d9.lib DXGI.lib d3d11.lib dxguid.lib libEGL@GL_DEBUG_POSTFIX@.lib libGLESv2@GL_DEBUG_POSTFIX@.lib
+QMAKE_LIBS_OPENGL_ES2   = gdi32.lib user32.lib d3d9.lib DXGI.lib d3d11.lib dxguid.lib libGLESv2@GL_DEBUG_POSTFIX@.lib
+QMAKE_LIBDIR_EGL        = @GL_LIBDIR@
+QMAKE_LIBDIR_OPENGL_ES2 = @GL_LIBDIR@

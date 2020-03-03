@@ -1,0 +1,32 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 4b7c98eac..8aeb9e870 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
++cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
+ project("Mapbox GL Native" LANGUAGES CXX C)
+ 
+ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+@@ -1008,6 +1008,20 @@ else()
+     message(FATAL_ERROR "Unsupported target platform: " ${CMAKE_SYSTEM_NAME})
+ endif()
+ 
++if(MBGL_OPTIONAL)
+ add_subdirectory(${PROJECT_SOURCE_DIR}/test)
+ add_subdirectory(${PROJECT_SOURCE_DIR}/benchmark)
+ add_subdirectory(${PROJECT_SOURCE_DIR}/render-test)
++endif()
++
++install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/mbgl TYPE INCLUDE)
++install(DIRECTORY ${PROJECT_SOURCE_DIR}/platform/default/include/mbgl TYPE INCLUDE)
++install(DIRECTORY ${PROJECT_SOURCE_DIR}/vendor/mapbox-base/mapbox/geometry.hpp/include/mapbox TYPE INCLUDE)
++install(DIRECTORY ${PROJECT_SOURCE_DIR}/vendor/mapbox-base/mapbox/variant/include/mapbox TYPE INCLUDE)
++install(DIRECTORY ${PROJECT_SOURCE_DIR}/vendor/mapbox-base/mapbox/geojson.hpp/include/mapbox TYPE INCLUDE)
++install(DIRECTORY ${PROJECT_SOURCE_DIR}/vendor/mapbox-base/mapbox/typewrapper/include/ TYPE INCLUDE)
++install(DIRECTORY ${PROJECT_SOURCE_DIR}/vendor/mapbox-base/mapbox/value/include/ TYPE INCLUDE)
++install(DIRECTORY ${PROJECT_SOURCE_DIR}/vendor/mapbox-base/mapbox/weak/include/ TYPE INCLUDE)
++install(DIRECTORY ${PROJECT_SOURCE_DIR}/vendor/mapbox-base/extras/expected-lite/include/nonstd TYPE INCLUDE)
++install(FILES ${PROJECT_SOURCE_DIR}/vendor/mapbox-base/mapbox/optional/optional.hpp TYPE INCLUDE)
++install(TARGETS mbgl-core mbgl-vendor-nunicode mbgl-vendor-parsedate mbgl-vendor-csscolorparser)
+\ No newline at end of file

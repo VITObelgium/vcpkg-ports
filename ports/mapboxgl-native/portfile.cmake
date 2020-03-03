@@ -17,7 +17,7 @@ file(REMOVE_RECURSE ${CURRENT_BUILDTREES_DIR}/src)
 vcpkg_from_git(
     URL https://github.com/mapbox/mapbox-gl-native.git
     OUT_SOURCE_PATH SOURCE_PATH
-    REF maps-v1.2.0
+    REF maps-v1.3.0
     HEAD_REF master
 )
 
@@ -44,7 +44,10 @@ vcpkg_execute_required_process(
 
 vcpkg_apply_patches(
     SOURCE_PATH ${SOURCE_PATH}
-    PATCHES cmake-fixes.patch
+    PATCHES
+        cmake-fixes-main.patch
+        cmake-fixes-qt.patch
+        compression-zlib.patch
 )
     
 vcpkg_configure_cmake(

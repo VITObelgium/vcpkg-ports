@@ -17,9 +17,13 @@ find_library(MapboxGL_nunicode_LIBRARY NAMES mbgl-vendor-nunicode HINTS ${Mapbox
 find_library(MapboxGL_nunicode_LIBRARY_DEBUG NAMES mbgl-vendor-nunicoded HINTS ${MapboxGL_ROOT_DIR}/debug/lib ${MapboxGL_ROOT_DIR}/lib)
 message(STATUS "MapboxGL nunicode library: ${MapboxGL_nunicode_LIBRARY}")
 
-find_library(MapboxGL_qt_LIBRARY NAMES qmapboxgl HINTS ${MapboxGL_ROOT_DIR}/lib)
-find_library(MapboxGL_qt_LIBRARY_DEBUG NAMES qmapboxgld HINTS ${MapboxGL_ROOT_DIR}/debug/lib ${MapboxGL_ROOT_DIR}/lib)
-message(STATUS "MapboxGL qt library: ${MapboxGL_qt_LIBRARY_DEBUG}")
+find_library(MapboxGL_csscolorparser_LIBRARY NAMES mbgl-vendor-csscolorparser HINTS ${MapboxGL_ROOT_DIR}/lib)
+find_library(MapboxGL_csscolorparser_LIBRARY_DEBUG NAMES mbgl-vendor-csscolorparserd HINTS ${MapboxGL_ROOT_DIR}/debug/lib ${MapboxGL_ROOT_DIR}/lib)
+message(STATUS "MapboxGL csscolorparser library: ${MapboxGL_csscolorparser_LIBRARY}")
+
+find_library(MapboxGL_parsedate_LIBRARY NAMES mbgl-vendor-parsedate HINTS ${MapboxGL_ROOT_DIR}/lib)
+find_library(MapboxGL_parsedate_LIBRARY_DEBUG NAMES mbgl-vendor-parsedated HINTS ${MapboxGL_ROOT_DIR}/debug/lib ${MapboxGL_ROOT_DIR}/lib)
+message(STATUS "MapboxGL parsedate library: ${MapboxGL_parsedate_LIBRARY}")
 
 find_package(ZLIB REQUIRED QUIET)
 find_package(ICU COMPONENTS i18n uc REQUIRED)
@@ -31,6 +35,8 @@ find_package_handle_standard_args(MapboxGL
         MapboxGL_INCLUDE_DIR
         MapboxGL_core_LIBRARY
         MapboxGL_nunicode_LIBRARY
+        MapboxGL_csscolorparser_LIBRARY
+        MapboxGL_parsedate_LIBRARY
         ZLIB_FOUND
         ICU_FOUND
 )
@@ -42,10 +48,10 @@ mark_as_advanced(
     MapboxGL_core_LIBRARY_DEBUG
     MapboxGL_nunicode_LIBRARY
     MapboxGL_nunicode_LIBRARY_DEBUG
-    MapboxGL_qt_LIBRARY
-    MapboxGL_qt_LIBRARY_DEBUG
-    MapboxGL_qgeoplugin_LIBRARY
-    MapboxGL_qgeoplugin_LIBRARY_DEBUG
+    MapboxGL_csscolorparser_LIBRARY
+    MapboxGL_csscolorparser_LIBRARY_DEBUG
+    MapboxGL_parsedate_LIBRARY
+    MapboxGL_parsedate_LIBRARY_DEBUG
 )
 
 if(MapboxGL_FOUND AND NOT TARGET MapboxGL::core)
@@ -62,11 +68,37 @@ if(MapboxGL_FOUND AND NOT TARGET MapboxGL::core)
         )
     endif()
 
+    add_library(MapboxGL::csscolorparser STATIC IMPORTED)
+    set_target_properties(MapboxGL::csscolorparser PROPERTIES
+        IMPORTED_LINK_INTERFACE_LANGUAGES "CXX"
+        INTERFACE_INCLUDE_DIRECTORIES "${MapboxGL_INCLUDE_DIR}"
+        IMPORTED_LOCATION ${MapboxGL_csscolorparser_LIBRARY}
+    )
+
+    if(MapboxGL_csscolorparser_LIBRARY_DEBUG)
+        set_target_properties(MapboxGL::csscolorparser PROPERTIES
+            IMPORTED_LOCATION_DEBUG "${MapboxGL_csscolorparser_LIBRARY_DEBUG}"
+        )
+    endif()
+
+    add_library(MapboxGL::parsedate STATIC IMPORTED)
+    set_target_properties(MapboxGL::parsedate PROPERTIES
+        IMPORTED_LINK_INTERFACE_LANGUAGES "CXX"
+        INTERFACE_INCLUDE_DIRECTORIES "${MapboxGL_INCLUDE_DIR}"
+        IMPORTED_LOCATION ${MapboxGL_parsedate_LIBRARY}
+    )
+
+    if(MapboxGL_parsedate_LIBRARY_DEBUG)
+        set_target_properties(MapboxGL::parsedate PROPERTIES
+            IMPORTED_LOCATION_DEBUG "${MapboxGL_parsedate_LIBRARY_DEBUG}"
+        )
+    endif()
+
     add_library(MapboxGL::core STATIC IMPORTED)
     set_target_properties(MapboxGL::core PROPERTIES
         IMPORTED_LINK_INTERFACE_LANGUAGES "CXX"
         INTERFACE_INCLUDE_DIRECTORIES "${MapboxGL_INCLUDE_DIR}"
-        INTERFACE_LINK_LIBRARIES "MapboxGL::nunicode;sqlite3;ICU::i18n;ICU::uc;ZLIB::ZLIB"
+        INTERFACE_LINK_LIBRARIES "MapboxGL::nunicode;MapboxGL::csscolorparser;MapboxGL::parsedate;sqlite3;ICU::i18n;ICU::uc;ZLIB::ZLIB"
         IMPORTED_LOCATION ${MapboxGL_core_LIBRARY}
     )
 
@@ -78,21 +110,4 @@ if(MapboxGL_FOUND AND NOT TARGET MapboxGL::core)
 
     # required dependencies
     set_property(TARGET MapboxGL::core APPEND PROPERTY INTERFACE_LINK_LIBRARIES )
-endif()
-
-if(MapboxGL_qt_LIBRARY AND NOT TARGET MapboxGL::qmapboxgl)
-    add_library(MapboxGL::qmapboxgl STATIC IMPORTED)
-    set_target_properties(MapboxGL::qmapboxgl PROPERTIES
-        IMPORTED_LINK_INTERFACE_LANGUAGES "CXX"
-        INTERFACE_INCLUDE_DIRECTORIES "${MapboxGL_INCLUDE_DIR}"
-        IMPORTED_LOCATION ${MapboxGL_qt_LIBRARY}
-        INTERFACE_LINK_LIBRARIES MapboxGL::core
-        INTERFACE_COMPILE_DEFINITIONS QT_MAPBOXGL_STATIC
-    )
-
-    if(MapboxGL_qt_LIBRARY_DEBUG)
-        set_target_properties(MapboxGL::qmapboxgl PROPERTIES
-            IMPORTED_LOCATION_DEBUG "${MapboxGL_qt_LIBRARY_DEBUG}"
-        )
-    endif()
 endif()

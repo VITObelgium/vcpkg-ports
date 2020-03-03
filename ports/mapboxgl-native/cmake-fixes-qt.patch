@@ -1,0 +1,41 @@
+diff --git a/platform/qt/qt.cmake b/platform/qt/qt.cmake
+index a7d209a07..9f6ecebb7 100644
+--- a/platform/qt/qt.cmake
++++ b/platform/qt/qt.cmake
+@@ -78,23 +78,25 @@ target_include_directories(
+     PRIVATE ${PROJECT_SOURCE_DIR}/platform/default/include
+ )
+ 
+-include(${PROJECT_SOURCE_DIR}/vendor/icu.cmake)
++find_package(ZLIB REQUIRED)
++find_package(ICU COMPONENTS i18n uc REQUIRED)
+ include(${PROJECT_SOURCE_DIR}/vendor/nunicode.cmake)
+-include(${PROJECT_SOURCE_DIR}/vendor/sqlite.cmake)
++find_package(sqlite3 CONFIG REQUIRED)
+ 
+ target_link_libraries(
+     mbgl-core
+     PRIVATE
+-        $<$<NOT:$<PLATFORM_ID:Windows>>:z>
+-        $<$<NOT:$<PLATFORM_ID:Windows>>:mbgl-vendor-icu>
++        ZLIB::ZLIB
++        ICU::i18n ICU::uc
+         Qt5::Core
+         Qt5::Gui
+         Qt5::Network
+         Qt5::OpenGL
+         mbgl-vendor-nunicode
+-        mbgl-vendor-sqlite
++        sqlite
+ )
+ 
++if(MBGL_OPTIONAL)
+ add_library(
+     qmapboxgl SHARED
+     ${PROJECT_SOURCE_DIR}/platform/qt/include/qmapbox.hpp
+@@ -212,3 +214,4 @@ if(MBGL_QDOC)
+ endif()
+ 
+ add_test(NAME mbgl-test-runner COMMAND mbgl-test-runner WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
++endif()
+\ No newline at end of file

@@ -1,0 +1,24 @@
+diff -Naur a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt	2020-01-19 17:27:05.000000000 +0100
++++ b/CMakeLists.txt	2020-03-04 13:41:54.895286100 +0100
+@@ -147,20 +147,6 @@
+ endif()
+ 
+ 
+-if(NOT BUILD_SHARED_LIBS)
+-    if(UNIX)
+-        set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+-    elseif(MINGW OR MSYS)
+-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -static -static-libgcc -Wno-char-subscripts -Wno-long-long")
+-        list(APPEND LXW_PRIVATE_COMPILE_DEFINITIONS USE_FILE32API)
+-    elseif(MSVC)
+-        set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /Fd\"${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pdb\"")
+-        set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /Ox /Zi /Fd\"${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pdb\"")
+-        set(CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL} /Zi /Fd\"${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pdb\"")
+-        set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} /Fd\"${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pdb\"")
+-    endif()
+-endif()
+-
+ if(MSVC AND USE_STATIC_MSVC_RUNTIME)
+     foreach(flag_var CMAKE_C_FLAGS
+                      CMAKE_C_FLAGS_DEBUG

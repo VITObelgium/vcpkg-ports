@@ -1,6 +1,6 @@
 set(VERSION_MAJOR 3)
 set(VERSION_MINOR 8)
-set(VERSION_REVISION 0)
+set(VERSION_REVISION 1)
 set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_REVISION})
 set(PACKAGE_NAME ${PORT}-${VERSION})
 set(PACKAGE ${PACKAGE_NAME}.tar.bz2)
@@ -10,14 +10,13 @@ include(vcpkg_common_functions)
 vcpkg_download_distfile(ARCHIVE
     URLS "http://download.osgeo.org/geos/${PACKAGE}"
     FILENAME "${PACKAGE}"
-    SHA512 c89b25b42092152ef261090f25ff64b229f30f67d42fdf44c2871e78b66bb2c42e23b9ae21f9aea0e48823bdb0267d609ab2ee77d310abcb76fa672c6614d8f1
+    SHA512 1d8d8b3ece70eb388ea128f4135c7455899f01828223b23890ad3a2401e27104efce03987676794273a9b9d4907c0add2be381ff14b8420aaa9a858cc5941056
 )
 vcpkg_extract_source_archive_ex(
     OUT_SOURCE_PATH SOURCE_PATH
     ARCHIVE ${ARCHIVE}
     PATCHES
         fix-build-without-tests.patch # fixed in the next release
-        install-inline-files.patch # fixed in the next release
         fix-exported-includes.patch
 )
 

@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 4b7c98eac..8aeb9e870 100644
+index 603615b37..61b8692f1 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -1,4 +1,4 @@
@@ -8,7 +8,7 @@ index 4b7c98eac..8aeb9e870 100644
  project("Mapbox GL Native" LANGUAGES CXX C)
  
  set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-@@ -1008,6 +1008,20 @@ else()
+@@ -1010,9 +1010,23 @@ else()
      message(FATAL_ERROR "Unsupported target platform: " ${CMAKE_SYSTEM_NAME})
  endif()
  
@@ -29,4 +29,6 @@ index 4b7c98eac..8aeb9e870 100644
 +install(DIRECTORY ${PROJECT_SOURCE_DIR}/vendor/mapbox-base/extras/expected-lite/include/nonstd TYPE INCLUDE)
 +install(FILES ${PROJECT_SOURCE_DIR}/vendor/mapbox-base/mapbox/optional/optional.hpp TYPE INCLUDE)
 +install(TARGETS mbgl-core mbgl-vendor-nunicode mbgl-vendor-parsedate mbgl-vendor-csscolorparser)
-\ No newline at end of file
+ 
+ if(EXISTS ${PROJECT_SOURCE_DIR}/internal/internal.cmake)
+     include(${PROJECT_SOURCE_DIR}/internal/internal.cmake)

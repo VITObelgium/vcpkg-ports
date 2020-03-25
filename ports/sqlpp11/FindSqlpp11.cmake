@@ -30,16 +30,20 @@ find_package_handle_standard_args(Sqlpp11
     REQUIRED_VARS Sqlpp11_INCLUDE_DIR
 )
 
+if(${CMAKE_VERSION} GREATER_EQUAL "3.17.0") 
+    set(Sqlpp11_NAME_MISMATCHED NAME_MISMATCHED)
+endif()
+
 find_package_handle_standard_args(Sqlpp11_Sqlite3
     FOUND_VAR Sqlpp11_Sqlite3_FOUND
     REQUIRED_VARS Sqlpp11_Sqlite3_INCLUDE_DIR Sqlpp11_Sqlite3_LIBRARY
-    NAME_MISMATCHED
+    ${Sqlpp11_NAME_MISMATCHED}
 )
 
 find_package_handle_standard_args(Sqlpp11_Postgresql
     FOUND_VAR Sqlpp11_Postgresql_FOUND
     REQUIRED_VARS Sqlpp11_Postgresql_INCLUDE_DIR Sqlpp11_Postgresql_LIBRARY
-    NAME_MISMATCHED
+    ${Sqlpp11_NAME_MISMATCHED}
 )
 
 find_package(sqlite3 CONFIG QUIET)
@@ -54,6 +58,7 @@ mark_as_advanced(
     Sqlpp11_Postgresql_INCLUDE_DIR
     Sqlpp11_Postgresql_LIBRARY
     Sqlpp11_Postgresql_LIBRARY_DEBUG
+    Sqlpp11_NAME_MISMATCHED
 )
 
 if(Sqlpp11_FOUND AND NOT TARGET Sqlpp11::Sqlpp11)

@@ -33,11 +33,13 @@ find_package_handle_standard_args(Sqlpp11
 find_package_handle_standard_args(Sqlpp11_Sqlite3
     FOUND_VAR Sqlpp11_Sqlite3_FOUND
     REQUIRED_VARS Sqlpp11_Sqlite3_INCLUDE_DIR Sqlpp11_Sqlite3_LIBRARY
+    NAME_MISMATCHED
 )
 
 find_package_handle_standard_args(Sqlpp11_Postgresql
     FOUND_VAR Sqlpp11_Postgresql_FOUND
     REQUIRED_VARS Sqlpp11_Postgresql_INCLUDE_DIR Sqlpp11_Postgresql_LIBRARY
+    NAME_MISMATCHED
 )
 
 find_package(sqlite3 CONFIG QUIET)

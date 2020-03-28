@@ -19,7 +19,9 @@ set(BUILD_PATH_DEBUG ${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-debug)
 set(BUILD_PATH_RELEASE ${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-release)
 
 vcpkg_download_distfile(ARCHIVE
-    URLS "http://dl.bintray.com/boostorg/release/${VERSION}/source/${PACKAGE}"
+    URLS
+        "http://dl.bintray.com/boostorg/release/${VERSION}/source/${PACKAGE}"
+        "https://netcologne.dl.sourceforge.net/project/boost/boost/${VERSION}/${PACKAGE}"
     FILENAME "${PACKAGE}"
     SHA512 ${SHA_SUM}
 )

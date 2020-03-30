@@ -1,4 +1,4 @@
 Source: mapboxgl-native
-Version: 1.4.1
+Version: 1.5.0
 Description: Interactive, thoroughly customizable maps for native c++
 Build-Depends: zlib, icu, qt5[ssl], libjpeg-turbo, libpng, sqlite3

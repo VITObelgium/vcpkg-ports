@@ -25,7 +25,7 @@ index 603615b37..61b8692f1 100644
 +install(DIRECTORY ${PROJECT_SOURCE_DIR}/vendor/mapbox-base/deps/geojson.hpp/include/mapbox TYPE INCLUDE)
 +install(DIRECTORY ${PROJECT_SOURCE_DIR}/vendor/mapbox-base/include/mapbox TYPE INCLUDE)
 +install(DIRECTORY ${PROJECT_SOURCE_DIR}/vendor/mapbox-base/extras/expected-lite/include/nonstd TYPE INCLUDE)
-+install(FILES ${PROJECT_SOURCE_DIR}/vendor/mapbox-base/deps/optional/optional.hpp TYPE INCLUDE)
++install(FILES ${PROJECT_SOURCE_DIR}/vendor/mapbox-base/mapbox/optional/optional.hpp TYPE INCLUDE)
 +install(TARGETS mbgl-core mbgl-vendor-nunicode mbgl-vendor-parsedate mbgl-vendor-csscolorparser)
  
  if(EXISTS ${PROJECT_SOURCE_DIR}/internal/internal.cmake)

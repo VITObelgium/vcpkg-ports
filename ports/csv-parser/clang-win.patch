@@ -1,0 +1,12 @@
+diff -Naur a/single_include/csv.hpp b/single_include/csv.hpp
+--- a/single_include/csv.hpp	2020-03-12 07:42:50.000000000 +0100
++++ b/single_include/csv.hpp	2020-03-31 15:21:52.949879900 +0200
+@@ -4854,7 +4854,7 @@
+ 
+     CSV_INLINE void CSVReader::fopen(csv::string_view filename) {
+         if (!this->infile) {
+-#ifdef _MSC_BUILD
++#if defined(_MSC_BUILD) && !defined(__clang__)
+             // Silence compiler warnings in Microsoft Visual C++
+             size_t err = fopen_s(&(this->infile), filename.data(), "rb");
+             if (err)

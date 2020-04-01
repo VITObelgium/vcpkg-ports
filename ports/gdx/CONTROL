@@ -2,3 +2,5 @@ Source: gdx
 Version: 0
 Description: a stub package that can be overridden using overlay ports
 
+Feature: testutils
+Description: Unit test utilities

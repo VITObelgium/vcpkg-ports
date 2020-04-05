@@ -38,6 +38,7 @@ vcpkg_extract_source_archive_ex(
         lld-link-win.patch
         fix-cmake-qtplugins-debug-config.patch
         qquickitemgrabber.patch
+        qmlimportscanner.patch
 )
 
 if (MINGW AND NOT CMAKE_CROSSCOMPILING)

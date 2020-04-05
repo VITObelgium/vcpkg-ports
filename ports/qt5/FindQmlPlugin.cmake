@@ -1,5 +1,7 @@
 set(_macro__internal_dir ${CMAKE_CURRENT_LIST_DIR} CACHE INTERNAL "")
 
+message(DEPRECATION "FindQmlPlugin module is deprecated (use find_package(Qt5QmlImportScanner REQUIRED); qt5_import_qml_plugins(<TARGET>))")
+
 macro(vcpkg_process_prl_file_plugin Target prl_file_location Configuration)
     #message(STATUS "###### process ${Target} prl: ${prl_file_location}")
     if (NOT EXISTS "${prl_file_location}")

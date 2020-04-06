@@ -12,4 +12,4 @@ jobs:
     - name: Install nasm
       run: sudo apt-get install nasm openssl
     - name: Bootstrap the ports
-      run: python3 scripts/buildtools/vcpkg.py --triplet x64-linux --ports-dir .
+      run: python3 scripts/buildtools/vcpkg.py --triplet x64-linux --ports-dir . --clean-after-build

@@ -55,6 +55,7 @@ set (B2_OPTIONS
     --ignore-site-config
     --no-cmake-config
     --disable-icu
+    --abbreviate-paths
     architecture=${ARCHITECTURE}
     threading=${THREADING}
     address-model=${ADDRESS_MODEL}

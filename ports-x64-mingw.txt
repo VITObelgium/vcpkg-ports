@@ -24,6 +24,7 @@ gsl
 hdf5[cpp]
 netcdf-c
 netcdf-cxx4
+nlohmann-json
 http-parser
 pugixml
 reproc

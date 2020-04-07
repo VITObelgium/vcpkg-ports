@@ -23,6 +23,7 @@ expat
 libxlsxwriter
 fmt
 mio
+nlohmann-json
 spdlog
 gdal[tools,geos,expat]
 gsl

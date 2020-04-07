@@ -33,6 +33,7 @@ hdf5[cpp]
 netcdf-c
 netcdf-cxx4
 netcdf-fortran
+nlohmann-json
 http-parser
 maphdf5
 pugixml

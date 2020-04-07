@@ -16,6 +16,7 @@ lyra
 mio
 netcdf-c
 netcdf-cxx4
+nlohmann-json
 pugixml
 soci[postgresql,sqlite3]
 spdlog

@@ -40,6 +40,7 @@ pugixml
 pybind11
 reproc
 restinio[boost]
+shapelib
 sqlite3
 sqlpp11
 sqlpp11-connector-sqlite3

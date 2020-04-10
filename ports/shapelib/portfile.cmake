@@ -45,5 +45,6 @@ endif()
 file(INSTALL ${SOURCE_PATH}/COPYING DESTINATION ${CURRENT_PACKAGES_DIR}/share/${PORT} RENAME copyright)
 file(INSTALL ${CMAKE_CURRENT_LIST_DIR}/FindShapelib.cmake DESTINATION ${CURRENT_PACKAGES_DIR}/share/cmake)
 
+vcpkg_test_cmake(PACKAGE_NAME Shapelib MODULE REQUIRED_HEADER shapefil.h TARGETS Shapelib::Shapelib)
 vcpkg_copy_tool_dependencies(${CURRENT_PACKAGES_DIR}/tools/shapelib)
 vcpkg_copy_pdbs()

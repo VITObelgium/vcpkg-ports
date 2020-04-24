@@ -414,7 +414,7 @@ def build_project(
 
 
 def build_project_release(
-    project_dir, triplet=None, cmake_args=[], build_name=None, install_dir=None
+    project_dir, triplet=None, cmake_args=[], build_name=None, install_dir=None, target=None
 ):
     if not git_status_is_clean():
         raise RuntimeError("Git status is not clean")
@@ -431,7 +431,7 @@ def build_project_release(
 
     git_hash = git_revision_hash()
     cmake_args.append("-DPACKAGE_VERSION_COMMITHASH=" + git_hash)
-    build_project(project_dir, triplet, cmake_args, build_dir, install_dir=install_dir)
+    build_project(project_dir, triplet, cmake_args, build_dir, target=target, install_dir=install_dir)
 
 
 def vcpkg_list_ports(triplet):

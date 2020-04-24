@@ -388,9 +388,8 @@ def build_project(
         build_dir = os.path.join(project_dir, "build", project_build_dir)
     os.makedirs(build_dir, exist_ok=True)
 
-    if not install_dir:
-        install_dir = build_dir + "-install"
-    cmake_args.append("-DCMAKE_INSTALL_PREFIX={}".format(install_dir))
+    if install_dir:
+        cmake_args.append("-DCMAKE_INSTALL_PREFIX={}".format(install_dir))
 
     vcpkg_root = vcpkg_root_dir()
     toolchain_file = os.path.abspath(

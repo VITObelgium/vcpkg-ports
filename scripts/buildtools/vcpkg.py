@@ -390,6 +390,8 @@ def build_project(
 
     if install_dir:
         cmake_args.append("-DCMAKE_INSTALL_PREFIX={}".format(install_dir))
+    else:
+        cmake_args.append("-DCMAKE_INSTALL_PREFIX={}".format(os.path.join(build_dir, "local")))
 
     vcpkg_root = vcpkg_root_dir()
     toolchain_file = os.path.abspath(

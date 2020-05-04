@@ -74,6 +74,7 @@ Halting portfile execution.
             "  Working Directory: ${vcpkg_execute_required_process_WORKING_DIRECTORY}\n"
             "  Error code: ${error_code}\nstderr:\n${err_contents}\n"
             "  See logs for more information:\n"
+            "  ${out_contents}"
             ${STRINGIFIED_LOGS}
         )
     endif()

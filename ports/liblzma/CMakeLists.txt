@@ -130,7 +130,7 @@ add_library(LibLZMA
     src/liblzma/simple/x86.c
 )
 
-if(MSVC)
+if(WIN32)
     target_include_directories(LibLZMA PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/windows/vs2017>)
 else()
     target_compile_definitions(LibLZMA PRIVATE -DHAVE_VISIBILITY=1)

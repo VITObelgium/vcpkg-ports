@@ -38,7 +38,7 @@
 ## Specifies the precise generator to use.
 ##
 ## This is useful if some project-specific buildsystem has been wrapped in a cmake script that won't perform an actual build.
-## If used for this purpose, it should be set to "NMake Makefiles".
+## If used for this purpose, it should be set to `"NMake Makefiles"`.
 ##
 ## ### OPTIONS
 ## Additional options passed to CMake during the configuration.
@@ -59,7 +59,7 @@
 ## * [poco](https://github.com/Microsoft/vcpkg/blob/master/ports/poco/portfile.cmake)
 ## * [opencv](https://github.com/Microsoft/vcpkg/blob/master/ports/opencv/portfile.cmake)
 function(vcpkg_configure_cmake)
-    cmake_parse_arguments(_csc 
+    cmake_parse_arguments(_csc
         "PREFER_NINJA;DISABLE_PARALLEL_CONFIGURE;NO_CHARSET_FLAG"
         "SOURCE_PATH;GENERATOR"
         "OPTIONS;OPTIONS_DEBUG;OPTIONS_RELEASE"
@@ -72,14 +72,11 @@ function(vcpkg_configure_cmake)
     endif()
 
     if(CMAKE_HOST_WIN32)
-        set(_PATHSEP ";")
         if(DEFINED ENV{PROCESSOR_ARCHITEW6432})
             set(_csc_HOST_ARCHITECTURE $ENV{PROCESSOR_ARCHITEW6432})
         else()
             set(_csc_HOST_ARCHITECTURE $ENV{PROCESSOR_ARCHITECTURE})
         endif()
-    else()
-        set(_PATHSEP ":")
     endif()
 
     set(NINJA_CAN_BE_USED ON) # Ninja as generator
@@ -154,7 +151,7 @@ function(vcpkg_configure_cmake)
     if(GENERATOR STREQUAL "Ninja")
         vcpkg_find_acquire_program(NINJA)
         get_filename_component(NINJA_PATH ${NINJA} DIRECTORY)
-        set(ENV{PATH} "$ENV{PATH}${_PATHSEP}${NINJA_PATH}")
+        vcpkg_add_to_path("${NINJA_PATH}")
         list(APPEND _csc_OPTIONS "-DCMAKE_MAKE_PROGRAM=${NINJA}")
     endif()
 
@@ -181,13 +178,13 @@ function(vcpkg_configure_cmake)
             "Invalid setting for VCPKG_LIBRARY_LINKAGE: \"${VCPKG_LIBRARY_LINKAGE}\". "
             "It must be \"static\" or \"dynamic\"")
     endif()
-    
+
     macro(check_both_vars_are_set var1 var2)
         if((NOT DEFINED ${var1} OR NOT DEFINED ${var2}) AND (DEFINED ${var1} OR DEFINED ${var2}))
             message(FATAL_ERROR "Both ${var1} and ${var2} must be set.")
         endif()
     endmacro()
-    
+
     check_both_vars_are_set(VCPKG_CXX_FLAGS_DEBUG VCPKG_C_FLAGS_DEBUG)
     check_both_vars_are_set(VCPKG_CXX_FLAGS_RELEASE VCPKG_C_FLAGS_RELEASE)
     check_both_vars_are_set(VCPKG_CXX_FLAGS VCPKG_C_FLAGS)
@@ -241,7 +238,7 @@ function(vcpkg_configure_cmake)
     endif()
 
     # Sets configuration variables for macOS builds
-    foreach(config_var  INSTALL_NAME_DIR OSX_DEPLOYMENT_TARGET OSX_SYSROOT)
+    foreach(config_var  INSTALL_NAME_DIR OSX_DEPLOYMENT_TARGET OSX_SYSROOT OSX_ARCHITECTURES)
         if(DEFINED VCPKG_${config_var})
             list(APPEND _csc_OPTIONS "-DCMAKE_${config_var}=${VCPKG_${config_var}}")
         endif()
@@ -262,7 +259,7 @@ function(vcpkg_configure_cmake)
 
         vcpkg_find_acquire_program(NINJA)
         get_filename_component(NINJA_PATH ${NINJA} DIRECTORY)
-        set(ENV{PATH} "$ENV{PATH}${_PATHSEP}${NINJA_PATH}")
+        vcpkg_add_to_path("${NINJA_PATH}")
 
         #parallelize the configure step
         set(_contents
@@ -299,14 +296,6 @@ function(vcpkg_configure_cmake)
         if(NOT DEFINED VCPKG_BUILD_TYPE OR VCPKG_BUILD_TYPE STREQUAL "debug")
             message(STATUS "Configuring ${TARGET_TRIPLET}-dbg")
             file(MAKE_DIRECTORY ${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-dbg)
-
-            if (VCPKG_VERBOSE)
-                string(JOIN "\n" PRINT_COMMAND ${dbg_command})
-                STRING(REPLACE "-C\n" "-C " PRINT_COMMAND "${PRINT_COMMAND}")
-                STRING(REPLACE "-G\n" "-G " PRINT_COMMAND "${PRINT_COMMAND}")
-                message(STATUS "Command: ${PRINT_COMMAND}")
-            endif ()
-
             vcpkg_execute_required_process(
                 COMMAND ${dbg_command}
                 WORKING_DIRECTORY ${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-dbg
@@ -317,12 +306,6 @@ function(vcpkg_configure_cmake)
         if(NOT DEFINED VCPKG_BUILD_TYPE OR VCPKG_BUILD_TYPE STREQUAL "release")
             message(STATUS "Configuring ${TARGET_TRIPLET}-rel")
             file(MAKE_DIRECTORY ${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-rel)
-            if (VCPKG_VERBOSE)
-                string(JOIN "\n" PRINT_COMMAND ${rel_command})
-                STRING(REPLACE "-C\n" "-C " PRINT_COMMAND "${PRINT_COMMAND}")
-                STRING(REPLACE "-G\n" "-G " PRINT_COMMAND "${PRINT_COMMAND}")
-                message(STATUS "Command: ${PRINT_COMMAND}")
-            endif ()
             vcpkg_execute_required_process(
                 COMMAND ${rel_command}
                 WORKING_DIRECTORY ${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-rel

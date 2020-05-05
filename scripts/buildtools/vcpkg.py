@@ -37,9 +37,14 @@ def _vcpkg_executable_path():
     return None
 
 
+def _vcpkg_version_check(vcpkg_path):
+    output = subprocess.check_output([vcpkg_path, "version"]).decode("utf-8")
+    return "2020.02.04" in output
+
+
 def _create_vcpkg_command(triplet, vcpkg_args):
     vcpkg = _vcpkg_executable_path()
-    if not vcpkg:
+    if not vcpkg or not _vcpkg_version_check(vcpkg):
         bootstrap_vcpkg()
         vcpkg = _vcpkg_executable_path()
 
@@ -244,21 +249,21 @@ def select_ports_file(ports_dir, triplet):
 
 
 def platform_for_triplet(triplet):
-    if 'osx' in triplet:
-        return 'osx'
-    if 'linux' in triplet:
-        return 'linux'
-    if 'mingw' in triplet:
-        return 'mingw'
-    if 'windows' in triplet:
-        return 'windows'
+    if "osx" in triplet:
+        return "osx"
+    if "linux" in triplet:
+        return "linux"
+    if "mingw" in triplet:
+        return "mingw"
+    if "windows" in triplet:
+        return "windows"
 
     raise RuntimeError(f"Unepected triplet: {triplet}")
 
 
 def platform_matches_filter(platform, filter_array):
     for filter in filter_array:
-        if filter.startswith('!'):
+        if filter.startswith("!"):
             if platform != filter[1:]:
                 return True
         elif filter == platform:
@@ -273,7 +278,7 @@ def read_ports_from_ports_file(ports_file, triplet):
     regex = r"([a-z0-9\-]+(?:\[\S*\])?)(?:\((\S+)\))?"
 
     requested_platform = platform_for_triplet(triplet)
-    
+
     ports_to_install = []
     with open(ports_file) as f:
         content = f.readlines()
@@ -285,7 +290,9 @@ def read_ports_from_ports_file(ports_file, triplet):
                     port = match.group(1)
                     filters = match.group(2)
                     if filters:
-                        if platform_matches_filter(requested_platform, filters.split('|')):
+                        if platform_matches_filter(
+                            requested_platform, filters.split("|")
+                        ):
                             ports_to_install.append(port)
                     else:
                         ports_to_install.append(port)
@@ -347,7 +354,13 @@ def bootstrap_argparser():
     return parser
 
 
-def bootstrap(ports_dir, triplet=None, additional_ports=[], clean_after_build=False, overlay_ports=None):
+def bootstrap(
+    ports_dir,
+    triplet=None,
+    additional_ports=[],
+    clean_after_build=False,
+    overlay_ports=None,
+):
     if triplet is None:
         triplet = prompt_for_triplet()
 

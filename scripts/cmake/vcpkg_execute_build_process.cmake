@@ -136,10 +136,6 @@ function(vcpkg_execute_build_process)
             message(FATAL_ERROR
                 "  Command failed: ${_ebp_COMMAND_PRETTY}\n"
                 "  Working Directory: ${_ebp_WORKING_DIRECTORY}\n"
-                "  stdout:\n"
-                ${out_contents}
-                "  stderr:\n"
-                ${err_contents}
                 "  See logs for more information:\n"
                 ${STRINGIFIED_LOGS})
         endif(error_code)

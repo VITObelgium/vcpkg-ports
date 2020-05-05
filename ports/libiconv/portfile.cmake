@@ -7,9 +7,8 @@ if(VCPKG_CMAKE_SYSTEM_NAME AND NOT (VCPKG_CMAKE_SYSTEM_NAME STREQUAL "WindowsSto
     return()
 endif()
 
-include(vcpkg_common_functions)
-
 set(LIBICONV_VERSION 1.15)
+set(VCPKG_POLICY_ALLOW_RESTRICTED_HEADERS enabled)
 
 vcpkg_download_distfile(ARCHIVE
     URLS "https://ftp.gnu.org/gnu/libiconv/libiconv-${LIBICONV_VERSION}.tar.gz" "https://www.mirrorservice.org/sites/ftp.gnu.org/gnu/libiconv/libiconv-${LIBICONV_VERSION}.tar.gz"

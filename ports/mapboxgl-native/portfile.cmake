@@ -17,7 +17,7 @@ file(REMOVE_RECURSE ${CURRENT_BUILDTREES_DIR}/src)
 vcpkg_from_git(
     URL https://github.com/mapbox/mapbox-gl-native.git
     OUT_SOURCE_PATH SOURCE_PATH
-    REF maps-v1.5.1
+    REF maps-v1.6.0
     HEAD_REF master
 )
 

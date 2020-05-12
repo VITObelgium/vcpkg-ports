@@ -1,6 +1,6 @@
-diff -Naur a/CMakeInstallation.cmake b/CMakeInstallation.cmake
---- a/CMakeInstallation.cmake	2018-09-10 16:43:41.000000000 +0200
-+++ b/CMakeInstallation.cmake	2018-11-13 12:23:14.982631106 +0100
+diff -Naur a/src/CMakeInstallation.cmake b/src/CMakeInstallation.cmake
+--- a/src/CMakeInstallation.cmake	2018-09-10 16:43:41.000000000 +0200
++++ b/src/CMakeInstallation.cmake	2018-11-13 12:23:14.982631106 +0100
 @@ -31,7 +31,7 @@
    if (HDF5_EXPORTED_TARGETS)
      install (

@@ -1,11 +1,11 @@
 Source: hdf5
-Version: 1.10.4-1
+Version: 1.12.0
 Description: HDF5 is a data model, library, and file format for storing and managing data
 Build-Depends: zlib
 
 Feature: parallel
 Description: parallel support for HDF5
-Build-Depends: msmpi (windows)
+Build-Depends: msmpi (windows), openmpi(linux), openmpi(osx)
 
 Feature: cpp
 Description: Builds cpp lib

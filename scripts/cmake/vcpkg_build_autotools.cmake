@@ -51,6 +51,8 @@ function(vcpkg_build_autotools)
 
     if (TARGET_PARAM STREQUAL "install")
         set (STATUS_MESSAGE "Install")
+        get_filename_component(_bc_DESTDIR ${CURRENT_PACKAGES_DIR} ABSOLUTE)
+        #set (_bc_DESTDIR ${CURRENT_PACKAGES_DIR})
     else ()
         set (STATUS_MESSAGE "Building")
     endif ()
@@ -70,9 +72,15 @@ function(vcpkg_build_autotools)
             if(BUILDTYPE STREQUAL "debug")
                 set(SHORT_BUILDTYPE "dbg")
                 set(CONFIG "Debug")
+                if (_bc_DESTDIR)
+                    set (DEST_DIR "DESTDIR=${_bc_DESTDIR}/debug")
+                endif ()
             else()
                 set(SHORT_BUILDTYPE "rel")
                 set(CONFIG "Release")
+                if (_bc_DESTDIR)
+                    set (DEST_DIR "DESTDIR=${_bc_DESTDIR}")
+                endif ()
             endif()
 
             message(STATUS "${STATUS_MESSAGE} ${TARGET_TRIPLET}-${SHORT_BUILDTYPE}")
@@ -99,7 +107,7 @@ function(vcpkg_build_autotools)
             endif ()
 
             execute_process(
-                COMMAND ${MAKE_WRAPPER} ${BUILD_TOOL} ${PARALLEL_ARG} ${TARGET_PARAM}
+                COMMAND ${MAKE_WRAPPER} ${BUILD_TOOL} ${DEST_DIR} ${PARALLEL_ARG} ${TARGET_PARAM}
                 OUTPUT_FILE "${LOGPREFIX}-out.log"
                 ERROR_FILE "${LOGPREFIX}-err.log"
                 RESULT_VARIABLE error_code

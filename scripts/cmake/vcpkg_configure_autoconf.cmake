@@ -120,7 +120,7 @@ function(vcpkg_configure_autoconf)
                 "${_csc_OPTIONS_DEBUG}"
                 --enable-debug
                 --disable-dependency-tracking
-                --prefix=${CURRENT_PACKAGES_DIR}/debug
+                --prefix=${CURRENT_INSTALLED_DIR}/debug
             )
         else ()
             set(command
@@ -130,7 +130,7 @@ function(vcpkg_configure_autoconf)
                 ${HOST_ARG}
                 --enable-debug
                 --disable-dependency-tracking
-                --prefix=${CURRENT_PACKAGES_DIR}/debug
+                --prefix=${CURRENT_INSTALLED_DIR}/debug
             )
         endif ()
 
@@ -178,7 +178,7 @@ function(vcpkg_configure_autoconf)
                     ${HOST_ARG}
                     "${_csc_OPTIONS}"
                     "${_csc_OPTIONS_RELEASE}"
-                    --prefix=${CURRENT_PACKAGES_DIR}
+                    --prefix=${CURRENT_INSTALLED_DIR}
             )
         else ()
             set(command
@@ -186,7 +186,7 @@ function(vcpkg_configure_autoconf)
                     ${HOST_ARG}
                     "${_csc_OPTIONS}"
                     "${_csc_OPTIONS_RELEASE}"
-                    --prefix=${CURRENT_PACKAGES_DIR}
+                    --prefix=${CURRENT_INSTALLED_DIR}
             )
         endif ()
 

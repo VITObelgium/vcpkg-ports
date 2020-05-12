@@ -30,13 +30,12 @@ file(REMOVE ${SOURCE_PATH}/cmake/modules/windows/FindHDF5.cmake)
 if (VCPKG_CMAKE_SYSTEM_NAME STREQUAL Windows AND NOT CMAKE_HOST_WIN32)
     set (INIT_CACHE_ARG ${CMAKE_CURRENT_LIST_DIR}/TryRunResults-mingw.cmake)
 else ()
-    set (INIT_CACHE_ARG ${CMAKE_CURRENT_LIST_DIR}/cacheinit.cmake)
-endif ()
-
-# make sure check_library_exist calls work without linker errors
-set(REQUIRED_LIBS)
-if (WITH_PARALLEL AND VCPKG_TARGET_IS_LINUX)
-    list(APPEND REQUIRED_LIBS -ldl -lm)
+    # make sure check_library_exist calls work without linker errors
+    if (WITH_PARALLEL AND VCPKG_TARGET_IS_LINUX)
+        set (INIT_CACHE_ARG ${CMAKE_CURRENT_LIST_DIR}/cacheinitpar.cmake)
+    else ()
+        set (INIT_CACHE_ARG ${CMAKE_CURRENT_LIST_DIR}/cacheinit.cmake)
+    endif ()
 endif ()
 
 vcpkg_configure_cmake(

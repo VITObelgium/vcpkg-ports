@@ -19,20 +19,30 @@ vcpkg_extract_source_archive_ex(
     OUT_SOURCE_PATH SOURCE_PATH
 )
 
+TEST_FEATURE("fortran" ENABLE_FORTRAN)
+if (ENABLE_FORTRAN)
+    set(CONFIG_OPTS --enable-mpi-fortran)
+else ()
+    set(CONFIG_OPTS --disable-mpi-fortran)
+endif ()
+
 vcpkg_configure_autoconf(
     SOURCE_PATH ${SOURCE_PATH}
     OPTIONS
         --bindir=${CURRENT_PACKAGES_DIR}/tools
         --disable-java
         --disable-visibility # handled by the compiler flags
+        ${CONFIG_OPTS}
     OPTIONS_DEBUG
         --enable-debug
 )
 
-#file(GLOB_RECURSE OPENMPI_MAKEFILES LIST_DIRECTORIES false ${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-rel/*Makefile)
-#foreach(OPENMPI_MAKEFILE IN LISTS OPENMPI_MAKEFILES)
-#    vcpkg_replace_string(${OPENMPI_MAKEFILE} "${CURRENT_PACKAGES_DIR}" "${CURRENT_INSTALLED_DIR}")
-#endforeach()
+# make sure the prefix paths in the binary point to the installed dir and not the packages dir
+vcpkg_replace_string(
+    "${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-rel/opal/mca/installdirs/config/install_dirs.h"
+    "${CURRENT_PACKAGES_DIR}"
+    "${CURRENT_INSTALLED_DIR}"
+)
 
 vcpkg_install_autotools()
 vcpkg_fixup_pkgconfig_file(NAMES ompi-c ompi-cxx ompi-f90 ompi-fort ompi orte)

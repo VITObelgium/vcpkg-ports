@@ -3,3 +3,7 @@ Version: 1.12.1
 Homepage: https://parallel-netcdf.github.io
 Description: A Parallel I/O Library for NetCDF File Access.
 Supports: !(windows|uwp)
+Build-Depends: netcdf-c, msmpi (windows), openmpi(linux), openmpi(osx)
+
+Feature: fortran
+Description: Build the fortran bindings

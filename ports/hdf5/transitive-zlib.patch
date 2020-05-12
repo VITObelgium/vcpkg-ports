@@ -1,6 +1,6 @@
-diff -Naur a/CMakeFilters.cmake b/CMakeFilters.cmake
---- a/CMakeFilters.cmake	2020-02-29 00:29:58.000000000 +0100
-+++ b/CMakeFilters.cmake	2020-05-11 15:30:26.312789000 +0200
+diff -Naur a/hdf5-1.12.0/CMakeFilters.cmake b/hdf5-1.12.0/CMakeFilters.cmake
+--- a/hdf5-1.12.0/CMakeFilters.cmake	2020-02-29 00:29:58.000000000 +0100
++++ b/hdf5-1.12.0/CMakeFilters.cmake	2020-05-11 15:30:26.312789000 +0200
 @@ -53,8 +53,8 @@
        if (NOT ZLIB_FOUND)
          find_package (ZLIB) # Legacy find
@@ -12,9 +12,8 @@ diff -Naur a/CMakeFilters.cmake b/CMakeFilters.cmake
          endif ()
        endif ()
      endif ()
-diff -Naur a/config/cmake/hdf5-config.cmake.in b/config/cmake/hdf5-config.cmake.in
---- a/config/cmake/hdf5-config.cmake.in	2020-02-29 00:29:58.000000000 +0100
-+++ b/config/cmake/hdf5-config.cmake.in	2020-05-11 15:41:15.823549000 +0200
+--- a/hdf5-1.12.0/config/cmake/hdf5-config.cmake.in	2020-02-29 00:29:58.000000000 +0100
++++ b/hdf5-1.12.0/config/cmake/hdf5-config.cmake.in	2020-05-11 15:41:15.823549000 +0200
 @@ -14,6 +14,7 @@
  #-----------------------------------------------------------------------------
  @PACKAGE_INIT@
@@ -35,18 +34,3 @@ diff -Naur a/config/cmake/hdf5-config.cmake.in b/config/cmake/hdf5-config.cmake.
  #-----------------------------------------------------------------------------
  # Directories
  #-----------------------------------------------------------------------------
-@@ -110,13 +116,10 @@
- # project which has already built hdf5 as a subproject
- #-----------------------------------------------------------------------------
- if (NOT TARGET "@HDF5_PACKAGE@")
--  if (${HDF5_PACKAGE_NAME}_ENABLE_Z_LIB_SUPPORT AND ${HDF5_PACKAGE_NAME}_PACKAGE_EXTLIBS)
--    include (@PACKAGE_SHARE_INSTALL_DIR@/@ZLIB_PACKAGE_NAME@/@ZLIB_PACKAGE_NAME@@HDF_PACKAGE_EXT@-targets.cmake)
--  endif ()
-   if (${HDF5_PACKAGE_NAME}_ENABLE_SZIP_SUPPORT AND ${HDF5_PACKAGE_NAME}_PACKAGE_EXTLIBS)
-     include (@PACKAGE_SHARE_INSTALL_DIR@/@SZIP_PACKAGE_NAME@/@SZIP_PACKAGE_NAME@@HDF_PACKAGE_EXT@-targets.cmake)
-   endif ()
--  include (@PACKAGE_SHARE_INSTALL_DIR@/@HDF5_PACKAGE@/@HDF5_PACKAGE@@HDF_PACKAGE_EXT@-targets.cmake)
-+  include (@PACKAGE_SHARE_INSTALL_DIR@/@HDF5_PACKAGE@@HDF_PACKAGE_EXT@-targets.cmake)
- endif ()
- 
- # Handle default component(static) :

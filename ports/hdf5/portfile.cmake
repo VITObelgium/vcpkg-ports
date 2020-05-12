@@ -15,8 +15,7 @@ vcpkg_extract_source_archive_ex(
     OUT_SOURCE_PATH SOURCE_PATH
     PATCHES
         transitive-mpi.patch
-        #transitive-zlib.patch
-        #cmake-install-dir.patch
+        transitive-zlib.patch
         #libsettings-cross.patch
         #mingw.patch
         #mingw-libname.patch # fix liblibhdf.a name for static libraries on mingw
@@ -87,4 +86,4 @@ file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/bin)
 file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/include)
 file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/lib/pkgconfig)
 
-vcpkg_test_cmake(PACKAGE_NAME hdf5 TARGETS "hdf5-static" REQUIRED_HEADER "hdf5.h" REQUIRED_FUNCTION "H5open()")
+vcpkg_test_cmake(PACKAGE_NAME hdf5)

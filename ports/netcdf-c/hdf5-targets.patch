@@ -31,7 +31,7 @@ diff -Naur a/liblib/CMakeLists.txt b/liblib/CMakeLists.txt
 -  ELSE() # Windows CMake defines HDF5_LIBRARIES.
 -    SET(TLL_LIBS ${HDF5_LIBRARIES} ${TLL_LIBS} ${SZIP_LIBRARY})
 -  ENDIF()
-+  SET(TLL_LIBS ${TLL_LIBS} hdf5::hdf5_hl-static hdf5::hdf5-static ${SZIP_LIBRARY})
++  SET(TLL_LIBS ${TLL_LIBS} hdf5_hl-static hdf5-static ${SZIP_LIBRARY})
  ENDIF()
  
  IF(USE_DAP)

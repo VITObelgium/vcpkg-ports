@@ -26,6 +26,9 @@ vcpkg_from_github(
 
 file(REMOVE ${SOURCE_PATH}/cmake/modules/FindZLIB.cmake)
 file(REMOVE ${SOURCE_PATH}/cmake/modules/windows/FindHDF5.cmake)
+foreach (TOOL ncgen ncgen3 ncdump)
+    vcpkg_replace_string(${SOURCE_PATH}/${TOOL}/CMakeLists.txt "DESTINATION bin" "DESTINATION tools")
+endforeach()
 
 if (VCPKG_CMAKE_SYSTEM_NAME STREQUAL Windows AND NOT CMAKE_HOST_WIN32)
     set (INIT_CACHE_ARG ${CMAKE_CURRENT_LIST_DIR}/TryRunResults-mingw.cmake)
@@ -65,13 +68,13 @@ vcpkg_configure_cmake(
 vcpkg_install_cmake()
 vcpkg_fixup_cmake_targets(CONFIG_PATH lib/cmake/netCDF)
 
-vcpkg_replace_string(${CURRENT_PACKAGES_DIR}/bin/nc-config "${CURRENT_PACKAGES_DIR}" "${CURRENT_INSTALLED_DIR}")
+file(MAKE_DIRECTORY ${CURRENT_PACKAGES_DIR}/tools)
+file(RENAME ${CURRENT_PACKAGES_DIR}/bin/nc-config ${CURRENT_PACKAGES_DIR}/tools/nc-config)
+vcpkg_replace_string(${CURRENT_PACKAGES_DIR}/tools/nc-config "${CURRENT_PACKAGES_DIR}" "${CURRENT_INSTALLED_DIR}")
 if(VCPKG_LIBRARY_LINKAGE STREQUAL "static" AND WITH_HDF5)
-    vcpkg_replace_string(${CURRENT_PACKAGES_DIR}/bin/nc-config "-lnetcdf" "-lnetcdf -lhdf5_hl -lhdf5 -lz")
+    vcpkg_replace_string(${CURRENT_PACKAGES_DIR}/tools/nc-config "-lnetcdf" "-lnetcdf -lhdf5_hl -lhdf5 -lz")
 endif()
 
-file(INSTALL ${CURRENT_PACKAGES_DIR}/bin/nc-config DESTINATION ${CURRENT_PACKAGES_DIR}/tools
-    FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 if(VCPKG_LIBRARY_LINKAGE STREQUAL "static")
     file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/bin ${CURRENT_PACKAGES_DIR}/bin)
 endif()

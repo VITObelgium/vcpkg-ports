@@ -1,21 +1,7 @@
 diff -Naur a/CMakeLists.txt b/CMakeLists.txt
 --- a/CMakeLists.txt	2020-03-27 16:33:36.000000000 +0100
-+++ b/CMakeLists.txt	2020-05-13 11:19:40.635787000 +0200
-@@ -615,12 +615,7 @@
-     # examples, even though the previous version of what we
-     # had worked.
-     #####
--    IF(MSVC)
--      SET(SEARCH_PACKAGE_NAME ${HDF5_PACKAGE_NAME})
--      FIND_PACKAGE(HDF5 NAMES ${SEARCH_PACKAGE_NAME} COMPONENTS C HL CONFIG REQUIRED ${NC_HDF5_LINK_TYPE})
--    ELSE(MSVC)
--      FIND_PACKAGE(HDF5 COMPONENTS C HL REQUIRED)
--    ENDIF(MSVC)
-+    FIND_PACKAGE(HDF5 CONFIG COMPONENTS C HL REQUIRED)
- 
-     ##
-     # Next, check the HDF5 version. This will inform which
-@@ -684,7 +679,7 @@
++++ b/CMakeLists.txt	2020-05-13 11:56:26.645327100 +0200
+@@ -684,7 +684,7 @@
            SET(HDF5_C_LIBRARY_hdf5 ${HDF5_C_${NC_HDF5_LINK_TYPE_UPPER}_LIBRARY})
            SET(HDF5_HL_LIBRARY ${HDF5_HL_${NC_HDF5_LINK_TYPE_UPPER}_LIBRARY})
  
@@ -24,9 +10,17 @@ diff -Naur a/CMakeLists.txt b/CMakeLists.txt
          ENDIF()
        ENDIF(${HDF5_VERSION} VERSION_GREATER "1.8.15")
  
+@@ -695,6 +695,7 @@
+       IF(HDF5_C_LIBRARIES AND NOT HDF5_hdf5_LIBRARY)
+         SET(HDF5_hdf5_LIBRARY ${HDF5_C_LIBRARIES})
+       ENDIF()
++      SET(HDF5_LIBRARIES hdf5_hl-static hdf5-static)
+ 
+     ENDIF(MSVC)
+     IF(NOT HDF5_C_LIBRARY)
 diff -Naur a/liblib/CMakeLists.txt b/liblib/CMakeLists.txt
 --- a/liblib/CMakeLists.txt	2020-03-27 16:33:36.000000000 +0100
-+++ b/liblib/CMakeLists.txt	2020-05-13 11:20:29.778925000 +0200
++++ b/liblib/CMakeLists.txt	2020-05-13 11:50:13.519773000 +0200
 @@ -68,23 +68,7 @@
  ENDIF()
  

@@ -7,6 +7,9 @@ Feature: hdf5
 Description: Hdf5 support
 Build-Depends: hdf5
 
+Feature: tools
+Description: Netcdf utilities
+
 Feature: parallel
 Description: Parallel io support
 Build-Depends: hdf5[parallel]

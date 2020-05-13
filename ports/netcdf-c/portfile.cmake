@@ -5,10 +5,8 @@ set(VERSION_REVISION 4)
 set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_REVISION})
 
 TEST_FEATURE("hdf5" WITH_HDF5)
+TEST_FEATURE("tools" WITH_UTILITIES)
 TEST_FEATURE("parallel" WITH_PARALLEL)
-if (WITH_HDF5)
-    set(HDF5_PATCH transitive-hdf5.patch hdf5-targets.patch)
-endif ()
 
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
@@ -17,11 +15,13 @@ vcpkg_from_github(
     SHA512 15922818fdd71be285eb7dd2fc9be2594fe9af979de3ed316465636c7bbdaec65eb151ca57ef8b703e6a360cdba036b8f9bc193ddff01ff7ce4214c0a66efa79
     HEAD_REF master
     PATCHES
+        libm.patch
+        hdf5-targets.patch
+        transitive-hdf5.patch
+        nc-config.patch
         #no-install-deps.patch
         #config-pkg-location.patch
-        #nc-config-zlib.patch
         #mingw.patch
-        #${HDF5_PATCH}
 )
 
 file(REMOVE ${SOURCE_PATH}/cmake/modules/FindZLIB.cmake)
@@ -38,13 +38,17 @@ else ()
     endif ()
 endif ()
 
+if (NOT VCPKG_TARGET_IS_WINDOWS)
+    set(LIBM_CONFIG -DHAVE_LIBM=-lm)
+endif ()
+
 vcpkg_configure_cmake(
     SOURCE_PATH ${SOURCE_PATH}
     PREFER_NINJA # Disable this option if project cannot be built with Ninja
     OPTIONS
         -C${INIT_CACHE_ARG}
-        -DHAVE_LIBM=m
-        -DBUILD_UTILITIES=OFF
+        ${LIBM_CONFIG}
+        -DBUILD_UTILITIES=${WITH_UTILITIES}
         -DBUILD_TESTING=OFF
         -DENABLE_EXAMPLES=OFF
         -DENABLE_TESTS=OFF

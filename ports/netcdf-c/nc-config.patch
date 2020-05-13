@@ -1,0 +1,19 @@
+diff -Naur a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt	2020-03-27 16:33:36.000000000 +0100
++++ b/CMakeLists.txt	2020-05-13 11:12:08.612941000 +0200
+@@ -1885,10 +1885,11 @@
+ #SET(NC_LIBS "-lnetcdf ${NC_LIBS}")
+ IF(NC_LIBS)
+   STRING(REPLACE ";" " " NC_LIBS "${NC_LIBS}")
+-  STRING(REPLACE "-lhdf5::hdf5-shared" "-lhdf5" NC_LIBS ${NC_LIBS})
+-  STRING(REPLACE "-lhdf5::hdf5_hl-shared" "-lhdf5_hl" NC_LIBS ${NC_LIBS})
+-  STRING(REPLACE "-lhdf5::hdf5-static" "-lhdf5" NC_LIBS ${NC_LIBS})
+-  STRING(REPLACE "-lhdf5::hdf5_hl-static" "-lhdf5_hl" NC_LIBS ${NC_LIBS})
++  STRING(REPLACE "-lhdf5-shared" "-lhdf5" NC_LIBS ${NC_LIBS})
++  STRING(REPLACE "-lhdf5_hl-shared" "-lhdf5_hl" NC_LIBS ${NC_LIBS})
++  STRING(REPLACE "-lhdf5-static" "-lhdf5" NC_LIBS ${NC_LIBS})
++  STRING(REPLACE "-lhdf5_hl-static" "-lhdf5_hl" NC_LIBS ${NC_LIBS})
++  STRING(REPLACE "-lZLIB::ZLIB" "-lz" NC_LIBS ${NC_LIBS})
+ ENDIF()
+ 
+ STRING(REPLACE ";" " " LINKFLAGS "${LINKFLAGS}")

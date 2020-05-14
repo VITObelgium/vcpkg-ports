@@ -70,6 +70,7 @@ function(vcpkg_configure_autoconf)
 
     vcpkg_assemble_compiler_cflags(DEBUG _ac_CFLAGS_DEB RELEASE _ac_CFLAGS_REL)
     vcpkg_assemble_compiler_cxxflags(DEBUG _ac_CXXFLAGS_DEB RELEASE _ac_CXXFLAGS_REL STANDARD ${_csc_CXX_STANDARD})
+    vcpkg_assemble_compiler_fcflags(DEBUG _ac_FCFLAGS_DEB RELEASE _ac_FCFLAGS_REL)
     vcpkg_assemble_linker_flags(DEBUG _ac_LDFLAGS_DEB RELEASE _ac_LDFLAGS_REL)
 
     if (CMAKE_CROSSCOMPILING OR HOST MATCHES ".*-musl")
@@ -115,6 +116,7 @@ function(vcpkg_configure_autoconf)
         set(EXPORT_CPPFLAGS "${EXPORT_CFLAGS}")
         STRING(JOIN " " EXPORT_CFLAGS ${_ac_CFLAGS_DEB})
         STRING(JOIN " " EXPORT_CXXFLAGS ${_ac_CXXFLAGS_DEB})
+        STRING(JOIN " " EXPORT_FCFLAGS ${_ac_FCFLAGS_DEB})
         STRING(JOIN " " EXPORT_LDFLAGS ${EXPORT_LDFLAGS})
         configure_file(${_csc_CURRENT_LIST_DIR}/runconfigure.sh.in ${WORKING_DIR}/runconfigure.sh)
 
@@ -175,7 +177,9 @@ function(vcpkg_configure_autoconf)
         set(EXPORT_CPPFLAGS "${EXPORT_CFLAGS}")
         STRING(JOIN " " EXPORT_CFLAGS ${_ac_CFLAGS_REL})
         STRING(JOIN " " EXPORT_CXXFLAGS ${_ac_CXXFLAGS_REL})
+        STRING(JOIN " " EXPORT_FCFLAGS ${_ac_FCFLAGS_REL})
         STRING(JOIN " " EXPORT_LDFLAGS ${EXPORT_LDFLAGS})
+
         configure_file(${_csc_CURRENT_LIST_DIR}/runconfigure.sh.in ${WORKING_DIR}/runconfigure.sh)
 
         if (VCPKG_CMAKE_SYSTEM_NAME STREQUAL "Emscripten")

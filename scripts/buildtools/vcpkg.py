@@ -179,7 +179,7 @@ def cmake_build(build_dir, config=None, target=None):
     subprocess.check_call(args)
 
 
-def vcpkg_install_ports(triplet, ports, clean_after_build=False, overlay_ports=None):
+def vcpkg_install_ports(triplet, ports, clean_after_build=False, overlay_ports=None, overlay_triplets=None):
     args = ["install", "--recurse"]
     if clean_after_build:
         args.append("--clean-after-build")
@@ -187,15 +187,21 @@ def vcpkg_install_ports(triplet, ports, clean_after_build=False, overlay_ports=N
     if overlay_ports:
         args.append(f"--overlay-ports={overlay_ports}")
 
+    if overlay_triplets:
+        args.append(f"--overlay-triplets={overlay_triplets}")
+
     args += ports
     run_vcpkg(triplet, args)
 
 
-def vcpkg_upgrade_ports(triplet, overlay_ports=None):
+def vcpkg_upgrade_ports(triplet, overlay_ports=None, overlay_triplets=None):
     args = ["upgrade", "--no-dry-run"]
 
     if overlay_ports:
         args.append(f"--overlay-ports={overlay_ports}")
+
+    if overlay_triplets:
+        args.append(f"--overlay-triplets={overlay_triplets}")
 
     run_vcpkg(triplet, args)
 
@@ -360,6 +366,7 @@ def bootstrap(
     additional_ports=[],
     clean_after_build=False,
     overlay_ports=None,
+    overlay_triplets=None,
 ):
     if triplet is None:
         triplet = prompt_for_triplet()
@@ -372,8 +379,8 @@ def bootstrap(
         return
 
     try:
-        vcpkg_upgrade_ports(triplet, overlay_ports)
-        vcpkg_install_ports(triplet, ports_to_install, clean_after_build, overlay_ports)
+        vcpkg_upgrade_ports(triplet, overlay_ports, overlay_triplets)
+        vcpkg_install_ports(triplet, ports_to_install, clean_after_build, overlay_ports, overlay_triplets)
     except subprocess.CalledProcessError as e:
         raise RuntimeError("Bootstrap failed: {}".format(e))
 

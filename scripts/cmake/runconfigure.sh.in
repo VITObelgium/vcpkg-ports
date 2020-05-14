@@ -10,7 +10,7 @@ export CXXFLAGS="@EXPORT_CXXFLAGS@"
 
 # Fortran compiler
 export FC="@CMAKE_Fortran_COMPILER@"
-export FCFLAGS="@CMAKE_Fortran_FLAGS@"
+export FCFLAGS="@EXPORT_FCFLAGS@"
 
 # Linker
 export LD="@LINKER_EXECUTABLE@"

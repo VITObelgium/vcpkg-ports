@@ -37,6 +37,7 @@ if (UNIX)
             --with-mpi=${CURRENT_INSTALLED_DIR}
             --enable-netcdf4
             --bindir=${CURRENT_PACKAGES_DIR}/tools
+            --disable-silent-rules
             ${CONFIG_OPTS}
     )
 

@@ -1,0 +1,19 @@
+Source: grib-api
+Version: 1.28.0
+Homepage: https://confluence.ecmwf.int/display/GRIB/
+Description: API accessible from C, FORTRAN and Python programs developed for encoding and decoding WMO FM-92
+
+Feature: png
+Description: Support for PNG decoding/encoding
+Build-Depends: libpng
+
+Feature: jpeg
+Description: Support for JPG decoding/encoding
+Build-Depends: libjpeg-turbo
+
+Feature: netcdf
+Description: Support for GRIB to NetCDF conversion
+Build-Depends: netcdf-c[hdf5]
+
+Feature: fortran
+Description: Build the fortran bindings

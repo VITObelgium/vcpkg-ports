@@ -8,6 +8,10 @@ export CPPFLAGS="@EXPORT_CFLAGS@"
 export CXX="@CMAKE_CXX_COMPILER@"
 export CXXFLAGS="@EXPORT_CXXFLAGS@"
 
+# Fortran compiler
+export FC="@CMAKE_Fortran_COMPILER@"
+export FCFLAGS="@CMAKE_Fortran_FLAGS@"
+
 # Linker
 export LD="@LINKER_EXECUTABLE@"
 export LDFLAGS="@EXPORT_LDFLAGS@"

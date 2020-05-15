@@ -2,40 +2,42 @@ include(vcpkg_common_functions)
 
 vcpkg_check_linkage(ONLY_STATIC_LIBRARY)
 
-set(HDF5_USE_STATIC_LIBRARIES ON)
-
-set(SOURCE_PATH ${CURRENT_BUILDTREES_DIR}/src/netcdf-cxx4-4.3.0)
-
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO Unidata/netcdf-cxx4
-    REF v4.3.0
-    SHA512 8e77333c979513721209e6b3fde31c298e18a45d7ea08123056e8120469eb8c4024d71289fab2b9182ee19ee7b6ad22bd133525bef048a497ede4aa2e9017465
+    REF v4.3.1
+    SHA512 404711eb80d5e78968c0f6cbdcb08855a2778d7fd94e7ee94bdc9d1cd72848ac3327613c6437a7634349f26bc463b950092a2999abb34ddab0a47ad185547d22
     HEAD_REF master
     PATCHES
-        install-destination.patch
+        hdf5check.patch
 )
+
+if (VCPKG_TARGET_IS_WINDOWS)
+    set(CACHE_INIT ${CMAKE_CURRENT_LIST_DIR}/cacheinit-msvc.cmake)
+    set(LINK_PATH /LIBPATH:${CURRENT_INSTALLED_DIR}/lib)
+else ()
+    set(CACHE_INIT ${CMAKE_CURRENT_LIST_DIR}/cacheinit.cmake)
+    set(LINK_PATH -L${CURRENT_INSTALLED_DIR}/lib)
+endif ()
 
 vcpkg_configure_cmake(
     SOURCE_PATH ${SOURCE_PATH}
-    PREFER_NINJA # Disable this option if project cannot be built with Ninja
+    PREFER_NINJA
     OPTIONS
+        -C${CACHE_INIT}
         -DNCXX_ENABLE_TESTS=OFF
-        -DCMAKE_INSTALL_CMAKECONFIGDIR=share/netCDFCxx
-        -DHDF5_USE_STATIC_LIBRARIES=${HDF5_USE_STATIC_LIBRARIES}
-    # OPTIONS_RELEASE -DOPTIMIZE=1
-    # OPTIONS_DEBUG -DDEBUGGABLE=1
+        -DNC_HDF5_LINK_TYPE=static
+        -DHAVE_H5FREE_MEMORY=TRUE
+        -DCMAKE_REQUIRED_LINK_OPTIONS=${LINK_PATH}
 )
 
 vcpkg_install_cmake()
+vcpkg_fixup_cmake_targets(CONFIG_PATH lib/cmake/netCDFCxx)
 
 file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/include)
 file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/share)
+file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/bin)
+file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/bin)
 
 # Handle copyright
-file(COPY ${SOURCE_PATH}/COPYRIGHT DESTINATION ${CURRENT_PACKAGES_DIR}/share/netcdf-cxx4)
-file(
-    RENAME
-        ${CURRENT_PACKAGES_DIR}/share/netcdf-cxx4/COPYRIGHT
-        ${CURRENT_PACKAGES_DIR}/share/netcdf-cxx4/copyright
-)
+file(INSTALL ${SOURCE_PATH}/COPYRIGHT DESTINATION ${CURRENT_PACKAGES_DIR}/share/${PORT} RENAME copyright)

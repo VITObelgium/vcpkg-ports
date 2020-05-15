@@ -785,7 +785,7 @@ if (GDAL_FRMTS_HDF5)
         frmts/hdf5/hdf5imagedataset.cpp
         frmts/hdf5/iso19115_srs.cpp
     )
-    target_link_libraries(frmts PRIVATE hdf5::hdf5-static)
+    target_link_libraries(frmts PRIVATE hdf5-static)
     target_compile_definitions(frmts PRIVATE FRMT_hdf5)
 endif ()
 
@@ -814,7 +814,7 @@ if (GDAL_FRMTS_NETCDF)
         frmts/netcdf/netcdfwriterconfig.cpp
     )
     target_link_libraries(frmts PRIVATE netcdf)
-    target_compile_definitions(frmts PRIVATE FRMT_netcdf NETCDF_HAS_NC4 $<$<TARGET_EXISTS:hdf5::hdf5_cpp-static>:HAVE_HDF5>)
+    target_compile_definitions(frmts PRIVATE FRMT_netcdf NETCDF_HAS_NC4 $<$<TARGET_EXISTS:hdf5_cpp-static>:HAVE_HDF5>)
 endif ()
 
 if (GDAL_FRMTS_PCRASTER)

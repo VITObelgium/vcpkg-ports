@@ -19,7 +19,7 @@ vcpkg_from_github(
         hdf5-targets.patch
         transitive-hdf5.patch
         nc-config.patch
-        #no-install-deps.patch
+        no-install-deps.patch
         #config-pkg-location.patch
         #mingw.patch
 )

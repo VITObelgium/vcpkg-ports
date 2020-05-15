@@ -9,7 +9,7 @@ vcpkg_from_github(
     SHA512 404711eb80d5e78968c0f6cbdcb08855a2778d7fd94e7ee94bdc9d1cd72848ac3327613c6437a7634349f26bc463b950092a2999abb34ddab0a47ad185547d22
     HEAD_REF master
     PATCHES
-        hdf5check.patch
+        hdf5check.patch # rely on the transitive hdf5 dependency of netcdf and remove the brittle hdf5 check
 )
 
 if (VCPKG_TARGET_IS_WINDOWS)

@@ -9,6 +9,7 @@ set(LLVM_ROOT /Library/Developer/CommandLineTools/usr)
 set(CMAKE_C_COMPILER ${LLVM_ROOT}/bin/clang CACHE STRING "")
 set(CMAKE_ASM_COMPILER ${LLVM_ROOT}/bin/clang CACHE STRING "")
 set(CMAKE_CXX_COMPILER ${LLVM_ROOT}/bin/clang++ CACHE STRING "")
+set(CMAKE_Fortran_COMPILER gfortran-9 CACHE STRING "")
 
 set(CMAKE_C_VISIBILITY_PRESET hidden)
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)

@@ -813,7 +813,7 @@ if (GDAL_FRMTS_NETCDF)
         frmts/netcdf/netcdflayer.cpp
         frmts/netcdf/netcdfwriterconfig.cpp
     )
-    target_link_libraries(frmts PRIVATE netcdf)
+    target_link_libraries(frmts PRIVATE netCDF::netcdf)
     target_compile_definitions(frmts PRIVATE FRMT_netcdf NETCDF_HAS_NC4 $<$<TARGET_EXISTS:hdf5_cpp-static>:HAVE_HDF5>)
 endif ()
 

@@ -16,7 +16,7 @@
 ## Indicates that the library expects to be found via built-in CMake targets.
 ##
 function(vcpkg_test_cmake)
-    cmake_parse_arguments(_tc "MODULE" "PACKAGE_NAME;REQUIRED_HEADER" "TARGETS" ${ARGN})
+    cmake_parse_arguments(_tc "MODULE" "PACKAGE_NAME;REQUIRED_HEADER;REQUIRED_FUNCTION" "TARGETS" ${ARGN})
 
     if(NOT DEFINED _tc_PACKAGE_NAME)
       message(FATAL_ERROR "PACKAGE_NAME must be specified")
@@ -47,7 +47,7 @@ function(vcpkg_test_cmake)
       if (_tc_REQUIRED_HEADER)
         file(APPEND ${VCPKG_TEST_MAIN} "#include <${_tc_REQUIRED_HEADER}>\n")
       endif ()
-      file(APPEND ${VCPKG_TEST_MAIN} "int main(int, char**) { return 0; }\n")
+      file(APPEND ${VCPKG_TEST_MAIN} "int main(int, char**) { ${_tc_REQUIRED_FUNCTION}; return 0; }\n")
     endif ()
 
     if(VCPKG_TARGET_ARCHITECTURE MATCHES "x64" AND VCPKG_PLATFORM_TOOLSET MATCHES "v141")

@@ -49,8 +49,8 @@ function(vcpkg_assemble_compiler_cflags)
         set(_calc_CFLAGS "${_calc_CFLAGS} -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX${CMAKE_OSX_DEPLOYMENT_TARGET}.sdk -mmacosx-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET}")
     endif ()
 
-    set (${_cf_DEBUG} "${_calc_CFLAGS} ${_calc_CFLAGS_DEBUG} ${VCPKG_C_FLAGS} ${VCPKG_C_FLAGS_DEBUG}" PARENT_SCOPE)
-    set (${_cf_RELEASE} "${_calc_CFLAGS} ${_calc_CFLAGS_RELEASE} ${VCPKG_C_FLAGS} ${VCPKG_C_FLAGS_RELEASE}" PARENT_SCOPE)
+    set (${_cf_DEBUG} "${_calc_CFLAGS} ${_calc_CFLAGS_DEBUG} ${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_DEBUG}" PARENT_SCOPE)
+    set (${_cf_RELEASE} "${_calc_CFLAGS} ${_calc_CFLAGS_RELEASE} ${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_RELEASE}" PARENT_SCOPE)
 endfunction()
 
 function(vcpkg_assemble_compiler_cxxflags)
@@ -81,22 +81,6 @@ function(vcpkg_assemble_compiler_cxxflags)
         set (_calc_CXXFLAGS_RELEASE "-O3 -DNDEBUG")
     endif ()
 
-    if (CMAKE_CXX_FLAGS_INIT_DEBUG)
-        set (_calc_CXXFLAGS_DEBUG "${CMAKE_CXX_FLAGS_INIT_DEBUG}")
-    else ()
-        set (_calc_CXXFLAGS_DEBUG "-g")
-    endif ()
-
-    if (CMAKE_CXX_FLAGS_INIT_RELEASE)
-        set (_calc_CXXFLAGS_RELEASE "${CMAKE_CXX_FLAGS_INIT_RELEASE}")
-    else ()
-        set (_calc_CXXFLAGS_RELEASE "-O3 -DNDEBUG")
-    endif ()
-
-    if (CMAKE_CXX_FLAGS_INIT)
-        set (_calc_CXXFLAGS "${CMAKE_CXX_FLAGS_INIT}")
-    endif ()
-
     if (CMAKE_CXX_VISIBILITY_PRESET)
         set(_calc_CXXFLAGS "${_calc_CXXFLAGS} -fvisibility=${CMAKE_CXX_VISIBILITY_PRESET}")
     endif ()
@@ -117,8 +101,36 @@ function(vcpkg_assemble_compiler_cxxflags)
         set(_calc_CXXFLAGS "${_calc_CXXFLAGS} -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX${CMAKE_OSX_DEPLOYMENT_TARGET}.sdk -mmacosx-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET}")
     endif ()
 
-    set (${_cf_DEBUG} "${_calc_CXXFLAGS} ${_calc_CXXFLAGS_DEBUG} ${VCPKG_CXX_FLAGS} ${VCPKG_CXX_FLAGS_DEBUG}" PARENT_SCOPE)
-    set (${_cf_RELEASE} "${_calc_CXXFLAGS} ${_calc_CXXFLAGS_RELEASE} ${VCPKG_CXX_FLAGS} ${VCPKG_CXX_FLAGS_RELEASE}" PARENT_SCOPE)
+    set (${_cf_DEBUG} "${_calc_CXXFLAGS} ${_calc_CXXFLAGS_DEBUG} ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}" PARENT_SCOPE)
+    set (${_cf_RELEASE} "${_calc_CXXFLAGS} ${_calc_CXXFLAGS_RELEASE} ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}" PARENT_SCOPE)
+endfunction()
+
+function(vcpkg_assemble_compiler_fcflags)
+    if (NOT UNIX)
+        return()
+    endif ()
+
+    cmake_parse_arguments(_cf "" "DEBUG;RELEASE" "" ${ARGN})
+
+    set(_calc_FCFLAGS)
+    if (CMAKE_Fortran_FLAGS_INIT)
+        set (_calc_FCFLAGS "${CMAKE_Fortran_FLAGS_INIT}")
+    endif ()
+
+    if (CMAKE_Fortran_FLAGS_INIT_DEBUG)
+        set (_calc_FCFLAGS_DEBUG "${CMAKE_Fortran_FLAGS_INIT_DEBUG}")
+    else ()
+        set (_calc_FCFLAGS_DEBUG "-g")
+    endif ()
+
+    if (CMAKE_Fortran_FLAGS_INIT_RELEASE)
+        set (_calc_FCFLAGS_RELEASE "${CMAKE_Fortran_FLAGS_INIT_RELEASE}")
+    else ()
+        set (_calc_FCFLAGS_RELEASE "-O3 -DNDEBUG")
+    endif ()
+
+    set (${_cf_DEBUG} "${_calc_FCFLAGS} ${_calc_FCFLAGS_DEBUG} ${CMAKE_Fortran_FLAGS} ${CMAKE_Fortran_FLAGS_DEBUG}" PARENT_SCOPE)
+    set (${_cf_RELEASE} "${_calc_FCFLAGS} ${_calc_FCFLAGS_RELEASE} ${CMAKE_Fortran_FLAGS} ${CMAKE_Fortran_FLAGS_RELEASE}" PARENT_SCOPE)
 endfunction()
 
 function(vcpkg_assemble_linker_flags)

@@ -1,11 +1,3 @@
-# Common Ambient Variables:
-#   VCPKG_ROOT_DIR = <C:\path\to\current\vcpkg>
-#   TARGET_TRIPLET is the current triplet (x86-windows, etc)
-#   PORT is the current port name (zlib, etc)
-#   CURRENT_BUILDTREES_DIR = ${VCPKG_ROOT_DIR}\buildtrees\${PORT}
-#   CURRENT_PACKAGES_DIR  = ${VCPKG_ROOT_DIR}\packages\${PORT}_${TARGET_TRIPLET}
-#
-
 set(MAJOR 4)
 set(MINOR 4)
 set(REVISION 4)
@@ -24,9 +16,10 @@ vcpkg_from_github(
 
 vcpkg_configure_cmake(
     SOURCE_PATH ${SOURCE_PATH}
-    PREFER_NINJA # Disable this option if project cannot be built with Ninja
-    INIT_CACHE ${INIT_CACHE_ARG}
+    PREFER_NINJA
     OPTIONS
+        -C${CMAKE_CURRENT_LIST_DIR}/cacheinit.cmake
+        -DCMAKE_REQUIRED_LINK_OPTIONS=-L${CURRENT_INSTALLED_DIR}/lib
         -DBUILD_SHARED_LIBS=OFF
         -DENABLE_TESTS=OFF
         -DBUILD_EXAMPLES=OFF

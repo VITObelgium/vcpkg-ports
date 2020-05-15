@@ -15,11 +15,11 @@
         <archiveName>cmake-3.15.0-Darwin-x86_64.tar.gz</archiveName>
     </tool>
     <tool name="cmake" os="linux">
-        <version>3.15.0</version>
-        <exeRelativePath>cmake-3.15.0-Linux-x86_64/bin/cmake</exeRelativePath>
-        <url>https://github.com/Kitware/CMake/releases/download/v3.15.0/cmake-3.15.0-Linux-x86_64.tar.gz</url>
-        <sha512>5081dc7de84987461a8c44e90b1ff398feeee80cc102603ddb42a668d5007e5f037da5fe3d696eb9bb683a6a2d45245d796470f51993600a5951a4f95a55d424</sha512>
-        <archiveName>cmake-3.15.0-Linux-x86_64.tar.gz</archiveName>
+        <version>3.17.2</version>
+        <exeRelativePath>cmake-3.17.2-Linux-x86_64/bin/cmake</exeRelativePath>
+        <url>https://github.com/Kitware/CMake/releases/download/v3.17.2/cmake-3.17.2-Linux-x86_64.tar.gz</url>
+        <sha512>2afc023363c40b110d97d871fb9a8917643bba308ca0c029ee8fe1164db1c168e32b2c9d7647475d84efa290c1242357f7cf260ea4d1f92f5a829cf418955490</sha512>
+        <archiveName>cmake-3.17.2-Linux-x86_64.tar.gz</archiveName>
     </tool>
     <tool name="cmake" os="freebsd">
         <version>3.12.4</version>

@@ -51,6 +51,7 @@ function(vcpkg_build_autotools)
 
     if (TARGET_PARAM STREQUAL "install")
         set (STATUS_MESSAGE "Install")
+        set (_bc_DESTDIR ${CURRENT_PACKAGES_DIR})
     else ()
         set (STATUS_MESSAGE "Building")
     endif ()

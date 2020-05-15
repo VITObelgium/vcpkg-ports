@@ -1,16 +1,26 @@
+diff -Naur a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt	2020-03-27 16:33:36.000000000 +0100
++++ b/CMakeLists.txt	2020-05-15 12:25:27.521144000 +0200
+@@ -686,6 +686,7 @@
+ 
+       	  SET(HDF5_LIBRARIES ${HDF5_C_${NC_HDF5_LINK_TYPE_UPPER}_LIBRARY} ${HDF5_HL_${NC_HDF5_LINK_TYPE_UPPER}_LIBRARY})
+         ENDIF()
++        SET(HDF5_LIBRARIES hdf5_hl-static hdf5-static)
+       ENDIF(${HDF5_VERSION} VERSION_GREATER "1.8.15")
+ 
+     ELSE(MSVC)
+@@ -695,6 +696,7 @@
+       IF(HDF5_C_LIBRARIES AND NOT HDF5_hdf5_LIBRARY)
+         SET(HDF5_hdf5_LIBRARY ${HDF5_C_LIBRARIES})
+       ENDIF()
++      SET(HDF5_LIBRARIES hdf5_hl-static hdf5-static)
+ 
+     ENDIF(MSVC)
+     IF(NOT HDF5_C_LIBRARY)
 diff -Naur a/liblib/CMakeLists.txt b/liblib/CMakeLists.txt
---- a/liblib/CMakeLists.txt	2016-11-21 19:27:08.000000000 +0100
-+++ b/liblib/CMakeLists.txt	2019-02-15 13:38:49.484631371 +0100
-@@ -35,7 +35,7 @@
- 
- SET(TLL_LIBS "")
- 
--SET(TLL_LIBS ${TLL_LIBS} ${HAVE_LIBM} ${ZLIB_LIBRARY})
-+SET(TLL_LIBS ${TLL_LIBS} ${HAVE_LIBM} ZLIB::ZLIB)
- 
- # Add extra dependencies specified via NC_EXTRA_DEPS
- SET(TLL_LIBS ${TLL_LIBS} ${EXTRA_DEPS})
-@@ -45,23 +45,7 @@
+--- a/liblib/CMakeLists.txt	2020-03-27 16:33:36.000000000 +0100
++++ b/liblib/CMakeLists.txt	2020-05-13 11:50:13.519773000 +0200
+@@ -68,23 +68,7 @@
  ENDIF()
  
  IF(USE_HDF5 OR USE_NETCDF4)
@@ -31,7 +41,7 @@ diff -Naur a/liblib/CMakeLists.txt b/liblib/CMakeLists.txt
 -  ELSE() # Windows CMake defines HDF5_LIBRARIES.
 -    SET(TLL_LIBS ${HDF5_LIBRARIES} ${TLL_LIBS} ${SZIP_LIBRARY})
 -  ENDIF()
-+  SET(TLL_LIBS ${TLL_LIBS} hdf5::hdf5_hl-static hdf5::hdf5-static ${SZIP_LIBRARY})
++  SET(TLL_LIBS ${HDF5_LIBRARIES} ${TLL_LIBS} ${SZIP_LIBRARY})
  ENDIF()
  
  IF(USE_DAP)

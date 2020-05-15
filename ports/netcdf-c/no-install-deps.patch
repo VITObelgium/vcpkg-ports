@@ -1,13 +1,12 @@
-diff --git a/CMakeLists.txt b/CMakeLists.txt
-index e87f3de..46892ee 100644
---- a/CMakeLists.txt
-+++ b/CMakeLists.txt
-@@ -1570,7 +1570,7 @@ ADD_SUBDIRECTORY(docs)
+diff -Naur a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt	2020-03-27 16:33:36.000000000 +0100
++++ b/CMakeLists.txt	2020-05-15 09:34:24.654733900 +0200
+@@ -1830,7 +1830,7 @@
  # install them in the binary dir. Grab all of the .libs, put them
  # in the libdir.
  ##
 -IF(MSVC)
-+IF(MSVC AND NOT DISABLE_INSTALL_DEPENDENCIES)
++IF(FALSE)
    FILE(GLOB COPY_FILES ${CMAKE_PREFIX_PATH}/lib/*.lib)
    INSTALL(FILES ${COPY_FILES}
    DESTINATION ${CMAKE_INSTALL_LIBDIR}

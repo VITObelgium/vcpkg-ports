@@ -1,31 +1,24 @@
 set(VERSION_MAJOR 1)
-set(VERSION_MINOR 10)
-set(VERSION_REVISION 4)
+set(VERSION_MINOR 12)
+set(VERSION_REVISION 0)
 set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_REVISION})
 set(PACKAGE_NAME ${PORT}-${VERSION})
 set(PACKAGE CMake-${PACKAGE_NAME}.tar.gz)
 
-include(vcpkg_common_functions)
-set(SOURCE_PATH ${CURRENT_BUILDTREES_DIR}/src/CMake-${PACKAGE_NAME}/${PACKAGE_NAME})
 vcpkg_download_distfile(ARCHIVE
     URLS "https://support.hdfgroup.org/ftp/HDF5/releases/${PORT}-${VERSION_MAJOR}.${VERSION_MINOR}/${PACKAGE_NAME}/src/${PACKAGE}"
     FILENAME "${PACKAGE}"
-    SHA512 d1b2c96e51e90eea82ddce717fa5d23bfe16f2c44101e6e11b8f0d227253646d0fe0b4f6d11f78c3f08ef0cf6676c9eaacb0894ecc28fd19faed0cd2b2ecd791
+    SHA512 67b415d2125010d587003c76ffdbd8b9b27ea79bf3309c1a916f57f9fe008b83b08067325961307d16adc03b7d8b90fbfcd6cd30eb2b49619112614afc8ae6ef
 )
-file(REMOVE_RECURSE ${CURRENT_BUILDTREES_DIR}/src)
-vcpkg_extract_source_archive(${ARCHIVE})
-
-vcpkg_apply_patches(
-    SOURCE_PATH ${SOURCE_PATH}
+vcpkg_extract_source_archive_ex(
+    ARCHIVE ${ARCHIVE}
+    OUT_SOURCE_PATH SOURCE_PATH
     PATCHES
+        transitive-mpi.patch
         transitive-zlib.patch
-        cmake-install-dir.patch
-        libsettings-cross.patch
-        mingw.patch
-        mingw-libname.patch # fix liblibhdf.a name for static libraries on mingw
-#         ${CMAKE_CURRENT_LIST_DIR}/disable-static-libs.patch
-#         ${CMAKE_CURRENT_LIST_DIR}/link-libraries-private.patch
-#         ${CMAKE_CURRENT_LIST_DIR}/mingw-cross.patch
+        #libsettings-cross.patch
+        #mingw.patch
+        #mingw-libname.patch # fix liblibhdf.a name for static libraries on mingw
 )
 
 if (VCPKG_CMAKE_SYSTEM_NAME STREQUAL Windows AND NOT CMAKE_HOST_SYSTEM STREQUAL Windows)
@@ -46,10 +39,12 @@ TEST_FEATURE("fortran" ENABLE_FORTRAN)
 TEST_FEATURE("tools" ENABLE_TOOLS)
 
 vcpkg_configure_cmake(
-    SOURCE_PATH ${SOURCE_PATH}
+    SOURCE_PATH ${SOURCE_PATH}/${PACKAGE_NAME}
     PREFER_NINJA
     OPTIONS
         "${INIT_CACHE_ARG}"
+        -DMPIEXEC_EXECUTABLE=${CURRENT_INSTALLED_DIR}/tools/mpiexec
+        -DMPI_HOME=${CURRENT_INSTALLED_DIR}
         -DBUILD_TESTING=OFF
         -DDISABLE_STATIC_LIBS=${DISABLE_STATIC_LIBS}
         -DHDF5_BUILD_HL_LIB=ON
@@ -62,7 +57,7 @@ vcpkg_configure_cmake(
         -DHDF5_ENABLE_SZIP_SUPPORT=OFF
         -DHDF5_ENABLE_SZIP_ENCODING=OFF
         -DHDF5_INSTALL_DATA_DIR=share/hdf5/data
-        -DHDF5_INSTALL_CMAKE_DIR=share/hdf5
+        -DHDF5_INSTALL_CMAKE_DIR=share
         -DHDF5_NO_PACKAGES=ON
         ${CROSS_COMPILE_OPTIONS}
     OPTIONS_RELEASE

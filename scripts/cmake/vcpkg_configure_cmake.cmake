@@ -228,6 +228,7 @@ function(vcpkg_configure_cmake)
         "-DCMAKE_INSTALL_BINDIR:STRING=bin"
         "-DCMAKE_POLICY_DEFAULT_CMP0063=NEW"
         "-DCMAKE_POLICY_DEFAULT_CMP0069=NEW"
+        "-DCMAKE_POLICY_DEFAULT_CMP0075=NEW"
         "-DCMAKE_DEBUG_POSTFIX=d"
     )
 

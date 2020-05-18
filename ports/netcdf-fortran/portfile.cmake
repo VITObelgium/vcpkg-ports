@@ -14,11 +14,24 @@ vcpkg_from_github(
     HEAD_REF master
 )
 
+set(CONDITIONAL_LIBS "")
+if (EXISTS ${CURRENT_INSTALLED_DIR}/share/hdf5)
+    list(APPEND CONDITIONAL_LIBS -lhdf5_hl -lhdf5)
+else ()
+    message(FATAL_ERROR "${CURRENT_INSTALLED_DIR}/share/hdf5 does not exist")
+endif ()
+
+if (EXISTS ${CURRENT_INSTALLED_DIR}/share/openmpi)
+    list(APPEND CONDITIONAL_LIBS -lmpi)
+endif ()
+configure_file(${CMAKE_CURRENT_LIST_DIR}/cacheinit.cmake.in ${SOURCE_PATH}/cacheinit.cmake)
+
 vcpkg_configure_cmake(
     SOURCE_PATH ${SOURCE_PATH}
     PREFER_NINJA
     OPTIONS
-        -C${CMAKE_CURRENT_LIST_DIR}/cacheinit.cmake
+        -C${SOURCE_PATH}/cacheinit.cmake
+        -DCMAKE_REQUIRED_INCLUDES=${CURRENT_INSTALLED_DIR}/include
         -DCMAKE_REQUIRED_LINK_OPTIONS=-L${CURRENT_INSTALLED_DIR}/lib
         -DBUILD_SHARED_LIBS=OFF
         -DENABLE_TESTS=OFF

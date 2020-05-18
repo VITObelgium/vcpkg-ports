@@ -16,12 +16,11 @@ endif()
 include(vcpkg_common_functions)
 
 set(LIBRESSL_VERSION 2.9.1)
-set(LIBRESSL_HASH 7051911e566bb093c48a70da72c9981b870e3bf49a167ba6c934eece873084cc41221fbe3cd0c8baba268d0484070df7164e4b937854e716337540a87c214354)
+set(LIBRESSL_HASH 797be9476827ae6aab19f74caa72e4d31b0a3d19bb43ae29b8b89f5a42da8d9ef35865cf93b48e058e0814e73022572d0e89b4ce257780d8b42fcfbc230047b8)
 
 vcpkg_download_distfile(
     LIBRESSL_SOURCE_ARCHIVE
-    URLS https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/${PORT}-${LIBRESSL_VERSION}.tar.gz
-         https://github.com/libressl-portable/portable/archive/v${LIBRESSL_VERSION}.tar.gz
+    URLS https://github.com/libressl-portable/portable/archive/v${LIBRESSL_VERSION}.tar.gz
     FILENAME ${PORT}-${LIBRESSL_VERSION}.tar.gz
     SHA512 ${LIBRESSL_HASH}
 )

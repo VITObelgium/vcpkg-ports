@@ -2,7 +2,7 @@ include(vcpkg_common_functions)
 vcpkg_from_git(
     URL https://git.vito.be/scm/marvin/cpphdf5tools.git
     OUT_SOURCE_PATH SOURCE_PATH
-    REF 1.0.2
+    REF 1.0.3
     HEAD_REF develop
     SHA512 0
 )

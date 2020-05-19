@@ -1,4 +1,4 @@
 Source: maphdf5
-Version: 1.0.2
+Version: 1.0.3
 Description: hdf5 library for map projects
 Build-Depends: hdf5[cpp], boost

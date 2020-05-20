@@ -29,6 +29,7 @@ vcpkg_configure_cmake(
         -DNC_HDF5_LINK_TYPE=static
         -DHAVE_H5FREE_MEMORY=TRUE
         -DCMAKE_REQUIRED_LINK_OPTIONS=${LINK_PATH}
+        -DNC_HAS_DEF_VAR_FILTER=OFF # do not build the plugins
 )
 
 vcpkg_install_cmake()

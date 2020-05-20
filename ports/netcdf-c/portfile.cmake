@@ -20,6 +20,7 @@ vcpkg_from_github(
         transitive-hdf5.patch
         nc-config.patch
         no-install-deps.patch
+        backtrace.patch # only support backtrace when using glibc
         #config-pkg-location.patch
         #mingw.patch
 )

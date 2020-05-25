@@ -23,7 +23,7 @@ else()
     list(APPEND CMAKE_OPTIONS "-DBUILD_LIBPROJ_SHARED=NO")
 endif()
 
-if (NOT VCPKG_CMAKE_SYSTEM_NAME OR VCPKG_CMAKE_SYSTEM_NAME STREQUAL "Windows" OR VCPKG_CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
+if (VCPKG_TARGET_IS_WINDOWS)
     vcpkg_replace_string(${SOURCE_PATH}/src/lib_proj.cmake "if(WIN32)" "if(MSVC)")
     vcpkg_replace_string(${SOURCE_PATH}/cmake/ProjInstallPath.cmake "set(DEFAULT_LIB_SUBDIR local/lib)" "set(DEFAULT_LIB_SUBDIR lib)")
     vcpkg_replace_string(${SOURCE_PATH}/cmake/ProjInstallPath.cmake "set(DEFAULT_INCLUDE_SUBDIR local/include)" "set(DEFAULT_INCLUDE_SUBDIR include)")

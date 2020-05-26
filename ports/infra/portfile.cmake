@@ -3,7 +3,7 @@ vcpkg_from_github(
     REPO VITObelgium/cpp-infra
     REF 0.9.34
     HEAD_REF master
-    SHA512 ac366c196be5c5d5c90af41262e43f42dac8983031489144b1b4ed00f47f33e32f168f055d6a1dadff7ae52284a172cecb2218592d305abd31f57d7a9cbfc831
+    SHA512 a1dc58fe1eb8923bb1672e3e6dceb336b3e456e4ce4979adb6e975f6b488854b6872708b6be6f89b7e8f640afd4f391ed79124ef56675b911bf9bb2dc46f2fa0
 )
 
 vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS

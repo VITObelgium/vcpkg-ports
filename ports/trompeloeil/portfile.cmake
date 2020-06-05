@@ -3,8 +3,8 @@ include(vcpkg_common_functions)
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO rollbear/trompeloeil
-    REF v35
-    SHA512 3ffa17f4b31f0c3bc3e333e5b1ce8c6f98389ac2c690b51e1519c65e37097af7f0844dea3c2c0a9484f97d77b5b96c0209711edca24c628e17376d4801f5c0c0
+    REF v37
+    SHA512 7821d2613051e4aed0526ec56d6fa30ee7b08653b84c7a34dd88cb71654437ac8eea38781a372717eb9647aabb826714369a3b59167c3483badb29b854cb2403
     HEAD_REF master
     PATCHES disable_master_project.patch
 )

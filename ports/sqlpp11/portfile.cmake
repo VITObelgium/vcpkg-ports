@@ -1,5 +1,5 @@
 set(VERSION_MAJOR 0)
-set(VERSION_MINOR 58)
+set(VERSION_MINOR 59)
 set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR})
 
 include(vcpkg_common_functions)
@@ -7,7 +7,7 @@ vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO rbock/sqlpp11
     REF ${VERSION}
-    SHA512 c391e72638a748e0e25b53176dc371ba468bc14bdcb6dda2f2418c4ab4d620ebc5507ee284ff81c3104888d0d959703c6c91b55ccd69a8641b07dcb20cd56209
+    SHA512 9da05e7a5163200040205b9740d6bf4ad1faa94b2bf031c16d896865b3f10e0fe95a0532a2c2e89adc051250a7f76c550a239916fdd700828d4fb1da566a4fe3
     HEAD_REF master
     PATCHES
         float-precision.patch

@@ -21,6 +21,7 @@ vcpkg_from_github(
         nc-config.patch
         no-install-deps.patch
         backtrace.patch # only support backtrace when using glibc
+        hdf5-path-encoding.patch
         #config-pkg-location.patch
         #mingw.patch
 )

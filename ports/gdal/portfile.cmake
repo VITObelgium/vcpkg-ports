@@ -1,7 +1,7 @@
 include(vcpkg_common_functions)
-set(MAJOR 2)
-set(MINOR 4)
-set(REVISION 4)
+set(MAJOR 3)
+set(MINOR 1)
+set(REVISION 2)
 set(VERSION ${MAJOR}.${MINOR}.${REVISION})
 set(PACKAGE_NAME ${PORT}-${VERSION})
 set(PACKAGE ${PACKAGE_NAME}.tar.xz)
@@ -9,16 +9,16 @@ set(PACKAGE ${PACKAGE_NAME}.tar.xz)
 vcpkg_download_distfile(ARCHIVE
     URLS "http://download.osgeo.org/${PORT}/${VERSION}/${PACKAGE}"
     FILENAME "${PACKAGE}"
-    SHA512 51e8b0fc78a5cd37a89f5fd2b07901313851d866ffb3dd428cb6a4bf9d750ac66cb1b99c6a8874353f14e5a002d295d6328576ec82ce617e757c519774e75616
+    SHA512 7730c204a44e1f8ab7c97e5ce6ee43dcac67d686de03da61d85b89c6f96e6883b987cbc60b4de93cee6ab97e770108987eedc16f26f1136944ceb6a330895670
 )
 
 vcpkg_extract_source_archive_ex(
     OUT_SOURCE_PATH SOURCE_PATH
     ARCHIVE ${ARCHIVE}
     PATCHES
-        copylayer-crash-1.patch # fixed upstream in next release
-        copylayer-crash-2.patch # fixed upstream in next release
-        netcdf-non-ascii.patch # fixed upstream in 3.x releases
+        #copylayer-crash-1.patch # fixed upstream in next release
+        #copylayer-crash-2.patch # fixed upstream in next release
+        #netcdf-non-ascii.patch # fixed upstream in 3.x releases
 )
 
 file(COPY ${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt

@@ -299,7 +299,7 @@ if (ENABLE_GEOPACKAGE)
     )
 endif ()
 
-target_compile_definitions(spatialitecommon PRIVATE $<$<C_COMPILER_ID:MSVC>:YY_NO_UNISTD_H>)
+target_compile_definitions(spatialitecommon PRIVATE $<$<C_COMPILER_ID:MSVC>:YY_NO_UNISTD_H> ACCEPT_USE_OF_DEPRECATED_PROJ_API_H)
 
 target_include_directories(spatialitecommon PRIVATE
 PUBLIC

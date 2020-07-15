@@ -94,6 +94,8 @@ def find_ninja_binary():
 
 def bootstrap_vcpkg():
     cmake_bin = find_cmake_binary()
+    if not cmake_bin:
+        raise RuntimeError("cmake executable could not be found")
     bootstrap_path = pathlib.Path(vcpkg_root_dir()) / "bootstrap.cmake"
     subprocess.check_output([cmake_bin, "-P", bootstrap_path.as_posix()], shell=False)
 

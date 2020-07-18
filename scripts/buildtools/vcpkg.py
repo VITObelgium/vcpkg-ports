@@ -58,7 +58,7 @@ def _create_vcpkg_command(triplet, vcpkg_args):
     return args
 
 
-def find_cmake_binary():
+def find_cmake_binary(binary="cmake"):
     dlenv = os.environ.get("VCPKG_DOWNLOADS")
     if dlenv:
         vcpkg_downloads_dir = pathlib.Path(dlenv) / "tools"
@@ -67,12 +67,12 @@ def find_cmake_binary():
 
     # first find cmake in the vcpkg downloads dir
     for cmake_dir in vcpkg_downloads_dir.glob("cmake*/cmake-*/bin/"):
-        cmake = shutil.which("cmake", path=cmake_dir.as_posix())
+        cmake = shutil.which(binary, path=cmake_dir.as_posix())
         if cmake:
             return cmake
 
     # find cmake on the system
-    return shutil.which("cmake")
+    return shutil.which(binary)
 
 
 def find_ninja_binary():
@@ -181,7 +181,9 @@ def cmake_build(build_dir, config=None, target=None):
     subprocess.check_call(args)
 
 
-def vcpkg_install_ports(triplet, ports, clean_after_build=False, overlay_ports=None, overlay_triplets=None):
+def vcpkg_install_ports(
+    triplet, ports, clean_after_build=False, overlay_ports=None, overlay_triplets=None
+):
     args = ["install", "--recurse"]
     if clean_after_build:
         args.append("--clean-after-build")
@@ -382,7 +384,13 @@ def bootstrap(
 
     try:
         vcpkg_upgrade_ports(triplet, overlay_ports, overlay_triplets)
-        vcpkg_install_ports(triplet, ports_to_install, clean_after_build, overlay_ports, overlay_triplets)
+        vcpkg_install_ports(
+            triplet,
+            ports_to_install,
+            clean_after_build,
+            overlay_ports,
+            overlay_triplets,
+        )
     except subprocess.CalledProcessError as e:
         raise RuntimeError("Bootstrap failed: {}".format(e))
 
@@ -413,7 +421,9 @@ def build_project(
     if install_dir:
         cmake_args.append("-DCMAKE_INSTALL_PREFIX={}".format(install_dir))
     else:
-        cmake_args.append("-DCMAKE_INSTALL_PREFIX={}".format(os.path.join(build_dir, "local")))
+        cmake_args.append(
+            "-DCMAKE_INSTALL_PREFIX={}".format(os.path.join(build_dir, "local"))
+        )
 
     vcpkg_root = vcpkg_root_dir()
     toolchain_file = os.path.abspath(
@@ -436,7 +446,12 @@ def build_project(
 
 
 def build_project_release(
-    project_dir, triplet=None, cmake_args=[], build_name=None, install_dir=None, target=None
+    project_dir,
+    triplet=None,
+    cmake_args=[],
+    build_name=None,
+    install_dir=None,
+    target=None,
 ):
     if not git_status_is_clean():
         raise RuntimeError("Git status is not clean")
@@ -453,7 +468,38 @@ def build_project_release(
 
     git_hash = git_revision_hash()
     cmake_args.append("-DPACKAGE_VERSION_COMMITHASH=" + git_hash)
-    build_project(project_dir, triplet, cmake_args, build_dir, target=target, install_dir=install_dir)
+    build_project(
+        project_dir,
+        triplet,
+        cmake_args,
+        build_dir,
+        target=target,
+        install_dir=install_dir,
+    )
+
+
+def run_tests(project_dir, triplet=None, build_dir=None, build_name=None):
+    if triplet is None:
+        triplet = prompt_for_triplet()
+
+    if build_name:
+        project_build_dir = "{}-{}".format(build_name, triplet)
+    else:
+        project_build_dir = "{}".format(triplet)
+
+    if not build_dir:
+        build_dir = os.path.join(project_dir, "build", project_build_dir)
+
+    ctest_bin = find_cmake_binary(binary="ctest")
+    if not ctest_bin:
+        raise RuntimeError("ctest executable could not be found")
+
+    cwd = os.getcwd()
+    os.chdir(build_dir)
+    args = [ctest_bin, "--output-on-failure"]
+    print(" ".join(args))
+    subprocess.check_call(args)
+    os.chdir(cwd)
 
 
 def vcpkg_list_ports(triplet):

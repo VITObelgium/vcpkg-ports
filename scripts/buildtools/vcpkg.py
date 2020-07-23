@@ -41,6 +41,12 @@ def _vcpkg_version_check(vcpkg_path):
     output = subprocess.check_output([vcpkg_path, "version"]).decode("utf-8")
     return "2020.02.04" in output
 
+def _args_to_array(args):
+    if args:
+        return args.split(' ')
+    else:
+        return []
+
 
 def _create_vcpkg_command(triplet, vcpkg_args):
     vcpkg = _vcpkg_executable_path()
@@ -406,6 +412,7 @@ def build_project(
     build_name=None,
     verbose=False,
     run_tests_after_build=False,
+    test_arguments=None,
 ):
     if triplet is None:
         triplet = prompt_for_triplet()
@@ -447,7 +454,7 @@ def build_project(
 
     if run_tests_after_build:
         try:
-            run_tests(project_dir, triplet, build_dir, build_name, config="Release")
+            run_tests(project_dir, triplet, build_dir, build_name, config="Release", extra_args=_args_to_array(test_arguments))
         except subprocess.CalledProcessError as e:
             raise RuntimeError("Unit tests failed: {}".format(e))
 
@@ -460,6 +467,7 @@ def build_project_release(
     install_dir=None,
     target=None,
     run_tests_after_build=False,
+    test_arguments = None,
 ):
     if not git_status_is_clean():
         raise RuntimeError("Git status is not clean")
@@ -487,12 +495,12 @@ def build_project_release(
 
     if run_tests_after_build:
         try:
-            run_tests(project_dir, triplet, build_dir, build_name)
+            run_tests(project_dir, triplet, build_dir, build_name, config="Release", extra_args=_args_to_array(test_arguments))
         except subprocess.CalledProcessError as e:
             raise RuntimeError("Unit tests failed: {}".format(e))
 
 
-def run_tests(project_dir, triplet=None, build_dir=None, build_name=None, config=None):
+def run_tests(project_dir, triplet=None, build_dir=None, build_name=None, config=None, extra_args=[]):
     if triplet is None:
         triplet = prompt_for_triplet()
 
@@ -514,6 +522,8 @@ def run_tests(project_dir, triplet=None, build_dir=None, build_name=None, config
 
     if config is not None:
         args.extend(["-C", config])
+
+    args.extend(extra_args)
 
     print(" ".join(args))
     subprocess.check_call(args)
@@ -597,6 +607,11 @@ def build_argparser():
         dest="run_tests",
         action="store_true",
         help="run the tests after build",
+    )
+    parser.add_argument(
+        "--test-arguments",
+        dest="test_args",
+        help="additonal arguments to pass to ctest",
     )
 
     return parser

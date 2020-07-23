@@ -405,6 +405,7 @@ def build_project(
     target=None,
     build_name=None,
     verbose=False,
+    run_tests_after_build=False,
 ):
     if triplet is None:
         triplet = prompt_for_triplet()
@@ -444,6 +445,12 @@ def build_project(
     except subprocess.CalledProcessError as e:
         raise RuntimeError("Build failed: {}".format(e))
 
+    if run_tests_after_build:
+        try:
+            run_tests(project_dir, triplet, build_dir, build_name, config="Release")
+        except subprocess.CalledProcessError as e:
+            raise RuntimeError("Unit tests failed: {}".format(e))
+
 
 def build_project_release(
     project_dir,
@@ -452,6 +459,7 @@ def build_project_release(
     build_name=None,
     install_dir=None,
     target=None,
+    run_tests_after_build=False,
 ):
     if not git_status_is_clean():
         raise RuntimeError("Git status is not clean")
@@ -477,8 +485,14 @@ def build_project_release(
         install_dir=install_dir,
     )
 
+    if run_tests_after_build:
+        try:
+            run_tests(project_dir, triplet, build_dir, build_name)
+        except subprocess.CalledProcessError as e:
+            raise RuntimeError("Unit tests failed: {}".format(e))
 
-def run_tests(project_dir, triplet=None, build_dir=None, build_name=None):
+
+def run_tests(project_dir, triplet=None, build_dir=None, build_name=None, config=None):
     if triplet is None:
         triplet = prompt_for_triplet()
 
@@ -497,6 +511,10 @@ def run_tests(project_dir, triplet=None, build_dir=None, build_name=None):
     cwd = os.getcwd()
     os.chdir(build_dir)
     args = [ctest_bin, "--output-on-failure"]
+
+    if config is not None:
+        args.extend(["-C", config])
+
     print(" ".join(args))
     subprocess.check_call(args)
     os.chdir(cwd)
@@ -573,6 +591,12 @@ def build_argparser():
     )
     parser.add_argument(
         "--verbose", dest="verbose", action="store_true", help="print executed commands"
+    )
+    parser.add_argument(
+        "--run-tests",
+        dest="run_tests",
+        action="store_true",
+        help="run the tests after build",
     )
 
     return parser

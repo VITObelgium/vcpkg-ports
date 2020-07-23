@@ -1,9 +1,9 @@
 include(vcpkg_common_functions)
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
-    REPO intel/parallelstl
+    REPO oneapi-src/oneDPL 
     REF 20190321
-    SHA512 814f98f8c9c4203425eda34b69d16fd2a6ad36a5f8d21b2745f5a8f87372ce43830f92e3e058cb3fdf2e942b9e6256df11abe514658b25fbbe553b6c2bb96e54
+    SHA512 2d6e2347019bf4bde8a5d397258f1392e14b064238024727ee95dab5d945e9b4a1ffe0c519cf3fcbc4b0d2835fb6a2c473c383f42892b670d99cc56b28081646
     HEAD_REF master
     PATCHES install-targets.patch
 )

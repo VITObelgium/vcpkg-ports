@@ -1,6 +1,6 @@
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
-    REPO 01org/tbb
+    REPO oneapi-src/oneTBB
     REF 2019_U9
     SHA512 ac1710ddfccfc431ffee2b9083b0892ee51b51929fe4de6444587c470d5274e22b265a63a4ea6c84471214aae42ec5c9f13c6512d33ef0d915e6235279b8f61e
     HEAD_REF tbb_2019

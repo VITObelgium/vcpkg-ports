@@ -39,6 +39,7 @@ vcpkg_extract_source_archive_ex(
         fix-cmake-qtplugins-debug-config.patch
         qquickitemgrabber.patch
         qmlimportscanner.patch
+        8c44d70.patch #static initialization fiasco in qt5
 )
 
 if (MINGW AND NOT CMAKE_CROSSCOMPILING)
@@ -75,6 +76,7 @@ if(NOT "qml" IN_LIST FEATURES)
     list(APPEND OPTIONAL_ARGS -skip qtquickcontrols -skip qtquickcontrols2 -skip qtdeclarative)
 else()
     list(APPEND OPTIONAL_ARGS
+        -no-feature-geoservices_here
         -no-feature-geoservices_mapbox
         -no-feature-geoservices_mapboxgl
     )

@@ -61,6 +61,12 @@ endif ()
 file(COPY ${CMAKE_CURRENT_LIST_DIR}/linux-g++-cluster DESTINATION ${SOURCE_PATH}/qtbase/mkspecs)
 
 set(OPTIONAL_ARGS)
+if("commercial" IN_LIST FEATURES)
+    list(APPEND OPTIONAL_ARGS -commercial)
+else()
+    list(APPEND OPTIONAL_ARGS -opensource)
+endif()
+
 if(NOT "tools" IN_LIST FEATURES)
     list(APPEND OPTIONAL_ARGS -skip qttools)
 endif()
@@ -112,7 +118,6 @@ endif ()
 set(QT_OPTIONS
     -I ${CURRENT_INSTALLED_DIR}/include
     -verbose
-    -opensource
     -confirm-license
     -nomake examples
     -nomake tests
@@ -278,6 +283,7 @@ set(QT_OPTIONS_REL
 set(QT_OPTIONS_DBG
     ${QT_OPTIONS}
     -debug
+    -optimized-tools
     -L ${CURRENT_INSTALLED_DIR}/debug/lib
     -prefix ${CURRENT_INSTALLED_DIR}
     -libdir ${CURRENT_PACKAGES_DIR}/debug/lib

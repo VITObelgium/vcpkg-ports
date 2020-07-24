@@ -1,18 +1,23 @@
 set(MAJOR 5)
-set(MINOR 14)
-set(REVISION 2)
+set(MINOR 15)
+set(REVISION 0)
 set(VERSION ${MAJOR}.${MINOR}.${REVISION})
 set(RELEASE official)
 set(TARBALL_EXTENSION tar.xz)
-set(SHASUM 264b0fa6782685f56751ede8935de03ac96a26beeefc48529e76b6f9ccb7022c57d4302488b0f8760e2c4a5c9f93513d3429654db5f135d68140ef3a1cb51c07)
+set(SHASUM 978dd94d007f08ab550c403e993ce742edffd6e85d3f2851d43531769935bf0ec4c327373072d0b7d4c307eaa489d6c89555d8a3b7a6f93643ba5aeb8f654e12)
 set(PACKAGE_NAME qt-everywhere-src-${VERSION})
 set(PACKAGE ${PACKAGE_NAME}.${TARBALL_EXTENSION})
 
 vcpkg_find_acquire_program(PYTHON3)
+vcpkg_find_acquire_program(PERL)
 
 get_filename_component(PYTHON_DIR ${PYTHON3} DIRECTORY)
 message(STATUS "Python directory: ${PYTHON_DIR}")
 vcpkg_add_to_path(${PYTHON_DIR})
+
+get_filename_component(PERL_DIR ${PERL} DIRECTORY)
+message(STATUS "Perl directory: ${PERL_DIR}")
+vcpkg_add_to_path(${PERL_DIR})
 
 if (CMAKE_HOST_WIN32 AND NOT MINGW)
     vcpkg_find_acquire_program("JOM")

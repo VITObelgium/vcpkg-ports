@@ -48,6 +48,7 @@ vcpkg_apply_patches(
         cmake-fixes-main.patch
         cmake-fixes-qt.patch
         compression-zlib.patch
+        iterator-include.patch
 )
     
 vcpkg_configure_cmake(

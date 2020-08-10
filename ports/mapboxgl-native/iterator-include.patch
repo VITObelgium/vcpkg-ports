@@ -1,0 +1,24 @@
+diff --git a/src/mbgl/gl/context.cpp b/src/mbgl/gl/context.cpp
+index 9c7898cc1..533d8f57c 100644
+--- a/src/mbgl/gl/context.cpp
++++ b/src/mbgl/gl/context.cpp
+@@ -14,6 +14,7 @@
+ #include <mbgl/util/logging.hpp>
+ 
+ #include <cstring>
++#include <iterator>
+ 
+ namespace mbgl {
+ namespace gl {
+diff --git a/src/mbgl/util/tile_cover_impl.cpp b/src/mbgl/util/tile_cover_impl.cpp
+index cca58ca7e..e6f0516d5 100644
+--- a/src/mbgl/util/tile_cover_impl.cpp
++++ b/src/mbgl/util/tile_cover_impl.cpp
+@@ -6,6 +6,7 @@
+ #include <cassert>
+ #include <climits>
+ #include <algorithm>
++#include <iterator>
+ 
+ namespace mbgl {
+ namespace util {

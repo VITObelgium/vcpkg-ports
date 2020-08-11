@@ -2,8 +2,8 @@ include(vcpkg_common_functions)
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO vincentlaucsb/csv-parser
-    REF 1.3.0
-    SHA512 b2496bd6a9906ac46f652d252b6f5402291f6bec85cb11c6607c8c8f25244ceb99da503da579d6c8e5299724b7004da315b6f19a1e1bb849545abc01d92e08dd
+    REF 1.3.3
+    SHA512 1233bceaf065af6468ce3f2a43db8bdf5be21a0dbffd0d00745140d8b04f275eedf210076ca14475b7a9d255601176f2ccdf45bb32884a1413f395946583aa18
     HEAD_REF master
     PATCHES clang-win.patch
 )

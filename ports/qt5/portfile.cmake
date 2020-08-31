@@ -202,6 +202,8 @@ if(VCPKG_CMAKE_SYSTEM_NAME STREQUAL "WindowsStore" OR NOT DEFINED VCPKG_CMAKE_SY
         list(APPEND PLATFORM_OPTIONS -opengl desktop)
     endif()
 
+    list(APPEND PLATFORM_OPTIONS -no-feature-d3d12) # not available on windows server 2012
+
     set(CONFIG_SUFFIX .bat)
     #if(VCPKG_PLATFORM_TOOLSET MATCHES "v142")
     #    list(APPEND QT_OPTIONS -platform win32-msvc2019)
@@ -394,10 +396,6 @@ configure_file(${CMAKE_CURRENT_LIST_DIR}/qt_debug.conf ${CURRENT_PACKAGES_DIR}/t
 configure_file(${CMAKE_CURRENT_LIST_DIR}/qt_release.conf ${CURRENT_PACKAGES_DIR}/tools/qt_release.conf)
 
 file(RENAME ${CURRENT_PACKAGES_DIR}/lib/cmake ${CURRENT_PACKAGES_DIR}/share/cmake)
-
-if("location" IN_LIST FEATURES)
-   vcpkg_replace_string(${CURRENT_PACKAGES_DIR}/share/cmake/Qt5Location/Qt5LocationConfig.cmake "Qt5Location_*Plugin.cmake" "Qt5Location_*Factory*.cmake")
-endif()
 
 file(GLOB BIN_FILES ${CURRENT_PACKAGES_DIR}/bin/*)
 file(COPY ${BIN_FILES} DESTINATION ${CURRENT_PACKAGES_DIR}/tools)

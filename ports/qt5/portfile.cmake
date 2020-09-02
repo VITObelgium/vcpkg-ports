@@ -84,7 +84,10 @@ else()
         -no-feature-geoservices_here
         -no-feature-geoservices_mapbox
         -no-feature-geoservices_mapboxgl
+        -no-feature-d3d12
     )
+
+    # d3d12 is not available on windows server 2012
 endif()
 
 if(NOT "location" IN_LIST FEATURES)
@@ -201,8 +204,6 @@ if(VCPKG_CMAKE_SYSTEM_NAME STREQUAL "WindowsStore" OR NOT DEFINED VCPKG_CMAKE_SY
     else ()
         list(APPEND PLATFORM_OPTIONS -opengl desktop)
     endif()
-
-    list(APPEND PLATFORM_OPTIONS -no-feature-d3d12) # not available on windows server 2012
 
     set(CONFIG_SUFFIX .bat)
     #if(VCPKG_PLATFORM_TOOLSET MATCHES "v142")

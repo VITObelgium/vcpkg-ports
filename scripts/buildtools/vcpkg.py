@@ -41,9 +41,10 @@ def _vcpkg_version_check(vcpkg_path):
     output = subprocess.check_output([vcpkg_path, "version"]).decode("utf-8")
     return "2020.02.04" in output
 
+
 def _args_to_array(args):
     if args:
-        return args.split(' ')
+        return args.split(" ")
     else:
         return []
 
@@ -142,6 +143,10 @@ def cmake_configure(
     elif triplet == "x64-windows-static-vs2019" or triplet == "x64-windows-vs2019":
         args.append("Visual Studio 16 2019")
         args.extend(["-A", "x64"])
+        args.extend(["-T", "v142,host=x64"])
+    elif triplet == "x86-windows-static-vs2019" or triplet == "x86-windows-vs2019":
+        args.append("Visual Studio 16 2019")
+        args.extend(["-A", "Win32"])
         args.extend(["-T", "v142,host=x64"])
     elif triplet == "x64-windows-static" or triplet == "x64-windows":
         args.append("Visual Studio 15 2017 Win64")
@@ -454,7 +459,14 @@ def build_project(
 
     if run_tests_after_build:
         try:
-            run_tests(project_dir, triplet, build_dir, build_name, config="Release", extra_args=_args_to_array(test_arguments))
+            run_tests(
+                project_dir,
+                triplet,
+                build_dir,
+                build_name,
+                config="Release",
+                extra_args=_args_to_array(test_arguments),
+            )
         except subprocess.CalledProcessError as e:
             raise RuntimeError("Unit tests failed: {}".format(e))
 
@@ -467,7 +479,7 @@ def build_project_release(
     install_dir=None,
     target=None,
     run_tests_after_build=False,
-    test_arguments = None,
+    test_arguments=None,
 ):
     if not git_status_is_clean():
         raise RuntimeError("Git status is not clean")
@@ -495,12 +507,26 @@ def build_project_release(
 
     if run_tests_after_build:
         try:
-            run_tests(project_dir, triplet, build_dir, build_name, config="Release", extra_args=_args_to_array(test_arguments))
+            run_tests(
+                project_dir,
+                triplet,
+                build_dir,
+                build_name,
+                config="Release",
+                extra_args=_args_to_array(test_arguments),
+            )
         except subprocess.CalledProcessError as e:
             raise RuntimeError("Unit tests failed: {}".format(e))
 
 
-def run_tests(project_dir, triplet=None, build_dir=None, build_name=None, config=None, extra_args=[]):
+def run_tests(
+    project_dir,
+    triplet=None,
+    build_dir=None,
+    build_name=None,
+    config=None,
+    extra_args=[],
+):
     if triplet is None:
         triplet = prompt_for_triplet()
 

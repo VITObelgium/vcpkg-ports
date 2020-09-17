@@ -1,10 +1,10 @@
 set(MAJOR 5)
 set(MINOR 15)
-set(REVISION 0)
+set(REVISION 1)
 set(VERSION ${MAJOR}.${MINOR}.${REVISION})
 set(RELEASE official)
 set(TARBALL_EXTENSION tar.xz)
-set(SHASUM 978dd94d007f08ab550c403e993ce742edffd6e85d3f2851d43531769935bf0ec4c327373072d0b7d4c307eaa489d6c89555d8a3b7a6f93643ba5aeb8f654e12)
+set(SHASUM 726372628f07cbbb8ff8df99e220b364614472bb74ba55a917df87d1b060079f8cbbe939f0d8f676c7d6ce5531e8cb9b6f5ddb88ebddcfea3c73b73da32eb140)
 set(PACKAGE_NAME qt-everywhere-src-${VERSION})
 set(PACKAGE ${PACKAGE_NAME}.${TARBALL_EXTENSION})
 
@@ -42,9 +42,8 @@ vcpkg_extract_source_archive_ex(
         #mingw-cmake-prl-file-has-no-lib-prefix.patch
         lld-link-win.patch
         fix-cmake-qtplugins-debug-config.patch
-        qquickitemgrabber.patch
+        # qquickitemgrabber.patch not needed anymore?
         qmlimportscanner.patch
-        8c44d70.patch #static initialization fiasco in qt5
 )
 
 if (MINGW AND NOT CMAKE_CROSSCOMPILING)

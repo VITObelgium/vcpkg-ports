@@ -42,7 +42,6 @@ vcpkg_extract_source_archive_ex(
         #mingw-cmake-prl-file-has-no-lib-prefix.patch
         lld-link-win.patch
         fix-cmake-qtplugins-debug-config.patch
-        # qquickitemgrabber.patch not needed anymore?
         qmlimportscanner.patch
 )
 

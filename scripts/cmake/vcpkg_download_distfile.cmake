@@ -28,6 +28,9 @@
 ##
 ## If this doesn't match the downloaded version, the build will be terminated with a message describing the mismatch.
 ##
+## ### QUIET
+## Suppress output on cache hit
+##
 ## ### SKIP_SHA512
 ## Skip SHA512 hash check for file.
 ##
@@ -46,9 +49,12 @@
 ## * [apr](https://github.com/Microsoft/vcpkg/blob/master/ports/apr/portfile.cmake)
 ## * [fontconfig](https://github.com/Microsoft/vcpkg/blob/master/ports/fontconfig/portfile.cmake)
 ## * [freetype](https://github.com/Microsoft/vcpkg/blob/master/ports/freetype/portfile.cmake)
+
+include(vcpkg_execute_in_download_mode)
+
 function(vcpkg_download_distfile VAR)
-    set(options SKIP_SHA512)
-    set(oneValueArgs FILENAME SHA512 TIMEOUT)
+    set(options SKIP_SHA512 SILENT_EXIT QUIET)
+    set(oneValueArgs FILENAME SHA512)
     set(multipleValuesArgs URLS HEADERS)
     cmake_parse_arguments(vcpkg_download_distfile "${options}" "${oneValueArgs}" "${multipleValuesArgs}" ${ARGN})
 
@@ -59,9 +65,6 @@ function(vcpkg_download_distfile VAR)
         message(FATAL_ERROR "vcpkg_download_distfile requires a FILENAME argument.")
     endif()
     if(NOT _VCPKG_INTERNAL_NO_HASH_CHECK)
-        if(vcpkg_download_distfile_SKIP_SHA512 AND NOT VCPKG_USE_HEAD_VERSION)
-            message(FATAL_ERROR "vcpkg_download_distfile only allows SKIP_SHA512 when building with --head")
-        endif()
         if(NOT vcpkg_download_distfile_SKIP_SHA512 AND NOT DEFINED vcpkg_download_distfile_SHA512)
             message(FATAL_ERROR "vcpkg_download_distfile requires a SHA512 argument. If you do not know the SHA512, add it as 'SHA512 0' and re-run this command.")
         endif()
@@ -72,13 +75,6 @@ function(vcpkg_download_distfile VAR)
 
     set(downloaded_file_path ${DOWNLOADS}/${vcpkg_download_distfile_FILENAME})
     set(download_file_path_part "${DOWNLOADS}/temp/${vcpkg_download_distfile_FILENAME}")
-    
-
-    if (vcpkg_download_distfile_TIMEOUT)
-        set(download_file_timeout_secs ${vcpkg_download_distfile_TIMEOUT})
-    else ()
-        set(download_file_timeout_secs 1200)
-    endif ()
 
     # Works around issue #3399
     if(IS_DIRECTORY "${DOWNLOADS}/temp")
@@ -113,7 +109,9 @@ function(vcpkg_download_distfile VAR)
     endfunction()
 
     if(EXISTS "${downloaded_file_path}")
-        message(STATUS "Using cached ${downloaded_file_path}")
+        if(NOT vcpkg_download_distfile_QUIET)
+            message(STATUS "Using cached ${downloaded_file_path}")
+        endif()
         test_hash("${downloaded_file_path}" "cached file" "Please delete the file and retry if this file should be downloaded again.")
     else()
         if(_VCPKG_NO_DOWNLOADS)
@@ -130,7 +128,7 @@ function(vcpkg_download_distfile VAR)
                     list(APPEND request_headers "--header=${header}")
                 endforeach()
             endif()
-            _execute_process(
+            vcpkg_execute_in_download_mode(
                 COMMAND ${ARIA2} ${vcpkg_download_distfile_URLS}
                 -o temp/${vcpkg_download_distfile_FILENAME}
                 -l download-${vcpkg_download_distfile_FILENAME}-detailed.log
@@ -166,7 +164,7 @@ function(vcpkg_download_distfile VAR)
                         list(APPEND request_headers HTTPHEADER ${header})
                     endforeach()
                 endif()
-                file(DOWNLOAD ${url} "${download_file_path_part}" TIMEOUT ${download_file_timeout_secs} STATUS download_status ${request_headers})
+                file(DOWNLOAD ${url} "${download_file_path_part}" STATUS download_status ${request_headers})
                 list(GET download_status 0 status_code)
                 if (NOT "${status_code}" STREQUAL "0")
                     message(STATUS "Downloading ${url}... Failed. Status: ${download_status}")
@@ -178,18 +176,31 @@ function(vcpkg_download_distfile VAR)
             endforeach(url)
         endif()
 
-        if (NOT download_success)
-            message(FATAL_ERROR
-            "    \n"
-            "    Failed to download file.\n"
-            "    If you use a proxy, please set the HTTPS_PROXY and HTTP_PROXY environment\n"
-            "    variables to \"https://user:password@your-proxy-ip-address:port/\".\n"
-            "    Otherwise, please submit an issue at https://github.com/Microsoft/vcpkg/issues\n")
+        if (NOT vcpkg_download_distfile_SILENT_EXIT)
+            if (NOT download_success)
+                message(FATAL_ERROR
+                "    \n"
+                "    Failed to download file.\n"
+                "    If you use a proxy, please set the HTTPS_PROXY and HTTP_PROXY environment\n"
+                "    variables to \"https://user:password@your-proxy-ip-address:port/\".\n"
+                "    Otherwise, please submit an issue at https://github.com/Microsoft/vcpkg/issues\n")
+            else()
+                test_hash("${download_file_path_part}" "downloaded file" "The file may have been corrupted in transit. This can be caused by proxies. If you use a proxy, please set the HTTPS_PROXY and HTTP_PROXY environment variables to \"https://user:password@your-proxy-ip-address:port/\".\n")
+                get_filename_component(downloaded_file_dir "${downloaded_file_path}" DIRECTORY)
+                file(MAKE_DIRECTORY "${downloaded_file_dir}")
+                file(RENAME ${download_file_path_part} ${downloaded_file_path})
+            endif()
         else()
-            test_hash("${download_file_path_part}" "downloaded file" "The file may have been corrupted in transit. This can be caused by proxies. If you use a proxy, please set the HTTPS_PROXY and HTTP_PROXY environment variables to \"https://user:password@your-proxy-ip-address:port/\".\n")
-            get_filename_component(downloaded_file_dir "${downloaded_file_path}" DIRECTORY)
-            file(MAKE_DIRECTORY "${downloaded_file_dir}")
-            file(RENAME ${download_file_path_part} ${downloaded_file_path})
+            if (NOT download_success)
+                message(WARNING
+                "    \n"
+                "    Failed to download file.\n")
+            else()
+                test_hash("${download_file_path_part}" "downloaded file" "The file may have been corrupted in transit. This can be caused by proxies. If you use a proxy, please set the HTTPS_PROXY and HTTP_PROXY environment variables to \"https://user:password@your-proxy-ip-address:port/\".\n")
+                get_filename_component(downloaded_file_dir "${downloaded_file_path}" DIRECTORY)
+                file(MAKE_DIRECTORY "${downloaded_file_dir}")
+                file(RENAME ${download_file_path_part} ${downloaded_file_path})
+            endif()
         endif()
     endif()
     set(${VAR} ${downloaded_file_path} PARENT_SCOPE)

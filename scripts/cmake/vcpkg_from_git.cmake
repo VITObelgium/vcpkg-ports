@@ -1,122 +1,147 @@
 ## # vcpkg_from_git
 ##
-## Download and extract a project from git
+## Checkout a project from a git server
 ##
 ## ## Usage:
 ## ```cmake
 ## vcpkg_from_git(
+##     GIT_URL <https://giturl>
 ##     OUT_SOURCE_PATH <SOURCE_PATH>
-##     URL <https://android.googlesource.com/platform/external/fdlibm>
-##     REF <59f7335e4d...>
+##     [REF <v10.7.3>]
+##     [HEAD_REF <master>]
 ##     [PATCHES <patch1.patch> <patch2.patch>...]
 ## )
 ## ```
 ##
 ## ## Parameters:
+##
+## ### GIT_URL
+## The full URL of the git server to clone from
+##
 ## ### OUT_SOURCE_PATH
 ## Specifies the out-variable that will contain the extracted location.
 ##
 ## This should be set to `SOURCE_PATH` by convention.
 ##
-## ### URL
-## The url of the git repository.
-##
 ## ### REF
-## The git sha of the commit to download.
+## A stable git commit-ish (ideally a tag) that will not change contents. **This should not be a branch.**
 ##
-## ### PATCHES
-## A list of patches to be applied to the extracted sources.
+## For repositories without official releases, this can be set to the full commit id of the current latest master.
+##
+## ### HEAD_REF
+## The unstable git commit-ish (ideally a branch) to pull for `--head` builds.
+##
+## For most projects, this should be `master`. The chosen branch should be one that is expected to be always buildable on all supported platforms.
 ##
 ## Relative paths are based on the port directory.
 ##
 ## ## Notes:
-## `OUT_SOURCE_PATH`, `REF`, and `URL` must be specified.
+## At least one of `REF` and `HEAD_REF` must be specified, however it is preferable for both to be present.
 ##
-## ## Examples:
+## This exports the `VCPKG_HEAD_VERSION` variable during head builds.
 ##
-## * [fdlibm](https://github.com/Microsoft/vcpkg/blob/master/ports/fdlibm/portfile.cmake)
-
-include(vcpkg_execute_in_download_mode)
 
 function(vcpkg_from_git)
-  set(oneValueArgs OUT_SOURCE_PATH URL REF)
-  set(multipleValuesArgs PATCHES)
-  cmake_parse_arguments(_vdud "" "${oneValueArgs}" "${multipleValuesArgs}" ${ARGN})
+    set(zeroValueArgs RECURSE_SUBMODULES)
+    set(oneValueArgs OUT_SOURCE_PATH URL REF HEAD_REF)
+    set(multipleValuesArgs PATCHES)
+    cmake_parse_arguments(_vdud "${zeroValueArgs}" "${oneValueArgs}" "${multipleValuesArgs}" ${ARGN})
 
-  if(NOT DEFINED _vdud_OUT_SOURCE_PATH)
-    message(FATAL_ERROR "OUT_SOURCE_PATH must be specified.")
-  endif()
+    if (WIN32)
+        vcpkg_add_to_path($ENV{ProgramFiles}/git/bin)
+    endif ()
+    find_package(Git)
 
-  if(NOT DEFINED _vdud_URL)
-    message(FATAL_ERROR "The git url must be specified")
-  endif()
+    if (NOT Git_FOUND)
+        message(FATAL_ERROR "Could not find git binary")
+    endif ()
 
-  if(NOT DEFINED _vdud_REF)
-    message(FATAL_ERROR "The git ref must be specified.")
-  endif()
-
-  # using .tar.gz instead of .zip because the hash of the latter is affected by timezone.
-  string(REPLACE "/" "-" SANITIZED_REF "${_vdud_REF}")
-  set(TEMP_ARCHIVE "${DOWNLOADS}/temp/${PORT}-${SANITIZED_REF}.tar.gz")
-  set(ARCHIVE "${DOWNLOADS}/${PORT}-${SANITIZED_REF}.tar.gz")
-  set(TEMP_SOURCE_PATH "${CURRENT_BUILDTREES_DIR}/src/${SANITIZED_REF}")
-
-  if(NOT EXISTS "${ARCHIVE}")
-    if(_VCPKG_NO_DOWNLOADS)
-        message(FATAL_ERROR "Downloads are disabled, but '${ARCHIVE}' does not exist.")
-    endif()
-    message(STATUS "Fetching ${_vdud_URL}...")
-    find_program(GIT NAMES git git.cmd)
-    # Note: git init is safe to run multiple times
-    vcpkg_execute_required_process(
-      ALLOW_IN_DOWNLOAD_MODE
-      COMMAND ${GIT} init git-tmp
-      WORKING_DIRECTORY ${DOWNLOADS}
-      LOGNAME git-init-${TARGET_TRIPLET}
-    )
-    vcpkg_execute_required_process(
-      ALLOW_IN_DOWNLOAD_MODE
-      COMMAND ${GIT} fetch ${_vdud_URL} ${_vdud_REF} --depth 1 -n
-      WORKING_DIRECTORY ${DOWNLOADS}/git-tmp
-      LOGNAME git-fetch-${TARGET_TRIPLET}
-    )
-    vcpkg_execute_in_download_mode(
-      COMMAND ${GIT} rev-parse FETCH_HEAD
-      OUTPUT_VARIABLE REV_PARSE_HEAD
-      ERROR_VARIABLE REV_PARSE_HEAD
-      RESULT_VARIABLE error_code
-      WORKING_DIRECTORY ${DOWNLOADS}/git-tmp
-    )
-    if(error_code)
-        message(FATAL_ERROR "unable to determine FETCH_HEAD after fetching git repository")
-    endif()
-    string(REGEX REPLACE "\n$" "" REV_PARSE_HEAD "${REV_PARSE_HEAD}")
-    if(NOT REV_PARSE_HEAD STREQUAL _vdud_REF)
-        message(FATAL_ERROR "REF (${_vdud_REF}) does not match FETCH_HEAD (${REV_PARSE_HEAD})")
+    if(NOT DEFINED _vdud_URL)
+        message(FATAL_ERROR "GIT_URL must be specified.")
     endif()
 
-    file(MAKE_DIRECTORY "${DOWNLOADS}/temp")
-    vcpkg_execute_required_process(
-      ALLOW_IN_DOWNLOAD_MODE
-      COMMAND ${GIT} archive FETCH_HEAD -o "${TEMP_ARCHIVE}"
-      WORKING_DIRECTORY ${DOWNLOADS}/git-tmp
-      LOGNAME git-archive
-    )
+    if (_vdud_RECURSE_SUBMODULES)
+        set(RECURSE_ARG --recurse)
+    endif ()
 
-    get_filename_component(downloaded_file_dir "${ARCHIVE}" DIRECTORY)
-    file(MAKE_DIRECTORY "${downloaded_file_dir}")
-    file(RENAME "${TEMP_ARCHIVE}" "${ARCHIVE}")
-  else()
-    message(STATUS "Using cached ${ARCHIVE}")
-  endif()
+    if(NOT DEFINED _vdud_OUT_SOURCE_PATH)
+        message(FATAL_ERROR "OUT_SOURCE_PATH must be specified.")
+    endif()
 
-  vcpkg_extract_source_archive_ex(
-    OUT_SOURCE_PATH SOURCE_PATH
-    ARCHIVE "${ARCHIVE}"
-    REF "${SANITIZED_REF}"
-    PATCHES ${_vdud_PATCHES}
-    NO_REMOVE_ONE_LEVEL
-  )
+    if(NOT DEFINED _vdud_REF AND NOT DEFINED _vdud_HEAD_REF)
+        message(FATAL_ERROR "At least one of REF and HEAD_REF must be specified.")
+    endif()
 
-  set(${_vdud_OUT_SOURCE_PATH} "${SOURCE_PATH}" PARENT_SCOPE)
+    if(VCPKG_USE_HEAD_VERSION AND NOT DEFINED _vdud_HEAD_REF)
+        message(STATUS "Package does not specify HEAD_REF. Falling back to non-HEAD version.")
+        set(VCPKG_USE_HEAD_VERSION OFF)
+    endif()
+
+    set(WORKING_DIRECTORY "${CURRENT_BUILDTREES_DIR}/src")
+    if (EXISTS ${WORKING_DIRECTORY})
+        file(REMOVE_RECURSE ${WORKING_DIRECTORY})
+    endif ()
+    file(MAKE_DIRECTORY "${WORKING_DIRECTORY}")
+
+    # Handle --no-head scenarios
+    if(NOT VCPKG_USE_HEAD_VERSION)
+        if(NOT _vdud_REF)
+            message(FATAL_ERROR "Package does not specify REF. It must built using --head.")
+        endif()
+
+        string(REPLACE "/" "-" SANITIZED_REF "${_vdud_REF}")
+        set(LOGNAME clone-${TARGET_TRIPLET}-${_vdud_REF})
+        set(GIT_COMMAND ${GIT_EXECUTABLE} clone ${RECURSE_ARG} --branch ${_vdud_REF} --single-branch ${_vdud_URL})
+        if (VCPKG_VERBOSE)
+            string(JOIN " " GIT_COMMAND_STRING ${GIT_COMMAND})
+            message(STATUS "${GIT_COMMAND_STRING}")
+        endif ()
+
+        execute_process(COMMAND ${GIT_COMMAND}
+            WORKING_DIRECTORY ${WORKING_DIRECTORY}
+            OUTPUT_FILE ${CURRENT_BUILDTREES_DIR}/${LOGNAME}-out.log
+            ERROR_FILE ${CURRENT_BUILDTREES_DIR}/${LOGNAME}-err.log
+            RESULT_VARIABLE git_error_code
+        )
+    else ()
+        # The following is for --head scenarios
+        if(NOT _vdud_REF)
+            message(FATAL_ERROR "Package does not specify HEAD_REF.")
+        endif()
+
+        set(LOGNAME clone-${TARGET_TRIPLET}-${_vdud_HEAD_REF})
+        set(GIT_COMMAND ${GIT_EXECUTABLE} clone ${RECURSE_ARG} --branch ${_vdud_HEAD_REF} --single-branch ${_vdud_URL})
+        if (VCPKG_VERBOSE)
+            string(JOIN " " GIT_COMMAND_STRING ${GIT_COMMAND})
+            message(STATUS "${GIT_COMMAND_STRING}")
+        endif ()
+
+        execute_process(COMMAND ${GIT_COMMAND}
+            WORKING_DIRECTORY ${WORKING_DIRECTORY}
+            OUTPUT_FILE ${CURRENT_BUILDTREES_DIR}/${LOGNAME}-out.log
+            ERROR_FILE ${CURRENT_BUILDTREES_DIR}/${LOGNAME}-err.log
+            RESULT_VARIABLE git_error_code
+        )
+    endif()
+
+    file(GLOB REPO_DIR RELATIVE ${WORKING_DIRECTORY} ${WORKING_DIRECTORY}/*)
+    list(LENGTH REPO_DIR NUM_DIRS)
+    if (NOT NUM_DIRS EQUAL 1)
+        message(FATAL_ERROR "Expected a single subdirectory as result of git clone")
+    endif ()
+
+    if(git_error_code AND NOT _ap_QUIET)
+        message(FATAL_ERROR "Git clone ref '${_vdud_REF}' from '${_vdud_URL}' failed.")
+    endif()
+
+    set("${_vdud_OUT_SOURCE_PATH}" ${WORKING_DIRECTORY}/${REPO_DIR} PARENT_SCOPE)    
+
+    # if (_vdud_PATCHES)
+    #     message(STATUS "PATCHES ${_vdud_PATCHES}")
+    #     vcpkg_apply_patches(
+    #         SOURCE_PATH ${OUT_SOURCE_PATH}
+    #         PATCHES ${_vdud_PATCHES}
+    #     )
+    # endif ()
+
 endfunction()

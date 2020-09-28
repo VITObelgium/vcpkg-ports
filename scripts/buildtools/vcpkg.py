@@ -39,7 +39,7 @@ def _vcpkg_executable_path():
 
 def _vcpkg_version_check(vcpkg_path):
     output = subprocess.check_output([vcpkg_path, "version"]).decode("utf-8")
-    return "2020.02.04" in output
+    return "2020.06.15" in output
 
 
 def _args_to_array(args):
@@ -103,6 +103,7 @@ def bootstrap_vcpkg():
     cmake_bin = find_cmake_binary()
     if not cmake_bin:
         raise RuntimeError("cmake executable could not be found")
+    print("Bootstrapping vcpkg")
     bootstrap_path = pathlib.Path(vcpkg_root_dir()) / "bootstrap.cmake"
     subprocess.check_output([cmake_bin, "-P", bootstrap_path.as_posix()], shell=False)
 

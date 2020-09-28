@@ -7,8 +7,8 @@ if (NOT Git_FOUND)
 endif ()
 
 if (VCPKG_TARGET_IS_WINDOWS)
-    vcpkg_find_acquire_program(LLVM)
-    get_filename_component(CLANG_EXE_PATH ${LLVM} DIRECTORY)
+    vcpkg_find_acquire_program(CLANG)
+    get_filename_component(CLANG_EXE_PATH ${CLANG} DIRECTORY)
     set(ADDITIONAL_ARGS -DVCPKG_CLANG=ON -DVCPKG_CLANG_PATH=${CLANG_EXE_PATH})
 endif ()
 

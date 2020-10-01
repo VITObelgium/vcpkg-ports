@@ -2,8 +2,8 @@ include(vcpkg_common_functions)
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO gabime/spdlog
-    REF v1.8.0
-    SHA512 18e9718a0dd58d33b1aef120e9e16123172db07be3758e906b82dee9fbfd0197108a5aa502aabe31dde189a90ff1ee1c14017e8b14fca0aee69e9df84cbf8283
+    REF v1.8.1
+    SHA512 ef855f4f91ed8aba89ef0191a9fd70f73a49567332f7eb42da1604e3a7dda3bbe48db3fd0fae317bb11ee95315d8cd62bf586d2de919ca0978d91e5a971b1c3f
     HEAD_REF master
 )
 

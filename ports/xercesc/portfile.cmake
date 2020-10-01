@@ -24,7 +24,7 @@ vcpkg_configure_cmake(
 vcpkg_install_cmake()
 
 vcpkg_fixup_cmake_targets(CONFIG_PATH share/XercesC TARGET_PATH share/${PORT})
-vcpkg_fixup_pkgconfig_file(NAMES xerces-c)
+vcpkg_fixup_pkgconfig_mod(NAMES xerces-c)
 
 file(REMOVE_RECURSE
     "${CURRENT_PACKAGES_DIR}/debug/include"

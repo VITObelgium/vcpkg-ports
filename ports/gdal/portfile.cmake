@@ -83,7 +83,7 @@ vcpkg_configure_cmake(
         -DGDAL_BUILD_TOOLS=OFF
 )
 
-#vcpkg_fixup_pkgconfig_file()
+#vcpkg_fixup_pkgconfig_mod()
 vcpkg_install_cmake()
 vcpkg_fixup_cmake_targets(CONFIG_PATH "lib/cmake/gdal")
 vcpkg_copy_pdbs()

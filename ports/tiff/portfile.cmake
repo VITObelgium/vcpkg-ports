@@ -64,4 +64,4 @@ file(INSTALL ${SOURCE_PATH}/COPYRIGHT DESTINATION ${CURRENT_PACKAGES_DIR}/share/
 
 
 vcpkg_copy_pdbs()
-vcpkg_fixup_pkgconfig_file(NAMES libtiff-4)
+vcpkg_fixup_pkgconfig_mod(NAMES libtiff-4)

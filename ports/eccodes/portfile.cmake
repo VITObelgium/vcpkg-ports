@@ -69,7 +69,7 @@ else ()
     file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/bin)
 endif()
 
-vcpkg_fixup_pkgconfig_file()
+vcpkg_fixup_pkgconfig_mod()
 
 # Handle copyright
 file(INSTALL ${SOURCE_PATH}/LICENSE DESTINATION ${CURRENT_PACKAGES_DIR}/share/${PORT} RENAME copyright)

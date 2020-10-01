@@ -45,6 +45,6 @@ vcpkg_replace_string(
 )
 
 vcpkg_install_autotools()
-vcpkg_fixup_pkgconfig_file(NAMES ompi-c ompi-cxx ompi-f90 ompi-fort ompi orte)
+vcpkg_fixup_pkgconfig_mod(NAMES ompi-c ompi-cxx ompi-f90 ompi-fort ompi orte)
 
 file(INSTALL ${SOURCE_PATH}/LICENSE DESTINATION ${CURRENT_PACKAGES_DIR}/share/openmpi RENAME copyright)

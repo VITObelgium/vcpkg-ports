@@ -30,7 +30,7 @@ def _vcpkg_executable_path():
     if sysconfig.get_platform().startswith("win"):
         bin_suffix = ".exe"
 
-    vcpkg_path = pathlib.Path(vcpkg_root_dir()) / "bin" / ("vcpkg" + bin_suffix)
+    vcpkg_path = pathlib.Path(vcpkg_root_dir()) / ("vcpkg" + bin_suffix)
     if vcpkg_path.exists():
         return vcpkg_path.as_posix()
 

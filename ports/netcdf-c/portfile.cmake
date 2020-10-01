@@ -16,12 +16,12 @@ vcpkg_from_github(
     HEAD_REF master
     PATCHES
         libm.patch
-        hdf5-targets.patch
         transitive-hdf5.patch
         nc-config.patch
         no-install-deps.patch
         backtrace.patch # only support backtrace when using glibc
         hdf5-path-encoding.patch
+        use_targets.patch
         #config-pkg-location.patch
         #mingw.patch
 )
@@ -84,7 +84,7 @@ endif()
 file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/include)
 file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/share)
 
-vcpkg_fixup_pkgconfig_file(NAMES netcdf)
+vcpkg_fixup_pkgconfig_mod(NAMES netcdf)
 
 # Handle copyright
 file(INSTALL ${SOURCE_PATH}/COPYRIGHT DESTINATION ${CURRENT_PACKAGES_DIR}/share/netcdf-c RENAME copyright)

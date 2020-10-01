@@ -104,11 +104,6 @@ if(NOT DEFINED CMAKE_MAP_IMPORTED_CONFIG_RELWITHDEBINFO)
 endif()
 
 if(VCPKG_TARGET_TRIPLET)
-    if (NOT VCPKG_CHAINLOAD_TOOLCHAIN_FILE)
-        # include the triplet cmake toolchain file if it is present unless a chainload toolchain was provided
-        include(${CMAKE_CURRENT_LIST_DIR}/../../triplets/${VCPKG_TARGET_TRIPLET}.cmake OPTIONAL)
-        message(STATUS "[${VCPKG_TARGET_TRIPLET}] Using toolchain ${CMAKE_CURRENT_LIST_DIR}/../../triplets/${VCPKG_TARGET_TRIPLET}.cmake")
-    endif ()
 elseif(CMAKE_GENERATOR_PLATFORM MATCHES "^[Ww][Ii][Nn]32$")
     set(_VCPKG_TARGET_TRIPLET_ARCH x86)
 elseif(CMAKE_GENERATOR_PLATFORM MATCHES "^[Xx]64$")
@@ -262,9 +257,6 @@ else() #Release build: Put Release paths before Debug paths. Debug Paths are req
     )
 endif()
 
-list(APPEND CMAKE_MODULE_PATH
-    ${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/share/cmake
-)
 # If one CMAKE_FIND_ROOT_PATH_MODE_* variables is set to ONLY, to  make sure that ${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}
 # and ${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/debug are searched, it is not sufficient to just add them to CMAKE_FIND_ROOT_PATH,
 # as CMAKE_FIND_ROOT_PATH specify "one or more directories to be prepended to all other search directories", so to make sure that
@@ -450,6 +442,19 @@ macro(${VCPKG_OVERRIDE_FIND_PACKAGE_NAME} name)
     if(EXISTS "${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/share/${_vcpkg_lowercase_name}/vcpkg-cmake-wrapper.cmake")
         set(ARGS "${ARGV}")
         include(${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/share/${_vcpkg_lowercase_name}/vcpkg-cmake-wrapper.cmake)
+    elseif("${name}" STREQUAL "Boost" AND EXISTS "${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include/boost")
+        # Checking for the boost headers disables this wrapper unless the user has installed at least one boost library
+        set(Boost_USE_STATIC_LIBS OFF)
+        set(Boost_USE_MULTITHREADED ON)
+        unset(Boost_USE_STATIC_RUNTIME)
+        set(Boost_NO_BOOST_CMAKE ON)
+        unset(Boost_USE_STATIC_RUNTIME CACHE)
+        if("${CMAKE_VS_PLATFORM_TOOLSET}" STREQUAL "v120")
+            set(Boost_COMPILER "-vc120")
+        else()
+            set(Boost_COMPILER "-vc140")
+        endif()
+        _find_package(${ARGV})
     elseif("${name}" STREQUAL "ICU" AND EXISTS "${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include/unicode/utf.h")
         function(_vcpkg_find_in_list)
             list(FIND ARGV "COMPONENTS" COMPONENTS_IDX)

@@ -72,9 +72,9 @@ vcpkg_copy_pdbs()
 file(RENAME ${CURRENT_PACKAGES_DIR}/share/hdf5/data/COPYING ${CURRENT_PACKAGES_DIR}/share/hdf5/copyright)
 
 vcpkg_fixup_cmake_targets(CONFIG_PATH share/hdf5)
-vcpkg_fixup_pkgconfig_file(NAMES hdf5-${VERSION} hdf5_hl-${VERSION})
+vcpkg_fixup_pkgconfig_mod(NAMES hdf5-${VERSION} hdf5_hl-${VERSION})
 if(ENABLE_CPP)
-    vcpkg_fixup_pkgconfig_file(NAMES hdf5_cpp-${VERSION} hdf5_hl_cpp-${VERSION})
+    vcpkg_fixup_pkgconfig_mod(NAMES hdf5_cpp-${VERSION} hdf5_hl_cpp-${VERSION})
 endif()
 
 file(GLOB TOOL_FILES ${CURRENT_PACKAGES_DIR}/bin/*)

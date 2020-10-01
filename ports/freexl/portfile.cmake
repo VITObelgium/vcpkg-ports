@@ -80,7 +80,7 @@ elseif (CMAKE_HOST_UNIX OR CMAKE_HOST_APPLE) # Build in UNIX
     )
     
     vcpkg_install_make()
-    vcpkg_fixup_pkgconfig_file()
+    vcpkg_fixup_pkgconfig_mod()
 
     if(VCPKG_LIBRARY_LINKAGE STREQUAL "static")
       file(GLOB DYLIB_FILES ${CURRENT_PACKAGES_DIR}/lib/*.dylib)

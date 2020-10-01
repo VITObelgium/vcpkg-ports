@@ -1,15 +1,14 @@
 include(vcpkg_common_functions)
 set(MAJOR 2)
 set(MINOR 0)
-set(REVISION 4)
+set(REVISION 5)
 set(VERSION ${MAJOR}.${MINOR}.${REVISION})
-set(SHA512_HASH 186b145730759c67b22380c2d64ca207d817cf78f8ded98949bcb087887173de48067ce29cdc1ba08502bd51aa63a5d44652db67beb4d1b2a9d0121566db57c2)
 
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO ${PORT}/${PORT}
     REF ${VERSION}
-    SHA512 ${SHA512_HASH}
+    SHA512 78e26d1f05b7dd9e6573b32b2324aa4b6a88a027c6b2d768aeefc46bc7780917bc850d6e77182d2ccb2cd228613a72222fbd3d1f1df0166a6e8128451ba731d2
     HEAD_REF master
 )
 
@@ -44,7 +43,7 @@ vcpkg_configure_cmake(
 )
 
 vcpkg_install_cmake()
-vcpkg_fixup_pkgconfig_file(NAMES libjpeg libturbojpeg)
+vcpkg_fixup_pkgconfig_mod(NAMES libjpeg libturbojpeg)
 vcpkg_copy_pdbs()
 
 if(VCPKG_LIBRARY_LINKAGE STREQUAL static)

@@ -195,9 +195,23 @@ function(vcpkg_configure_cmake)
         set(VCPKG_SET_CHARSET_FLAG OFF)
     endif()
 
-    if(VCPKG_CHAINLOAD_TOOLCHAIN_FILE)
-        list(APPEND _csc_OPTIONS "-DVCPKG_CHAINLOAD_TOOLCHAIN_FILE=${VCPKG_CHAINLOAD_TOOLCHAIN_FILE}")
-    endif ()
+    if(NOT VCPKG_CHAINLOAD_TOOLCHAIN_FILE)
+        if(NOT DEFINED VCPKG_CMAKE_SYSTEM_NAME OR _TARGETTING_UWP)
+            set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "${SCRIPTS}/toolchains/windows.cmake")
+        elseif(VCPKG_CMAKE_SYSTEM_NAME STREQUAL "Linux")
+            set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "${SCRIPTS}/toolchains/linux.cmake")
+        elseif(VCPKG_CMAKE_SYSTEM_NAME STREQUAL "Android")
+            set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "${SCRIPTS}/toolchains/android.cmake")
+        elseif(VCPKG_CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+            set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "${SCRIPTS}/toolchains/osx.cmake")
+        elseif(VCPKG_CMAKE_SYSTEM_NAME STREQUAL "iOS")
+            set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "${SCRIPTS}/toolchains/ios.cmake")
+        elseif(VCPKG_CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
+            set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "${SCRIPTS}/toolchains/freebsd.cmake")
+        elseif(VCPKG_CMAKE_SYSTEM_NAME STREQUAL "MinGW")
+            set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "${SCRIPTS}/toolchains/mingw.cmake")
+        endif()
+    endif()
 
     if (VCPKG_CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
         find_program(NODEJS node)
@@ -205,6 +219,7 @@ function(vcpkg_configure_cmake)
     endif ()
 
     list(APPEND _csc_OPTIONS
+        "-DVCPKG_CHAINLOAD_TOOLCHAIN_FILE=${VCPKG_CHAINLOAD_TOOLCHAIN_FILE}"
         "-DVCPKG_TARGET_TRIPLET=${TARGET_TRIPLET}"
         "-DVCPKG_SET_CHARSET_FLAG=${VCPKG_SET_CHARSET_FLAG}"
         "-DVCPKG_PLATFORM_TOOLSET=${VCPKG_PLATFORM_TOOLSET}"

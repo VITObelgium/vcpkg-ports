@@ -36,7 +36,7 @@ if (UNIX OR MINGW)
     vcpkg_build_autotools()
     vcpkg_install_autotools()
 
-    vcpkg_fixup_pkgconfig_file(NAMES icu-i18n icu-uc icu-io)
+    vcpkg_fixup_pkgconfig_mod(NAMES icu-i18n icu-uc icu-io)
 
     file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/include)
     file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/share)

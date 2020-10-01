@@ -14,7 +14,7 @@ endif ()
 
 file(REMOVE_RECURSE ${CURRENT_BUILDTREES_DIR}/src)
 
-vcpkg_from_git(
+vcpkg_from_git_mod(
     URL https://github.com/mapbox/mapbox-gl-native.git
     OUT_SOURCE_PATH SOURCE_PATH
     REF maps-v1.6.0

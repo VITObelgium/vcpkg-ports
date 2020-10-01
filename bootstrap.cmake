@@ -2,7 +2,7 @@ find_package(Git)
 
 set(VCPKG_TAG "2020.07")
 set(BUILD_DIR ${CMAKE_CURRENT_LIST_DIR}/buildtrees)
-set(BIN_DIR ${CMAKE_CURRENT_LIST_DIR}/bin)
+set(BIN_DIR ${CMAKE_CURRENT_LIST_DIR})
 set(VCPKG_BUILD_DIR ${BUILD_DIR}/vcpkg)
 
 file(MAKE_DIRECTORY ${BUILD_DIR} ${BIN_DIR})

@@ -23,29 +23,16 @@ vcpkg_configure_cmake(
     SOURCE_PATH ${SOURCE_PATH}
     PREFER_NINJA
     OPTIONS
-        -DSKIP_INSTALL_FILES=ON
         -DSKIP_BUILD_EXAMPLES=ON
+        -DINSTALL_PKGCONFIG_DIR=${CURRENT_PACKAGES_DIR}/lib/pkgconfig
+        -DSKIP_INSTALL_FILES=OFF
     OPTIONS_DEBUG
+        -DSKIP_INSTALL_FILES=ON
         -DSKIP_INSTALL_HEADERS=ON
 )
 
 vcpkg_install_cmake()
-
-# Install the pkgconfig file
-if(NOT DEFINED VCPKG_BUILD_TYPE OR VCPKG_BUILD_TYPE STREQUAL "release")
-    if(VCPKG_TARGET_IS_WINDOWS)
-        vcpkg_replace_string(${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-rel/zlib.pc "-lz" "-lzlib")
-    endif()
-    file(COPY ${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-rel/zlib.pc DESTINATION ${CURRENT_PACKAGES_DIR}/lib/pkgconfig)
-endif()
-if(NOT DEFINED VCPKG_BUILD_TYPE OR VCPKG_BUILD_TYPE STREQUAL "debug")
-    if(VCPKG_TARGET_IS_WINDOWS)
-        vcpkg_replace_string(${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-dbg/zlib.pc "-lz" "-lzlibd")
-    endif()
-    file(COPY ${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-dbg/zlib.pc DESTINATION ${CURRENT_PACKAGES_DIR}/debug/lib/pkgconfig)
-endif()
-
-vcpkg_fixup_pkgconfig()
+vcpkg_fixup_pkgconfig_mod()
 
 file(INSTALL ${CMAKE_CURRENT_LIST_DIR}/LICENSE DESTINATION ${CURRENT_PACKAGES_DIR}/share/${PORT} RENAME copyright)
 
@@ -53,4 +40,4 @@ vcpkg_copy_pdbs()
 
 file(COPY ${CMAKE_CURRENT_LIST_DIR}/usage DESTINATION ${CURRENT_PACKAGES_DIR}/share/${PORT})
 
-# vcpkg_test_cmake(PACKAGE_NAME ZLIB MODULE)
+vcpkg_test_cmake(PACKAGE_NAME ZLIB MODULE)

@@ -8,3 +8,4 @@ scripts/buildtools/__pycache__
 .vscode/ipch
 bin
 vcpkg.exe
+vcpkg

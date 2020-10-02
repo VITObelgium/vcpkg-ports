@@ -60,6 +60,10 @@ if(VCPKG_TARGET_IS_UWP)
     )
 endif()
 
+if (VCPKG_TARGET_IS_OSX)
+    list(APPEND FEATURE_OPTIONS -DVCPKG_ALLOW_SYSTEM_LIBS=ON)
+endif ()
+
 vcpkg_configure_cmake(
     SOURCE_PATH ${SOURCE_PATH}
     PREFER_NINJA

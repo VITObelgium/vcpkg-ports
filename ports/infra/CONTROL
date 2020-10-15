@@ -1,5 +1,5 @@
 Source: infra
-Version: 0.9.44
+Version: 0.9.45
 Description: c++ infrastructure classes (logging, string operations, ...)
 Build-Depends: fmt, date
 
@@ -38,6 +38,10 @@ Build-Depends: qt5[qml,location], gdal
 Feature: sqlite
 Description: Sqlite database utilities
 Build-Depends: sqlpp11-connector-sqlite3
+
+Feature: zstd
+Description: Enable zstd compression support
+Build-Depends: zstd
 
 Feature: postgres
 Description: Postgresql database utilities

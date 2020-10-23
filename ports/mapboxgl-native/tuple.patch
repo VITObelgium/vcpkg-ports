@@ -1,0 +1,19 @@
+diff --git a/include/mbgl/util/indexed_tuple.hpp b/include/mbgl/util/indexed_tuple.hpp
+index 99d73d1e1..fc22d1ee3 100644
+--- a/include/mbgl/util/indexed_tuple.hpp
++++ b/include/mbgl/util/indexed_tuple.hpp
+@@ -30,12 +30,12 @@ public:
+ 
+     template <class I>
+     auto& get() {
+-        return std::get<TypeIndex<I, Is...>::value, Ts...>(*this);
++        return std::get<TypeIndex<I, Is...>::value>(*this);
+     }
+ 
+     template <class I>
+     const auto& get() const {
+-        return std::get<TypeIndex<I, Is...>::value, Ts...>(*this);
++        return std::get<TypeIndex<I, Is...>::value>(*this);
+     }
+ 
+     template <class... Us>

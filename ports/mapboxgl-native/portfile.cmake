@@ -49,6 +49,7 @@ vcpkg_apply_patches(
         cmake-fixes-qt.patch
         compression-zlib.patch
         iterator-include.patch
+        tuple.patch
 )
     
 vcpkg_configure_cmake(
@@ -59,6 +60,7 @@ vcpkg_configure_cmake(
         -DMBGL_WITH_RTTI=ON
         -DMBGL_WITH_QT=ON
         -DMBGL_WITH_COVERAGE=OFF
+        -DMBGL_WITH_WERROR=OFF
         ${ADDITIONAL_ARGS}
 )
 

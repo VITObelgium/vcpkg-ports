@@ -1,0 +1,29 @@
+diff -Naur a/Vc/common/scatterimplementation.h b/Vc/common/scatterimplementation.h
+--- a/Vc/common/scatterimplementation.h	2018-11-19 13:14:38.000000000 +0100
++++ b/Vc/common/scatterimplementation.h	2020-11-13 14:22:14.042974900 +0100
+@@ -72,6 +72,7 @@
+                                     const IT &indexes,
+                                     typename V::MaskArgument mask)
+ {
++    /*
+     size_t bits = mask.toInt();
+     while (Vc_IS_LIKELY(bits > 0)) {
+         size_t i, j;
+@@ -83,15 +84,15 @@
+         mem[indexes[i]] = v[i];
+         mem[indexes[j]] = v[j];
+     }
++    */
+ 
+-    /* Alternative from Vc::SSE (0.7)
++    /* Alternative from Vc::SSE (0.7) */
+     int bits = mask.toInt();
+     while (bits) {
+         const int i = _bit_scan_forward(bits);
+         bits ^= (1 << i); // btr?
+         mem[indexes[i]] = v[i];
+     }
+-    */
+ }
+ 
+ template <typename V, typename MT, typename IT>

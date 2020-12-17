@@ -35,6 +35,11 @@ vcpkg_fixup_cmake_targets(CONFIG_PATH "lib/cmake/GEOS")
 vcpkg_test_cmake(PACKAGE_NAME GEOS)
 
 file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/include)
+if (EXISTS ${CURRENT_PACKAGES_DIR}/bin/geos-config)
+    vcpkg_replace_string(${CURRENT_PACKAGES_DIR}/bin/geos-config "packages/${PORT}_${TARGET_TRIPLET}" "installed/${TARGET_TRIPLET}")
+    file(COPY ${CURRENT_PACKAGES_DIR}/bin/geos-config DESTINATION ${CURRENT_PACKAGES_DIR}/tools)
+    file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/bin ${CURRENT_PACKAGES_DIR}/debug/bin)
+endif ()
 
 # Handle copyright
 file(INSTALL ${SOURCE_PATH}/COPYING DESTINATION DESTINATION ${CURRENT_PACKAGES_DIR}/share/${PORT} RENAME copyright)

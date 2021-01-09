@@ -134,6 +134,7 @@ set(QT_OPTIONS
     -no-glib
     -no-webp
     -no-cups
+    -no-feature-zstd
     -system-zlib
     -system-libpng
     -system-libjpeg

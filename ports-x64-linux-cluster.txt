@@ -50,7 +50,7 @@ mapnik[gdal]
 tbb
 trompeloeil
 parallelstl
-boost[iostreams,zlib,program-options,regex,filesystem,thread,system,date-time]
+boost[iostreams,zlib,program-options,regex,thread,system,date-time]
 vc
 typesafe
 zstr

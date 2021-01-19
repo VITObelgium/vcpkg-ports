@@ -1,18 +1,11 @@
 include(vcpkg_common_functions)
 
 set(MAJOR 1)
-set(MINOR 75)
+set(MINOR 74)
 set(REVISION 0)
 set(VERSION ${MAJOR}.${MINOR}.${REVISION})
 set(VERSION_UNDERSCORE ${MAJOR}_${MINOR}_${REVISION})
-set(PACKAGE_NAME ${PORT}_${VERSION_UNDERSCORE})
-if (CMAKE_HOST_WIN32)
-    set(PACKAGE ${PACKAGE_NAME}.7z)
-    set(SHA_SUM b00946f87ee8b66ccac843729c6c2ffbc444c195cc8e11bd20baa73a7f7cb4a31f91bfc918e19ea850765cc6b0898b05d5ba605cad402330b094cbf9a45113fa)
-else ()
-    set(PACKAGE ${PACKAGE_NAME}.tar.bz2)
-    set(SHA_SUM d86f060245e98dca5c7f3f831c98ea9ccbfa8310f20830dd913d9d4c939fbe7cb94accd35f1128e7c4faf6c27adb6f4bb54e5477a6bde983dfc7aa33c4eed03a)
-endif ()
+set(PACKAGE ${PORT}_${VERSION_UNDERSCORE}.7z)
 
 set(BUILD_PATH_DEBUG ${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-debug)
 set(BUILD_PATH_RELEASE ${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-release)
@@ -22,7 +15,7 @@ vcpkg_download_distfile(ARCHIVE
         "http://dl.bintray.com/boostorg/release/${VERSION}/source/${PACKAGE}"
         "https://netcologne.dl.sourceforge.net/project/boost/boost/${VERSION}/${PACKAGE}"
     FILENAME "${PACKAGE}"
-    SHA512 ${SHA_SUM}
+    SHA512 a2c3524235479f8a56dba154114962df50293d87304a8943f3c8755408f2ca380c90aff6fa1ef0aeefb927046db7b8e5dba5c7b19f493ee6799ad74f423d402e
 )
 
 file(REMOVE_RECURSE ${BUILD_PATH_DEBUG})
@@ -245,6 +238,8 @@ if (NOT WITH_COMPONENTS)
     file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug)
     file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/lib)
 endif ()
+
+vcpkg_test_cmake(PACKAGE_NAME Boost MODULE REQUIRED_HEADER boost/version.hpp TARGETS Boost::headers)
 
 # Handle copyright
 file(INSTALL ${SOURCE_PATH}/LICENSE_1_0.txt DESTINATION ${CURRENT_PACKAGES_DIR}/share/${PORT} RENAME copyright)

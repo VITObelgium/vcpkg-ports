@@ -32,6 +32,8 @@ if (CMD_ERROR)
     message(FATAL_ERROR "Failed to apply vcpkg patch (Error: ${CMD_ERROR})")
 endif ()
 
+file(COPY ${CMAKE_CURRENT_LIST_DIR}/scripts/vcpkgTools.xml DESTINATION ${VCPKG_BUILD_DIR}/scripts)
+
 execute_process(
     COMMAND ${VCPKG_BUILD_DIR}/bootstrap-vcpkg${SCRIPT_EXTENSION} -disableMetrics
     WORKING_DIRECTORY ${VCPKG_BUILD_DIR}

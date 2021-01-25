@@ -8,11 +8,11 @@
         <archiveName>cmake-3.15.0-win64-x64.zip</archiveName>
     </tool>
     <tool name="cmake" os="osx">
-        <version>3.15.0</version>
-        <exeRelativePath>cmake-3.15.0-Darwin-x86_64/CMake.app/Contents/bin/cmake</exeRelativePath>
-        <url>https://github.com/Kitware/CMake/releases/download/v3.15.0/cmake-3.15.0-Darwin-x86_64.tar.gz</url>
-        <sha512>6aedf8941bfd6ec446b9d630d495c0033e8ad94cf23809a3dae01823d59358398cdc59994e1db1bc92ce3f283062bc6da4550c6c2e6fe816d18cfa7f1e18bf74</sha512>
-        <archiveName>cmake-3.15.0-Darwin-x86_64.tar.gz</archiveName>
+        <version>3.19.3</version>
+        <exeRelativePath>cmake-3.19.3-macos-universal/CMake.app/Contents/bin/cmake</exeRelativePath>
+        <url>https://github.com/Kitware/CMake/releases/download/v3.19.3/cmake-3.19.3-macos-universal.tar.gz</url>
+        <sha512>360e6024496965a8819700418079baa617eb825409295e4667eee6eedbf0dce459e659091c31959d9b65d2444eae7ed7316f00b4882b6773320fafce93f251cf</sha512>
+        <archiveName>cmake-3.19.3-universal.tar.gz</archiveName>
     </tool>
     <tool name="cmake" os="linux">
         <version>3.17.2</version>
@@ -101,11 +101,11 @@
         <archiveName>ninja-linux-1.10.0.zip</archiveName>
     </tool>
     <tool name="ninja" os="osx">
-        <version>1.10.0</version>
+        <version>1.10.2</version>
         <exeRelativePath>ninja</exeRelativePath>
-        <url>https://github.com/ninja-build/ninja/releases/download/v1.10.0/ninja-mac.zip</url>
-        <sha512>619a1924067a0b30fc5f8887f868d3ee5481838d2f0f158d031f7614a2a10b95a73d4a56b658d5d560283ebf809e2e536b968c6c01ff0108075c3f393f5780ba</sha512>
-        <archiveName>ninja-mac-1.10.0.zip</archiveName>
+        <url>https://github.com/ninja-build/ninja/releases/download/v1.10.2/ninja-mac.zip</url>
+        <sha512>bcd12f6a3337591306d1b99a7a25a6933779ba68db79f17c1d3087d7b6308d245daac08df99087ff6be8dc7dd0dcdbb3a50839a144745fa719502b3a7a07260b</sha512>
+        <archiveName>ninja-mac-1.10.2.zip</archiveName>
     </tool>
     <tool name="ninja" os="freebsd">
         <version>1.8.2</version>

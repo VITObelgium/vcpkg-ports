@@ -7,6 +7,12 @@ set(PACKAGE ${PACKAGE_NAME}.tar.bz2)
 
 include(vcpkg_common_functions)
 
+if (${TARGET_TRIPLET} STREQUAL "arm64-osx")
+    set(_CMAKE_EXTRA_OPTIONS "-DDISABLE_GEOS_INLINE=ON")
+else()
+    set(_CMAKE_EXTRA_OPTIONS "")
+endif()
+
 vcpkg_download_distfile(ARCHIVE
     URLS "http://download.osgeo.org/geos/${PACKAGE}"
     FILENAME "${PACKAGE}"
@@ -29,6 +35,7 @@ vcpkg_configure_cmake(
     OPTIONS
         -DBUILD_TESTING=OFF
         -DBUILD_DOCUMENTATION=OFF
+        ${_CMAKE_EXTRA_OPTIONS}
 )
 vcpkg_install_cmake()
 vcpkg_fixup_cmake_targets(CONFIG_PATH "lib/cmake/GEOS")

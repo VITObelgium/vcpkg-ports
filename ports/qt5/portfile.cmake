@@ -225,6 +225,10 @@ elseif(VCPKG_CMAKE_SYSTEM_NAME STREQUAL "Linux")
 elseif(VCPKG_CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     list(APPEND PLATFORM_OPTIONS -c++std c++17 -no-pch)
 
+    if (${TARGET_TRIPLET} STREQUAL "arm64-osx")
+        list(APPEND PLATFORM_OPTIONS QMAKE_APPLE_DEVICE_ARCHS=arm64)
+    endif ()
+
     # change the minumum deployment target so the c++17 features become available
     vcpkg_replace_string(${SOURCE_PATH}/qtbase/mkspecs/common/macx.conf
         "QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.13"

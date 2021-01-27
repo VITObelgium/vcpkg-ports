@@ -1,15 +1,19 @@
-set(PCRE2_VERSION 10.32)
+set(PCRE2_VERSION 10.36)
 include(vcpkg_common_functions)
 vcpkg_download_distfile(ARCHIVE
     URLS "https://ftp.pcre.org/pub/pcre/pcre2-${PCRE2_VERSION}.zip" "https://sourceforge.net/projects/pcre/files/pcre2/${PCRE2_VERSION}/pcre2-${PCRE2_VERSION}.zip/download"
     FILENAME "pcre2-${PCRE2_VERSION}.zip"
-    SHA512 4e556059ee25940a2ace4219ffc338636dd00a924d846aea81221ab563b5cba3be18fc9ea77ceb8c83e6345485ec120ed9b8eaea198816e0a5242b3c6154b73f)
+    SHA512 68f5984a786f77e298d33a55260ff23709cc959b6085fe6f4c4e70c1db8531f177e8e26b03fab114cfc200cf919c340aaba463bb2d0e978e635184098ed45b9f)
 
 vcpkg_extract_source_archive_ex(
     ARCHIVE ${ARCHIVE}
     OUT_SOURCE_PATH SOURCE_PATH
-    PATCHES fix-space.patch
 )
+
+set(SUPPORT_JIT ON)
+if (${TARGET_TRIPLET} STREQUAL "arm64-osx")
+    set(SUPPORT_JIT OFF)
+endif ()
 
 vcpkg_configure_cmake(
     SOURCE_PATH ${SOURCE_PATH}
@@ -18,7 +22,7 @@ vcpkg_configure_cmake(
         -DPCRE2_BUILD_PCRE2_8=ON
         -DPCRE2_BUILD_PCRE2_16=ON
         -DPCRE2_BUILD_PCRE2_32=ON
-        -DPCRE2_SUPPORT_JIT=ON
+        -DPCRE2_SUPPORT_JIT=${SUPPORT_JIT}
         -DPCRE2_SUPPORT_UNICODE=ON
         -DPCRE2_BUILD_TESTS=OFF
         -DPCRE2_BUILD_PCRE2GREP=OFF)
@@ -39,6 +43,10 @@ file(REMOVE ${CURRENT_PACKAGES_DIR}/lib/pcre2-posix.lib ${CURRENT_PACKAGES_DIR}/
 file(REMOVE ${CURRENT_PACKAGES_DIR}/bin/pcre2-posix.dll ${CURRENT_PACKAGES_DIR}/debug/bin/pcre2-posixd.dll)
 
 vcpkg_copy_pdbs()
+
+if(VCPKG_LIBRARY_LINKAGE STREQUAL "static")
+    file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/bin" "${CURRENT_PACKAGES_DIR}/debug/bin")
+endif()
 
 file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/man)
 file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/share/doc)

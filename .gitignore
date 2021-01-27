@@ -7,3 +7,4 @@ scripts/buildtools/__pycache__
 .vscode/cquery_cached_index
 .vscode/ipch
 bin
+*.DS_Store

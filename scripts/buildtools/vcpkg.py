@@ -178,7 +178,7 @@ def cmake_configure(
     os.chdir(cwd)
 
 
-def cmake_build(build_dir, config=None, target=None):
+def cmake_build(build_dir, config=None, targets=[]):
     cmake_bin = find_cmake_binary()
     if not cmake_bin:
         raise RuntimeError("cmake executable could not be found")
@@ -187,7 +187,7 @@ def cmake_build(build_dir, config=None, target=None):
     if config is not None:
         args.extend(["--config", config])
 
-    if target is not None:
+    for target in targets:
         args.extend(["--target", target])
     subprocess.check_call(args)
 
@@ -413,7 +413,7 @@ def build_project(
     build_dir=None,
     install_dir=None,
     generator=None,
-    target=None,
+    targets=[],
     build_name=None,
     verbose=False,
     run_tests_after_build=False,
@@ -453,7 +453,7 @@ def build_project(
             generator=generator,
             verbose=verbose,
         )
-        cmake_build(build_dir, config="Release", target=target)
+        cmake_build(build_dir, config="Release", targets=targets)
     except subprocess.CalledProcessError as e:
         raise RuntimeError("Build failed: {}".format(e))
 
@@ -477,7 +477,7 @@ def build_project_release(
     cmake_args=[],
     build_name=None,
     install_dir=None,
-    target=None,
+    targets=[],
     run_tests_after_build=False,
     test_arguments=None,
 ):
@@ -501,7 +501,7 @@ def build_project_release(
         triplet,
         cmake_args,
         build_dir,
-        target=target,
+        targets=targets,
         install_dir=install_dir,
     )
 

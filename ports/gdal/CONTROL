@@ -1,5 +1,5 @@
 Source: gdal
-Version: 2.4.4-3
+Version: 2.4.4-4
 Description: The Geographic Data Abstraction Library for reading and writing geospatial raster and vector data.
 Build-Depends: proj4, tiff[lzw], liblzma, libpng (windows), libiconv
 
@@ -18,6 +18,9 @@ Build-Depends: libjpeg-turbo
 Feature: gif
 Description: Gif support
 Build-Depends: giflib
+
+Feature: grib
+Description: Grib support
 
 Feature: sqlite
 Description: Sqlite support

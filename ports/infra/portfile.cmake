@@ -1,9 +1,9 @@
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO VITObelgium/cpp-infra
-    REF 0.9.53
+    REF 0.9.54
     HEAD_REF master
-    SHA512 8880d5880d28b37e7e13955aed7b12c08634c7283bc9dc4fabafb188ba0b06eb7733ee2ce490eb36d28d6ac6d745cbe5e84bd61fc96449991b0ab66a264bb461
+    SHA512 874e8be47c4416bf542dafb141325b9b735ceb6b4beb82b0a4ba2a2eee592afd67785bf8bd1914641db05ff8c0054f3a5911f2ba7b031df8cdef25ce938757ff
 )
 
 vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS

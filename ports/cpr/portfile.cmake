@@ -10,6 +10,7 @@ vcpkg_from_github(
         001-cpr-config.patch
         002_cpr_fixcase.patch
         ssl-opt.patch
+        ssl-no-revoke.patch
 )
 
 vcpkg_configure_cmake(

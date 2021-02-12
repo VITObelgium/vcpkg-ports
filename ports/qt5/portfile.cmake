@@ -135,6 +135,7 @@ set(QT_OPTIONS
     -no-webp
     -no-cups
     -no-feature-zstd
+    -no-feature-accessibility
     -system-zlib
     -system-libpng
     -system-libjpeg

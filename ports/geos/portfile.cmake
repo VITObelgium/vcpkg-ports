@@ -1,22 +1,16 @@
 set(VERSION_MAJOR 3)
 set(VERSION_MINOR 9)
-set(VERSION_REVISION 0)
+set(VERSION_REVISION 1)
 set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_REVISION})
 set(PACKAGE_NAME ${PORT}-${VERSION})
 set(PACKAGE ${PACKAGE_NAME}.tar.bz2)
 
 include(vcpkg_common_functions)
 
-if (${TARGET_TRIPLET} STREQUAL "arm64-osx")
-    set(_CMAKE_EXTRA_OPTIONS "-DDISABLE_GEOS_INLINE=ON")
-else()
-    set(_CMAKE_EXTRA_OPTIONS "")
-endif()
-
 vcpkg_download_distfile(ARCHIVE
     URLS "http://download.osgeo.org/geos/${PACKAGE}"
     FILENAME "${PACKAGE}"
-    SHA512 1081f2aa20e671450953f7bb53b17c703804a1c9f4987c9da0987ff24339af5811b2c8b79c8e438d04ca38e4d06164dc5a4206f266f7efc19af3f9d9ea8f71f8
+    SHA512 7ea131685cd110ec5e0cb7c214b52b75397371e75f011e1410b6770b6a48ca492a02337d86a7be35c852ef94604fe9d6f49634c79d4946df611aaa4f5cbaee28
 )
 vcpkg_extract_source_archive_ex(
     OUT_SOURCE_PATH SOURCE_PATH
@@ -35,7 +29,6 @@ vcpkg_configure_cmake(
     OPTIONS
         -DBUILD_TESTING=OFF
         -DBUILD_DOCUMENTATION=OFF
-        ${_CMAKE_EXTRA_OPTIONS}
 )
 vcpkg_install_cmake()
 vcpkg_fixup_cmake_targets(CONFIG_PATH "lib/cmake/GEOS")

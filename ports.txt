@@ -18,6 +18,7 @@ netcdf-c
 netcdf-cxx4
 nlohmann-json
 pugixml
+scnlib
 shapelib
 soci[postgresql,sqlite3]
 spdlog

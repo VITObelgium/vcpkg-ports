@@ -29,6 +29,7 @@ http-parser
 pugixml
 reproc
 restinio[boost]
+scnlib
 shapelib
 sqlite3
 sqlpp11

@@ -1182,6 +1182,10 @@ add_library(ogr OBJECT
     ogr/ogrsf_frmts/mitab/mitab_ogr_datasource.cpp
     ogr/ogrsf_frmts/mitab/mitab_geometry.cpp
     ogr/ogrsf_frmts/mitab/mitab_tabseamless.cpp
+
+    ogr/ogrsf_frmts/vrt/ogrvrtdatasource.cpp
+    ogr/ogrsf_frmts/vrt/ogrvrtdriver.cpp
+    ogr/ogrsf_frmts/vrt/ogrvrtlayer.cpp
 )
 
 set(OGR_PUBLIC_HEADERS
@@ -1302,6 +1306,7 @@ target_compile_definitions(ogr PRIVATE
     KML_ENABLED
     MEM_ENABLED
     GEOJSON_ENABLED
+    VRT_ENABLED
 )
 
 target_include_directories(ogr

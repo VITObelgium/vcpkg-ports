@@ -18,7 +18,7 @@ file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug")
 
 file(INSTALL ${SOURCE_PATH}/LICENSE.txt DESTINATION ${CURRENT_PACKAGES_DIR}/share/${PORT} RENAME copyright)
 file(INSTALL ${CMAKE_CURRENT_LIST_DIR}/usage DESTINATION ${CURRENT_PACKAGES_DIR}/share/${PORT})
-vcpkg_test_cmake(PACKAGE_NAME Lyra REQUIRED_HEADER lyra/lyra.hpp TARGETS bfg::lyra)
+vcpkg_test_cmake(PACKAGE_NAME lyra REQUIRED_HEADER lyra/lyra.hpp TARGETS bfg::lyra)
 
 #provided for backwards compatibility, remove eventually
 file(INSTALL ${CMAKE_CURRENT_LIST_DIR}/FindLyra.cmake DESTINATION ${CURRENT_PACKAGES_DIR}/share/cmake)

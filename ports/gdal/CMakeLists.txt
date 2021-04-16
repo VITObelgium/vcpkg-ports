@@ -1296,7 +1296,7 @@ if (GDAL_OGR_FRMTS_XLSX)
         ogr/ogrsf_frmts/xlsx/ogrxlsxdatasource.cpp
         ogr/ogrsf_frmts/xlsx/ogrxlsxdriver.cpp
     )
-    target_compile_definitions(ogr PRIVATE XLSX_ENABLED)
+    target_compile_definitions(ogr PRIVATE XLSX_ENABLED PUBLIC XML_STATIC)
     target_link_libraries(ogr PRIVATE EXPAT::EXPAT)
 endif ()
 

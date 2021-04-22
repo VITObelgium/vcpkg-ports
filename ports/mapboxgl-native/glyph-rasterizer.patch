@@ -1,0 +1,13 @@
+diff --git a/platform/qt/src/local_glyph_rasterizer.cpp b/platform/qt/src/local_glyph_rasterizer.cpp
+index 31abfd450..79141cd4b 100644
+--- a/platform/qt/src/local_glyph_rasterizer.cpp
++++ b/platform/qt/src/local_glyph_rasterizer.cpp
+@@ -40,7 +40,7 @@ LocalGlyphRasterizer::~LocalGlyphRasterizer() {
+ }
+ 
+ bool LocalGlyphRasterizer::canRasterizeGlyph(const FontStack&, GlyphID glyphID) {
+-    return impl->isConfigured() && impl->metrics->inFont(glyphID) && util::i18n::allowsFixedWidthGlyphGeneration(glyphID);
++    return impl->isConfigured() && impl->metrics->inFont(glyphID);
+ }
+ 
+ Glyph LocalGlyphRasterizer::rasterizeGlyph(const FontStack&, GlyphID glyphID) {

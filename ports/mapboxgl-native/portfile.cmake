@@ -50,6 +50,7 @@ vcpkg_apply_patches(
         compression-zlib.patch
         iterator-include.patch
         tuple.patch
+        glyph-rasterizer.patch
 )
     
 vcpkg_configure_cmake(

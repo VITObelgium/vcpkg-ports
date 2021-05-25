@@ -1,9 +1,9 @@
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO VITObelgium/cpp-infra
-    REF 0.9.62
+    REF 0.9.63
     HEAD_REF master
-    SHA512 e1916812923710fe7a70aee9cc31aaa1850b97baae15a5ede02216b2967489124e24eeeecb3d10dc8008299d13b86c8c2999406501b923b317b27e911e5fcf59
+    SHA512 12d0a8444c4a1b4d81af0205eba776c70bed8013a581d9f2df79113b1794258bda3f2fc7927f6dc6cf2c6303989fabba18ea1c9eae59bccc412db6d20578e00e
 )
 
 vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
@@ -15,6 +15,7 @@ vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
         log         INFRA_LOGGING
         numeric     INFRA_NUMERIC
         process     INFRA_PROCESS
+        cliprogress INFRA_CLI_PROGRESS
         sqlite      INFRA_DATABASE
         sqlite      INFRA_DATABASE_SQLITE
         postgres    INFRA_DATABASE_POSTGRES

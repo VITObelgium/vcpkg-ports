@@ -1,5 +1,5 @@
 Source: infra
-Version: 0.9.62
+Version: 0.9.63
 Description: c++ infrastructure classes (logging, string operations, ...)
 Build-Depends: fmt, date
 
@@ -54,6 +54,10 @@ Build-Depends: libxlsxwriter
 Feature: process
 Description: Support process launching utilities
 Build-Depends: reproc
+
+Feature: cliprogress
+Description: Cli progressbar utilities
+Build-Depends: indicators
 
 Feature: testutils
 Description: Unit test utilities

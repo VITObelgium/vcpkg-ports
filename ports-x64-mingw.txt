@@ -9,6 +9,7 @@ libjpeg-turbo
 libpng
 tiff[lzw]
 libressl
+indicators
 benchmark
 gtest
 ceres

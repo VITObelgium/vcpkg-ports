@@ -30,3 +30,4 @@ vc
 zlib
 infra[gdal,log,charset,xml,sqlite,postgres,xlsx,process,testutils]
 mapnik[gdal](osx|linux)
+indicators

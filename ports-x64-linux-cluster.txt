@@ -30,6 +30,7 @@ gdal[tools,geos,expat,gif,png,netcdf,spatialite]
 gsl
 harfbuzz
 hdf5[cpp]
+indicators
 netcdf-c
 netcdf-cxx4
 netcdf-fortran

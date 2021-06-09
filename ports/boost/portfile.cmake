@@ -1,7 +1,7 @@
 include(vcpkg_common_functions)
 
 set(MAJOR 1)
-set(MINOR 74)
+set(MINOR 75)
 set(REVISION 0)
 set(VERSION ${MAJOR}.${MINOR}.${REVISION})
 set(VERSION_UNDERSCORE ${MAJOR}_${MINOR}_${REVISION})
@@ -12,10 +12,9 @@ set(BUILD_PATH_RELEASE ${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-release)
 
 vcpkg_download_distfile(ARCHIVE
     URLS
-        "http://dl.bintray.com/boostorg/release/${VERSION}/source/${PACKAGE}"
-        "https://netcologne.dl.sourceforge.net/project/boost/boost/${VERSION}/${PACKAGE}"
+        "https://boostorg.jfrog.io/artifactory/main/release/${VERSION}/source/${PACKAGE}"
     FILENAME "${PACKAGE}"
-    SHA512 a2c3524235479f8a56dba154114962df50293d87304a8943f3c8755408f2ca380c90aff6fa1ef0aeefb927046db7b8e5dba5c7b19f493ee6799ad74f423d402e
+    SHA512 b00946f87ee8b66ccac843729c6c2ffbc444c195cc8e11bd20baa73a7f7cb4a31f91bfc918e19ea850765cc6b0898b05d5ba605cad402330b094cbf9a45113fa
 )
 
 file(REMOVE_RECURSE ${BUILD_PATH_DEBUG})

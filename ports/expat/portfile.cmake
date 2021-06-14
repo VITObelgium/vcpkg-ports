@@ -1,6 +1,6 @@
 set(MAJOR 2)
-set(MINOR 3)
-set(REVISION 0)
+set(MINOR 4)
+set(REVISION 1)
 set(VERSION R_${MAJOR}_${MINOR}_${REVISION})
 
 include(vcpkg_common_functions)
@@ -8,7 +8,7 @@ vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO libexpat/libexpat
     REF ${VERSION}
-    SHA512 728ceb1d912fabc7662d4201828dc29c7fdaff124a1d6dc81434b1951eb530b17f1bbb1aec22c1520543cff3844f4751f29d3c59b696dd8a56598abdc25e1d08
+    SHA512 1f08861e9b766fdbbc40159404a3fe1a86451d635ef81874fa3492845eda83ac2dc6a0272525891d396b70c9a9254c2f6c907fe4abb2f8a533ccd3f52dae9d5a
     HEAD_REF master
     PATCHES winpostfix.patch
 )
@@ -19,12 +19,6 @@ if(VCPKG_CMAKE_SYSTEM_NAME STREQUAL Emscripten)
     vcpkg_replace_string(${SOURCE_PATH}/expat/lib/xmlparse.c "#include <stdio.h>" "unsigned int arc4random(void);\n#include <stdio.h>")
 endif()
 
-if(VCPKG_LIBRARY_LINKAGE STREQUAL dynamic)
-    set(EXPAT_LINKAGE ON)
-else()
-    set(EXPAT_LINKAGE OFF)
-endif()
-
 vcpkg_configure_cmake(
     SOURCE_PATH ${SOURCE_PATH}/expat
     PREFER_NINJA
@@ -33,7 +27,6 @@ vcpkg_configure_cmake(
         -DEXPAT_BUILD_TESTS=OFF
         -DEXPAT_BUILD_TOOLS=OFF
         -DEXPAT_BUILD_DOCS=OFF
-        -DEXPAT_SHARED_LIBS=${EXPAT_LINKAGE}
 )
 
 vcpkg_install_cmake()

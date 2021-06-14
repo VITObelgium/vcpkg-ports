@@ -3,8 +3,8 @@ include(vcpkg_common_functions)
 vcpkg_from_github(
   OUT_SOURCE_PATH SOURCE_PATH
   REPO HowardHinnant/date
-  REF v3.0.0
-  SHA512 03ba0faef68e053aba888591b9350af1a043ef543825c80b1ca3f0dc0448697f56286e561f1a2a59e684680d7fc1e51fd24955c4cc222fe28db64f56037dc1aa
+  REF v3.0.1
+  SHA512 6bdc7cba821d66e17a559250cc0ce0095808e9db81cec9e16eaa4c31abdfa705299c67b72016d9b06b302bc306d063e83a374eb00728071b83a5ad650d59034f
   HEAD_REF master
 )
 

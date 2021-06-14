@@ -1,5 +1,5 @@
 Source: date
-Version: 3.0.0
+Version: 3.0.1
 Description: A date and time library based on the C++11/14/17 <chrono> header
 
 Feature: remote-api

@@ -53,11 +53,11 @@ function(vcpkg_acquire_msys PATH_TO_ROOT_OUT)
   if(_vam_HOST_ARCHITECTURE STREQUAL "AMD64")
     set(TOOLSUBPATH msys64)
     set(URLS
-      "https://sourceforge.net/projects/msys2/files/Base/x86_64/msys2-base-x86_64-20200720.tar.xz/download"
-      "http://repo.msys2.org/distrib/x86_64/msys2-base-x86_64-20200720.tar.xz"
+      "https://sourceforge.net/projects/msys2/files/Base/x86_64/msys2-base-x86_64-20210419.tar.xz/download"
+      "http://repo.msys2.org/distrib/x86_64/msys2-base-x86_64-20210419.tar.xz"
     )
-    set(ARCHIVE "msys2-base-x86_64-20200720.tar.xz")
-    set(HASH 1d0841107ded2c7917ebe1810175b940dd9ee9478200d535af0c99b235eb1102659c08cbe0f760e6c1c2a06ecf2f49537c7e0470662a99b72f0f8f0011b5242d)
+    set(ARCHIVE "msys2-base-x86_64-20210419.tar.xz")
+    set(HASH 5e50a5174ad7e356dd0a761d09ca95905834b68f6cbfc740b6d224a8efe5e4d7192028f47bdb74208eeb588cfa3e9dd9ad94e34c9935d7903eb5399ba3b0ca0d)
     set(STAMP "initialized-msys2_64.stamp")
   else()
     set(TOOLSUBPATH msys32)

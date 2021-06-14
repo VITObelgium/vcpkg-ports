@@ -1,16 +1,9 @@
-set(MAJOR 4)
-set(MINOR 4)
-set(REVISION 4)
-set(VERSION ${MAJOR}.${MINOR}.${REVISION})
-set(PACKAGE_NAME v${VERSION})
-set(PACKAGE ${PACKAGE_NAME}.tar.gz)
-
 include(vcpkg_common_functions)
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO Unidata/netcdf-fortran
-    REF v4.5.2
-    SHA512 d9f5463ee31dab62d5a1b2feb0c780c344978f179237cd23f92ea32a4b400910a66a9ac4e446be734166ecc7578ef25a7183b4444926a6f386d9a5e02d1cf4f6
+    REF v4.5.3
+    SHA512 fe4b2f6f8c44bf4fdeebe3cbd57ee44ccee15a70075428bb68f0d33b70f9291b68b542965634a27fb4be5a59c756d672a3d264f2628391861edb98a244e072b4
     HEAD_REF master
 )
 
@@ -39,6 +32,7 @@ vcpkg_configure_cmake(
 )
 
 vcpkg_install_cmake()
+vcpkg_fixup_cmake_targets(CONFIG_PATH lib/cmake)
 
 if(VCPKG_LIBRARY_LINKAGE STREQUAL "static")
     file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/bin ${CURRENT_PACKAGES_DIR}/bin)

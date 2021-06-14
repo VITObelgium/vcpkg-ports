@@ -12,8 +12,8 @@ include(vcpkg_common_functions)
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO google/benchmark
-    REF v1.5.0
-    SHA512 a0df9aa3d03f676e302c76d83b436de36eea0a8517ab50a8f5a11c74ccc68a1f5128fa02474901002d8e6b5a4d290ef0272a798ff4670eab3e2d78dc86bb6cd3
+    REF v1.5.5
+    SHA512 91a2cdf0245625c657b9bb8d76c7d616a99eaed333e42b34ceff4e996b8fa6027b1c7313a815e7b441d2f6e2e1244c139a0911d585bf0d2e767ac3cea23a67d1
     HEAD_REF master
 )
 

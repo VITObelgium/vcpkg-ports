@@ -28,7 +28,6 @@ libpng
 libressl
 libxlsxwriter
 lyra
-maphdf5
 mapnik[gdal]
 mio
 netcdf-c

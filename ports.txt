@@ -12,7 +12,10 @@ harfbuzz
 hdf5[cpp]
 http-parser
 icu
+indicators
+infra[gdal,log,charset,xml,sqlite,postgres,xlsx,process,testutils]
 lyra
+mapnik[gdal](osx|linux)
 mio
 netcdf-c
 netcdf-cxx4
@@ -24,10 +27,8 @@ soci[postgresql,sqlite3]
 spdlog
 sqlite3
 tbb
+tomlplusplus
 trompeloeil
 typesafe
 vc
 zlib
-infra[gdal,log,charset,xml,sqlite,postgres,xlsx,process,testutils]
-mapnik[gdal](osx|linux)
-indicators

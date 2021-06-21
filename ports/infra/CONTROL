@@ -1,5 +1,5 @@
 Source: infra
-Version: 0.9.44
+Version: 0.9.65
 Description: c++ infrastructure classes (logging, string operations, ...)
 Build-Depends: fmt, date
 
@@ -39,6 +39,10 @@ Feature: sqlite
 Description: Sqlite database utilities
 Build-Depends: sqlpp11-connector-sqlite3
 
+Feature: zstd
+Description: Enable zstd compression support
+Build-Depends: zstd
+
 Feature: postgres
 Description: Postgresql database utilities
 Build-Depends: sqlpp11-connector-postgresql
@@ -50,6 +54,10 @@ Build-Depends: libxlsxwriter
 Feature: process
 Description: Support process launching utilities
 Build-Depends: reproc
+
+Feature: cliprogress
+Description: Cli progressbar utilities
+Build-Depends: indicators
 
 Feature: testutils
 Description: Unit test utilities

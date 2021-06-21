@@ -5,7 +5,6 @@ set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_REVISION})
 set(PACKAGE_NAME ${PORT}-${VERSION})
 set(PACKAGE ${PACKAGE_NAME}.tar.gz)
 
-include(vcpkg_common_functions)
 set(SOURCE_PATH ${CURRENT_BUILDTREES_DIR}/src/bzip2-1.0.6)
 vcpkg_download_distfile(ARCHIVE
     URLS "https://github.com/past-due/bzip2-mirror/releases/download/v${VERSION}/${PACKAGE}"

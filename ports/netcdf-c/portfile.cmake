@@ -1,4 +1,3 @@
-include(vcpkg_common_functions)
 set(VERSION_MAJOR 4)
 set(VERSION_MINOR 7)
 set(VERSION_REVISION 4)
@@ -16,12 +15,12 @@ vcpkg_from_github(
     HEAD_REF master
     PATCHES
         libm.patch
+        hdf5-targets.patch
         transitive-hdf5.patch
         nc-config.patch
         no-install-deps.patch
         backtrace.patch # only support backtrace when using glibc
         hdf5-path-encoding.patch
-        use_targets.patch
         #config-pkg-location.patch
         #mingw.patch
 )

@@ -1,23 +1,30 @@
-include(vcpkg_common_functions)
-
-vcpkg_from_github(
+vcpkg_from_gitlab(
+    GITLAB_URL https://gitlab.com
     OUT_SOURCE_PATH SOURCE_PATH
-    REPO eigenteam/eigen-git-mirror
-    REF 3.3.7
-    SHA512 270ab9b5c22e09aa0e70d1a26995523c5c21fb0f09da45c137c11ab4c7700fe2bdb2b343c1e063bea4be5ae61d2313ff29ebbcad519dc355a568792b4a6e9e48
+    REPO libeigen/eigen
+    REF 3.3.9
+    SHA512 16244cc89f2e1879543232b965cbf653b3ccf10e967c8c437a41e27d8320392bdf584d8c24b8a97406ab7d1481d5154da74e0702ec1334ae6a46de83f4573a46
     HEAD_REF master
+    PATCHES disable_pkgconfig_absolute_path_check.patch
 )
 
 vcpkg_configure_cmake(
     SOURCE_PATH ${SOURCE_PATH}
     PREFER_NINJA
+    OPTIONS
+        -DBUILD_TESTING=OFF
+        -DEIGEN_BUILD_PKGCONFIG=ON
     OPTIONS_RELEASE
         -DCMAKEPACKAGE_INSTALL_DIR=${CURRENT_PACKAGES_DIR}/share/eigen3
+        -DPKGCONFIG_INSTALL_DIR=${CURRENT_PACKAGES_DIR}/lib/pkgconfig
     OPTIONS_DEBUG
         -DCMAKEPACKAGE_INSTALL_DIR=${CURRENT_PACKAGES_DIR}/debug/share/eigen3
+        -DPKGCONFIG_INSTALL_DIR=${CURRENT_PACKAGES_DIR}/debug/lib/pkgconfig
 )
 
 vcpkg_install_cmake()
+vcpkg_fixup_cmake_targets()
+vcpkg_fixup_pkgconfig_mod()
 
 file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug)
 

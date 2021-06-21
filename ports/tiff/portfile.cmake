@@ -1,4 +1,3 @@
-include(vcpkg_common_functions)
 
 set(LIBTIFF_VERSION 4.0.10)
 

@@ -1,4 +1,4 @@
 The package lyra is compatible with built-in CMake targets:
 
-    find_package(Lyra REQUIRED)
-    target_link_libraries(main PRIVATE BFG::Lyra)
+    find_package(lyra CONFIG REQUIRED)
+    target_link_libraries(main PRIVATE bfg::lyra)

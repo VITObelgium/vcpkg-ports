@@ -1,4 +1,3 @@
-include(vcpkg_common_functions)
 
 option(BUILD_DEBUG_TOOLS "Build debug version of tools" OFF)
 

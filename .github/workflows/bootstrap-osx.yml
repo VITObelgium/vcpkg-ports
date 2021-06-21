@@ -11,5 +11,5 @@ jobs:
     - uses: actions/checkout@v1
     - name: Bootstrap the ports on OSX
       run: |
-        brew install nasm
+        brew install nasm ninja
         python3 scripts/buildtools/vcpkg.py --triplet x64-osx --ports-dir . --clean-after-build

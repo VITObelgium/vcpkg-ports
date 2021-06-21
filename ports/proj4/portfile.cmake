@@ -1,4 +1,3 @@
-include(vcpkg_common_functions)
 set(MAJOR 5)
 set(MINOR 2)
 set(REVISION 0)
@@ -72,5 +71,3 @@ file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/share)
 # Handle copyright
 file(COPY ${SOURCE_PATH}/COPYING DESTINATION ${CURRENT_PACKAGES_DIR}/share/${PORT})
 file(RENAME ${CURRENT_PACKAGES_DIR}/share/${PORT}/COPYING ${CURRENT_PACKAGES_DIR}/share/${PORT}/copyright)
-
-vcpkg_test_cmake(PACKAGE_NAME PROJ4 REQUIRED_HEADER proj.h TARGETS proj)

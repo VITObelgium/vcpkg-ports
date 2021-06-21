@@ -1,4 +1,3 @@
-include(vcpkg_common_functions)
 
 vcpkg_download_distfile(ARCHIVE
     URLS "http://www.gaia-gis.it/gaia-sins/readosm-sources/readosm-1.1.0.tar.gz"

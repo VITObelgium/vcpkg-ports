@@ -1,4 +1,3 @@
-include(vcpkg_common_functions)
 set(FT_VERSION 2.8.1)
 vcpkg_download_distfile(ARCHIVE
     URLS "http://download.savannah.gnu.org/releases/freetype/freetype-${FT_VERSION}.tar.bz2"

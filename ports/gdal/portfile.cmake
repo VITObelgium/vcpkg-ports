@@ -1,4 +1,3 @@
-include(vcpkg_common_functions)
 set(MAJOR 2)
 set(MINOR 4)
 set(REVISION 4)
@@ -19,6 +18,7 @@ vcpkg_extract_source_archive_ex(
         copylayer-crash-1.patch # fixed upstream in next release
         copylayer-crash-2.patch # fixed upstream in next release
         netcdf-non-ascii.patch # fixed upstream in 3.x releases
+        vrtfilter.patch
 )
 
 file(COPY ${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt
@@ -32,6 +32,7 @@ TEST_FEATURE("png" WITH_PNG)
 TEST_FEATURE("geos" WITH_GEOS)
 TEST_FEATURE("jpeg" WITH_JPEG)
 TEST_FEATURE("gif" WITH_GIF)
+TEST_FEATURE("grib" WITH_GRIB)
 TEST_FEATURE("sqlite" WITH_SQLITE)
 TEST_FEATURE("spatialite" WITH_SPATIALITE)
 TEST_FEATURE("expat" WITH_EXPAT)
@@ -64,6 +65,7 @@ vcpkg_configure_cmake(
         -DGDAL_FRMTS_AAIGRID=ON
         -DGDAL_FRMTS_BMP=OFF
         -DGDAL_FRMTS_GIF=${WITH_GIF}
+        -DGDAL_FRMTS_GRIB=${WITH_GRIB}
         -DGDAL_FRMTS_HDF5=${WITH_NETCDF}
         -DGDAL_FRMTS_MBTILES=${WITH_SQLITE}
         -DGDAL_FRMTS_NETCDF=${WITH_NETCDF}

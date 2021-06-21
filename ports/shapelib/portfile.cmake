@@ -1,4 +1,3 @@
-include(vcpkg_common_functions)
 
 set(SHAPELIB_VERSION 1.5.0)
 set(SHAPELIB_HASH 230939afb33aee042808a32b38ee9dfc7ec1f39432e5a4ebe3fda99c2f87bfbebc91830d4e21691c51aae3f4bb65d7e71e7061472bb08124dcd3402c46800d6c)

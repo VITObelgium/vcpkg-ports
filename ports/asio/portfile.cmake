@@ -1,6 +1,4 @@
 #header-only library
-include(vcpkg_common_functions)
-
 vcpkg_download_distfile(
 	ARCHIVE_FILE
 	URLS "https://netix.dl.sourceforge.net/project/asio/asio/1.12.2%20%28Stable%29/asio-1.12.2.zip"

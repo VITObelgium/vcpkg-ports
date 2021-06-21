@@ -22,6 +22,7 @@ option(GDAL_CURL_SUPPORT "Enable curl support" OFF)
 option(GDAL_FRMTS_AAIGRID "Arc ascii driver support" ON)
 option(GDAL_FRMTS_BMP "Bitmap driver support" OFF)
 option(GDAL_FRMTS_GIF "Gif driver support" OFF)
+option(GDAL_FRMTS_GRIB "Grib driver support" OFF)
 option(GDAL_FRMTS_HDF5 "Hdf5 driver support" OFF)
 option(GDAL_FRMTS_MBTILES "Mbtiles driver support (sqlite required)" OFF)
 option(GDAL_FRMTS_NETCDF "Netcdf driver support" OFF)
@@ -743,6 +744,80 @@ if (GDAL_FRMTS_GIF)
     target_compile_definitions(frmts PRIVATE FRMT_gif)
 endif ()
 
+if (GDAL_FRMTS_GRIB)
+    target_sources(frmts PRIVATE 
+        frmts/grib/gribdataset.cpp
+        frmts/grib/gribcreatecopy.cpp
+
+        frmts/grib/degrib/degrib/degrib1.cpp
+        frmts/grib/degrib/degrib/degrib2.cpp
+        frmts/grib/degrib/degrib/grib1tab.cpp
+        frmts/grib/degrib/degrib/inventory.cpp
+        frmts/grib/degrib/degrib/metaname.cpp
+        frmts/grib/degrib/degrib/metaparse.cpp
+        frmts/grib/degrib/degrib/metaprint.cpp
+        frmts/grib/degrib/degrib/tendian.cpp
+        frmts/grib/degrib/degrib/clock.c
+        frmts/grib/degrib/degrib/engribapi.c
+        frmts/grib/degrib/degrib/grib2api.c
+        frmts/grib/degrib/degrib/hazard.c
+        frmts/grib/degrib/degrib/myassert.c
+        frmts/grib/degrib/degrib/myerror.c
+        frmts/grib/degrib/degrib/myutil.c
+        frmts/grib/degrib/degrib/scan.c
+        frmts/grib/degrib/degrib/weather.c
+
+        frmts/grib/degrib/g2clib/cmplxpack.c
+        frmts/grib/degrib/g2clib/compack.c
+        frmts/grib/degrib/g2clib/comunpack.c
+        frmts/grib/degrib/g2clib/dec_png.c
+        frmts/grib/degrib/g2clib/drstemplates.c
+        frmts/grib/degrib/g2clib/enc_jpeg2000.c
+        frmts/grib/degrib/g2clib/enc_png.c
+        frmts/grib/degrib/g2clib/g2_addfield.c
+        frmts/grib/degrib/g2clib/g2_addgrid.c
+        frmts/grib/degrib/g2clib/g2_addlocal.c
+        frmts/grib/degrib/g2clib/g2_create.c
+        frmts/grib/degrib/g2clib/g2_free.c
+        frmts/grib/degrib/g2clib/g2_getfld.c
+        frmts/grib/degrib/g2clib/g2_gribend.c
+        frmts/grib/degrib/g2clib/g2_info.c
+        frmts/grib/degrib/g2clib/g2_miss.c
+        frmts/grib/degrib/g2clib/g2_unpack1.c
+        frmts/grib/degrib/g2clib/g2_unpack2.c
+        frmts/grib/degrib/g2clib/g2_unpack3.c
+        frmts/grib/degrib/g2clib/g2_unpack4.c
+        frmts/grib/degrib/g2clib/g2_unpack5.c
+        frmts/grib/degrib/g2clib/g2_unpack6.c
+        frmts/grib/degrib/g2clib/g2_unpack7.c
+        frmts/grib/degrib/g2clib/gbits.c
+        frmts/grib/degrib/g2clib/getdim.c
+        frmts/grib/degrib/g2clib/getpoly.c
+        frmts/grib/degrib/g2clib/gridtemplates.c
+        frmts/grib/degrib/g2clib/int_power.c
+        frmts/grib/degrib/g2clib/jpcpack.c
+        frmts/grib/degrib/g2clib/jpcunpack.c
+        frmts/grib/degrib/g2clib/misspack.c
+        frmts/grib/degrib/g2clib/mkieee.c
+        frmts/grib/degrib/g2clib/pack_gp.c
+        frmts/grib/degrib/g2clib/pdstemplates.c
+        frmts/grib/degrib/g2clib/pngpack.c
+        frmts/grib/degrib/g2clib/pngunpack.c
+        frmts/grib/degrib/g2clib/rdieee.c
+        frmts/grib/degrib/g2clib/reduce.c
+        frmts/grib/degrib/g2clib/seekgb.c
+        frmts/grib/degrib/g2clib/simpack.c
+        frmts/grib/degrib/g2clib/simunpack.c
+        frmts/grib/degrib/g2clib/specpack.c
+        frmts/grib/degrib/g2clib/specunpack.c
+
+        frmts/grib/degrib/g2clib/dec_jpeg2000.cpp
+    )
+
+    target_include_directories(frmts PRIVATE frmts/grib/degrib/degrib frmts/grib/degrib/g2clib)
+    target_compile_definitions(frmts PRIVATE FRMT_grib)
+endif ()
+
 if (GDAL_FRMTS_GTIFF)
     target_sources(frmts PRIVATE 
         frmts/gtiff/geotiff.cpp
@@ -955,6 +1030,7 @@ message(STATUS "Supported raster formats:")
 message(STATUS "Arc ascii driver support:         ${GDAL_FRMTS_AAIGRID}")
 message(STATUS "Bitmap driver support:            ${GDAL_FRMTS_BMP}")
 message(STATUS "Gif driver support:               ${GDAL_FRMTS_GIF}")
+message(STATUS "Grib driver support:              ${GDAL_FRMTS_GRIB}")
 message(STATUS "Geotiff driver support:           ${GDAL_FRMTS_GTIFF}")
 message(STATUS "Hdf5 driver support:              ${GDAL_FRMTS_HDF5}")
 message(STATUS "Mbtiles driver support:           ${GDAL_FRMTS_MBTILES}")
@@ -1106,6 +1182,10 @@ add_library(ogr OBJECT
     ogr/ogrsf_frmts/mitab/mitab_ogr_datasource.cpp
     ogr/ogrsf_frmts/mitab/mitab_geometry.cpp
     ogr/ogrsf_frmts/mitab/mitab_tabseamless.cpp
+
+    ogr/ogrsf_frmts/vrt/ogrvrtdatasource.cpp
+    ogr/ogrsf_frmts/vrt/ogrvrtdriver.cpp
+    ogr/ogrsf_frmts/vrt/ogrvrtlayer.cpp
 )
 
 set(OGR_PUBLIC_HEADERS
@@ -1216,7 +1296,7 @@ if (GDAL_OGR_FRMTS_XLSX)
         ogr/ogrsf_frmts/xlsx/ogrxlsxdatasource.cpp
         ogr/ogrsf_frmts/xlsx/ogrxlsxdriver.cpp
     )
-    target_compile_definitions(ogr PRIVATE XLSX_ENABLED)
+    target_compile_definitions(ogr PRIVATE XLSX_ENABLED PUBLIC XML_STATIC)
     target_link_libraries(ogr PRIVATE EXPAT::EXPAT)
 endif ()
 
@@ -1226,6 +1306,7 @@ target_compile_definitions(ogr PRIVATE
     KML_ENABLED
     MEM_ENABLED
     GEOJSON_ENABLED
+    VRT_ENABLED
 )
 
 target_include_directories(ogr

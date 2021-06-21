@@ -1,4 +1,3 @@
-include(vcpkg_common_functions)
 set(SOURCE_PATH ${CURRENT_BUILDTREES_DIR}/src/msmpi-8.1)
 
 vcpkg_download_distfile(SDK_ARCHIVE

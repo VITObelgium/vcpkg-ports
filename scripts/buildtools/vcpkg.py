@@ -39,7 +39,7 @@ def _vcpkg_executable_path():
 
 def _vcpkg_version_check(vcpkg_path):
     output = subprocess.check_output([vcpkg_path, "version"]).decode("utf-8")
-    return "2020.06.15" in output
+    return "2021-05-05" in output
 
 
 def _args_to_array(args):
@@ -123,7 +123,6 @@ def cmake_configure(
     build_dir,
     cmake_args,
     triplet=None,
-    toolchain=None,
     generator=None,
     verbose=False,
 ):
@@ -164,13 +163,21 @@ def cmake_configure(
             raise RuntimeError("ninja executable could not be found")
         args.append(f"-DCMAKE_MAKE_PROGRAM={ninja_bin}")
 
+    vcpkg_root = vcpkg_root_dir()
+    toolchain = os.path.abspath(
+        os.path.join(vcpkg_root, "scripts", "buildsystems", "vcpkg.cmake")
+    )
+    args.append("-DCMAKE_TOOLCHAIN_FILE={}".format(toolchain))
+    
     if triplet is not None:
+        toolchain_chainload_file = os.path.abspath(
+            os.path.join(vcpkg_root, "triplets", f"{triplet}.cmake")
+        )
+        args.append("-DVCPKG_CHAINLOAD_TOOLCHAIN_FILE={}".format(toolchain_chainload_file))
         args.append("-DVCPKG_TARGET_TRIPLET={}".format(triplet))
 
-    if toolchain is not None:
-        args.append("-DCMAKE_TOOLCHAIN_FILE={}".format(toolchain))
-
     args.append("-DVCPKG_APPLOCAL_DEPS=OFF")
+    args.append("-DVCPKG_VERBOSE=ON")
     args.extend(cmake_args)
     args.append(source_dir)
 
@@ -439,18 +446,12 @@ def build_project(
             "-DCMAKE_INSTALL_PREFIX={}".format(os.path.join(build_dir, "local"))
         )
 
-    vcpkg_root = vcpkg_root_dir()
-    toolchain_file = os.path.abspath(
-        os.path.join(vcpkg_root, "scripts", "buildsystems", "vcpkg.cmake")
-    )
-
     try:
         cmake_configure(
             project_dir,
             build_dir,
             cmake_args,
             triplet,
-            toolchain=toolchain_file,
             generator=generator,
             verbose=verbose,
         )

@@ -1,4 +1,3 @@
-include(vcpkg_common_functions)
 set(MAJOR 4)
 set(MINOR 2)
 set(REVISION 0)

@@ -1,4 +1,3 @@
-include(vcpkg_common_functions)
 set(VERSION_MAJOR 62)
 set(VERSION_MINOR 2)
 set(PACKAGE icu4c-${VERSION_MAJOR}_${VERSION_MINOR}-src.tgz)

@@ -7,14 +7,14 @@ if (NOT Git_FOUND)
 endif ()
 
 if (VCPKG_TARGET_IS_WINDOWS)
-    vcpkg_find_acquire_program(CLANG)
-    get_filename_component(CLANG_EXE_PATH ${CLANG} DIRECTORY)
+    vcpkg_find_acquire_program(LLVM)
+    get_filename_component(CLANG_EXE_PATH ${LLVM} DIRECTORY)
     set(ADDITIONAL_ARGS -DVCPKG_CLANG=ON -DVCPKG_CLANG_PATH=${CLANG_EXE_PATH})
 endif ()
 
 file(REMOVE_RECURSE ${CURRENT_BUILDTREES_DIR}/src)
 
-vcpkg_from_git_mod(
+vcpkg_from_git(
     URL https://github.com/mapbox/mapbox-gl-native.git
     OUT_SOURCE_PATH SOURCE_PATH
     REF maps-v1.6.0
@@ -49,6 +49,8 @@ vcpkg_apply_patches(
         cmake-fixes-qt.patch
         compression-zlib.patch
         iterator-include.patch
+        tuple.patch
+        glyph-rasterizer.patch
 )
     
 vcpkg_configure_cmake(
@@ -59,6 +61,7 @@ vcpkg_configure_cmake(
         -DMBGL_WITH_RTTI=ON
         -DMBGL_WITH_QT=ON
         -DMBGL_WITH_COVERAGE=OFF
+        -DMBGL_WITH_WERROR=OFF
         ${ADDITIONAL_ARGS}
 )
 

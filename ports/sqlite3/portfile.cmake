@@ -1,4 +1,3 @@
-include(vcpkg_common_functions)
 
 set(VERSION 3.31.1)
 set(SQLITE_VERSION 3310100)

@@ -2,7 +2,6 @@ set(VERSION_MAJOR 0)
 set(VERSION_MINOR 54)
 set(VERSION v${VERSION_MAJOR}.${VERSION_MINOR})
 
-include(vcpkg_common_functions)
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO matthijs/${PORT}

@@ -26,7 +26,7 @@ index a7d209a07..9f6ecebb7 100644
          Qt5::OpenGL
          mbgl-vendor-nunicode
 -        mbgl-vendor-sqlite
-+        sqlite
++        sqlite3
  )
  
 +if(MBGL_OPTIONAL)

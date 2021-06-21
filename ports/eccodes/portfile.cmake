@@ -1,5 +1,3 @@
-include(vcpkg_common_functions)
-
 set(VERSION_MAJOR 2)
 set(VERSION_MINOR 9)
 set(VERSION_REVISION 2)

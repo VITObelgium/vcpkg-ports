@@ -4,13 +4,13 @@ Date: Wed, 3 Jul 2019 15:15:49 +0200
 Subject: [PATCH] Coffreader: do not error on libraries built using clang
 
 ---
- toolsrc/src/vcpkg/base/cofffilereader.cpp | 23 ++++++++++++++---------
+ src/vcpkg/base/cofffilereader.cpp | 23 ++++++++++++++---------
  1 file changed, 14 insertions(+), 9 deletions(-)
 
-diff --git a/toolsrc/src/vcpkg/base/cofffilereader.cpp b/toolsrc/src/vcpkg/base/cofffilereader.cpp
+diff --git a/src/vcpkg/base/cofffilereader.cpp b/src/vcpkg/base/cofffilereader.cpp
 index cb75e08475..abb81905d2 100644
---- a/toolsrc/src/vcpkg/base/cofffilereader.cpp
-+++ b/toolsrc/src/vcpkg/base/cofffilereader.cpp
+--- a/src/vcpkg/base/cofffilereader.cpp
++++ b/src/vcpkg/base/cofffilereader.cpp
 @@ -276,15 +276,20 @@ namespace vcpkg::CoffFileReader
          marker.advance_by(ArchiveMemberHeader::HEADER_SIZE + first_linker_member_header.member_size());
          marker.seek_to_marker(fs);

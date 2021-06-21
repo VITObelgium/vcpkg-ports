@@ -1,4 +1,3 @@
-include(vcpkg_common_functions)
 
 set(VERSION_MAJOR 1)
 set(VERSION_MINOR 28)
@@ -12,15 +11,9 @@ TEST_FEATURE("jpeg" JPEG_OPT)
 TEST_FEATURE("netcdf" NETCDF_OPT)
 TEST_FEATURE("fortran" FORTRAN_OPT)
 
-vcpkg_download_distfile(ARCHIVE
-    URLS "https://confluence.ecmwf.int/download/attachments/3473437/${PACKAGE}"
-    FILENAME "${PACKAGE}"
-    SHA512 75a61e4af02cebd6e1e598a5a0738f0c21575b3e50070892ff99c60b1a7e6cb131ddf95a40267ec837c34ac4cf416e6a4c8bbb3d064ac7579985098b808bbf05
-)
-
 vcpkg_extract_source_archive_ex(
     OUT_SOURCE_PATH SOURCE_PATH
-    ARCHIVE ${ARCHIVE}
+    ARCHIVE ${CMAKE_CURRENT_LIST_DIR}/${PACKAGE}
 )
 
 vcpkg_configure_cmake(

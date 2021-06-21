@@ -6,8 +6,6 @@ if(VCPKG_CRT_LINKAGE STREQUAL "static")
     set(MSVC_USE_STATIC_CRT_VALUE ON)
 endif()
 
-include(vcpkg_common_functions)
-
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO ceres-solver/ceres-solver

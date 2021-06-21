@@ -9,3 +9,4 @@ scripts/buildtools/__pycache__
 bin
 vcpkg.exe
 vcpkg
+**/.DS_Store

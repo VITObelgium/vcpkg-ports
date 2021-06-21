@@ -1,4 +1,3 @@
-include(vcpkg_common_functions)
 set(SOURCE_PATH ${CURRENT_BUILDTREES_DIR}/src/libxml2-2.9.4)
 vcpkg_download_distfile(ARCHIVE
     URLS "ftp://xmlsoft.org/libxml2/libxml2-2.9.4.tar.gz" "http://xmlsoft.org/sources/libxml2-2.9.4.tar.gz"

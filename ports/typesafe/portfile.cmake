@@ -1,5 +1,4 @@
-include(vcpkg_common_functions)
-vcpkg_from_git_mod(
+vcpkg_from_git(
     URL https://github.com/foonathan/type_safe.git
     OUT_SOURCE_PATH SOURCE_PATH
     REF v0.2.1

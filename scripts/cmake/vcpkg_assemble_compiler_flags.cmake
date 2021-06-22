@@ -71,10 +71,9 @@ function(vcpkg_detect_compiler_flags)
         set(_calc_CFLAGS "${_calc_CFLAGS} --sysroot=${VCPKG_DETECTED_CMAKE_SYSROOT}")
     endif ()
 
-    # Seems to be already present in the C FLAGS
-    # if (VCPKG_DETECTED_CMAKE_OSX_SYSROOT)
-    #     set(_calc_CFLAGS "${_calc_CFLAGS} -isysroot ${VCPKG_DETECTED_CMAKE_OSX_SYSROOT}")
-    # endif ()
+    if (VCPKG_DETECTED_CMAKE_OSX_SYSROOT)
+        set(_calc_CFLAGS "${_calc_CFLAGS} -isysroot ${VCPKG_DETECTED_CMAKE_OSX_SYSROOT}")
+    endif ()
 
     if (VCPKG_DETECTED_CMAKE_OSX_DEPLOYMENT_TARGET)
         set(_calc_CFLAGS "${_calc_CFLAGS} -mmacosx-version-min=${VCPKG_DETECTED_CMAKE_OSX_DEPLOYMENT_TARGET}")
@@ -121,10 +120,9 @@ function(vcpkg_detect_compiler_flags)
         set(_calc_CXXFLAGS "${_calc_CXXFLAGS} --sysroot=${VCPKG_DETECTED_CMAKE_SYSROOT}")
     endif ()
 
-    # Seems to be already present in the CXX FLAGS
-    # if (VCPKG_DETECTED_CMAKE_OSX_SYSROOT)
-    #     set(_calc_CXXFLAGS "${_calc_CXXFLAGS} -isysroot ${VCPKG_DETECTED_CMAKE_OSX_SYSROOT}")
-    # endif ()
+    if (VCPKG_DETECTED_CMAKE_OSX_SYSROOT)
+        set(_calc_CXXFLAGS "${_calc_CXXFLAGS} -isysroot ${VCPKG_DETECTED_CMAKE_OSX_SYSROOT}")
+    endif ()
 
     if (VCPKG_DETECTED_CMAKE_OSX_DEPLOYMENT_TARGET)
         set(_calc_CXXFLAGS "${_calc_CXXFLAGS} -mmacosx-version-min=${VCPKG_DETECTED_CMAKE_OSX_DEPLOYMENT_TARGET}")

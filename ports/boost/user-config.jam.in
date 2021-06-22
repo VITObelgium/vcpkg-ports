@@ -1,25 +1,25 @@
-if "@VCPKG_CMAKE_SYSTEM_NAME@" = ""
+if "@VCPKG_DETECTED_CMAKE_SYSTEM_NAME@" = "Windows"
 {
     using msvc ; 
 }
-else if "@VCPKG_CMAKE_SYSTEM_NAME@" = "Darwin"
+else if "@VCPKG_DETECTED_CMAKE_SYSTEM_NAME@" = "Darwin"
 {
-    using darwin : vcpkg : @CMAKE_CXX_COMPILER@ :
+    using darwin : vcpkg : @BOOST_CXX_COMPILER@ :
         <cxxstd>17
         <cxxflags>"@BOOST_CXX_FLAGS@"
-        <ranlib>@CMAKE_RANLIB@
-        <archiver>@CMAKE_AR@
-        <linkflags>"@CMAKE_EXE_LINKER_FLAGS@"
+        <ranlib>@BOOST_RANLIB@
+        <archiver>@BOOST_AR@
+        <linkflags>"@BOOST_LINKER_FLAGS@"
         ;
 }
 else
 {
-    using gcc : vcpkg : @CMAKE_CXX_COMPILER@ :
+    using gcc : vcpkg : @BOOST_CXX_COMPILER@ :
         <cxxstd>17
         <cxxflags>"@BOOST_CXX_FLAGS@"
-        <ranlib>@CMAKE_RANLIB@
-        <archiver>@CMAKE_AR@
-        <linkflags>"@CMAKE_EXE_LINKER_FLAGS@"
+        <ranlib>@BOOST_RANLIB@
+        <archiver>@BOOST_AR@
+        <linkflags>"@BOOST_LINKER_FLAGS@"
         ;
 
     using python

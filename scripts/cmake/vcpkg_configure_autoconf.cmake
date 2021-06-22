@@ -68,10 +68,21 @@ function(vcpkg_configure_autoconf)
         include(${CMAKE_CURRENT_LIST_DIR}/../../triplets/${VCPKG_TARGET_TRIPLET}.cmake OPTIONAL)
     endif ()
 
-    vcpkg_assemble_compiler_cflags(DEBUG _ac_CFLAGS_DEB RELEASE _ac_CFLAGS_REL)
-    vcpkg_assemble_compiler_cxxflags(DEBUG _ac_CXXFLAGS_DEB RELEASE _ac_CXXFLAGS_REL STANDARD ${_csc_CXX_STANDARD})
-    vcpkg_assemble_compiler_fcflags(DEBUG _ac_FCFLAGS_DEB RELEASE _ac_FCFLAGS_REL)
-    vcpkg_assemble_linker_flags(DEBUG _ac_LDFLAGS_DEB RELEASE _ac_LDFLAGS_REL)
+    vcpkg_detect_compilers(
+        C EXPORT_C_COMPILER
+        CXX EXPORT_CXX_COMPILER
+        FC EXPORT_FC_COMPILER
+        AR EXPORT_AR
+        RANLIB EXPORT_RANLIB
+        LD EXPORT_LD
+    )
+    vcpkg_detect_compiler_flags(
+        STANDARD ${_csc_CXX_STANDARD}
+        C_DEBUG _ac_CFLAGS_DEB C_RELEASE _ac_CFLAGS_REL
+        CXX_DEBUG _ac_CXXFLAGS_DEB CXX_RELEASE _ac_CXXFLAGS_REL
+        LD_DEBUG _ac_LDFLAGS_DEB LD_RELEASE _ac_LDFLAGS_REL
+        FC_DEBUG _ac_FCFLAGS_DEB FC_RELEASE _ac_FCFLAGS_REL
+    )
 
     if (CMAKE_CROSSCOMPILING OR HOST MATCHES ".*-musl")
         message(STATUS "CROSS COMPILING on host '${HOST}'")
@@ -83,16 +94,10 @@ function(vcpkg_configure_autoconf)
         list(APPEND _csc_OPTIONS --enable-static)
     endif ()
 
-    if (VCPKG_VERBOSE)
-        message(STATUS "PIC: ${CMAKE_POSITION_INDEPENDENT_CODE}")
-        message(STATUS "Visibility C: ${CMAKE_C_VISIBILITY_PRESET}")
-        message(STATUS "Visibility C++: ${CMAKE_CXX_VISIBILITY_PRESET}")
-    endif ()
+    debug_message("CC : ${EXPORT_C_COMPILER}")
+    debug_message("CXX: ${EXPORT_CXX_COMPILER}")
 
-    if (CMAKE_EXE_LINKER_FLAGS)
-        STRING(JOIN " " EXPORT_LDFLAGS ${CMAKE_EXE_LINKER_FLAGS})
-    endif ()
-
+    set(EXPORT_LDFLAGS)
     if (PORT_LINKER_FLAGS)
         set(EXPORT_LDFLAGS "${EXPORT_LDFLAGS} ${PORT_LINKER_FLAGS}")
     endif ()
@@ -142,13 +147,11 @@ function(vcpkg_configure_autoconf)
         endif ()
 
         message(STATUS "Configuring ${TARGET_TRIPLET}-dbg")
-        if (VCPKG_VERBOSE)
-            STRING(JOIN " " COMMAND_STRING "${command}")
-            message(STATUS "Autoconf deb cmd ${COMMAND_STRING}")
-            message(STATUS "CFLAGS: ${EXPORT_CFLAGS}")
-            message(STATUS "CXXFLAGS: ${EXPORT_CXXFLAGS}")
-            message(STATUS "LDFLAGS: ${EXPORT_LDFLAGS}")
-        endif ()
+        STRING(JOIN " " COMMAND_STRING "${command}")
+        debug_message("Autoconf deb cmd ${COMMAND_STRING}")
+        debug_message("CFLAGS: ${EXPORT_CFLAGS}")
+        debug_message("CXXFLAGS: ${EXPORT_CXXFLAGS}")
+        debug_message("LDFLAGS: ${EXPORT_LDFLAGS}")
         file(MAKE_DIRECTORY ${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-dbg)
 
         vcpkg_execute_required_process(
@@ -174,12 +177,12 @@ function(vcpkg_configure_autoconf)
         endif ()
 
         set(EXPORT_LDFLAGS "${EXPORT_LDFLAGS} ${_ac_LDFLAGS_REL}")
-        set(EXPORT_CPPFLAGS "${EXPORT_CFLAGS}")
         STRING(JOIN " " EXPORT_CFLAGS ${_ac_CFLAGS_REL})
         STRING(JOIN " " EXPORT_CXXFLAGS ${_ac_CXXFLAGS_REL})
         STRING(JOIN " " EXPORT_FCFLAGS ${_ac_FCFLAGS_REL})
         STRING(JOIN " " EXPORT_LDFLAGS ${EXPORT_LDFLAGS})
-
+        set(EXPORT_CPPFLAGS "${EXPORT_CFLAGS}")
+        
         configure_file(${_csc_CURRENT_LIST_DIR}/runconfigure.sh.in ${WORKING_DIR}/runconfigure.sh)
 
         if (VCPKG_CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
@@ -201,13 +204,10 @@ function(vcpkg_configure_autoconf)
         endif ()
 
         message(STATUS "Configuring ${TARGET_TRIPLET}-rel")
-        if (VCPKG_VERBOSE)
-            STRING(JOIN " " COMMAND_STRING ${command})
-            message(STATUS "Autoconf rel cmd ${COMMAND_STRING}")
-            message(STATUS "CFLAGS: ${EXPORT_CFLAGS}")
-            message(STATUS "CXXFLAGS: ${EXPORT_CXXFLAGS}")
-            message(STATUS "LDFLAGS: ${EXPORT_LDFLAGS}")
-        endif ()
+        debug_message("Autoconf rel cmd ${COMMAND_STRING}")
+        debug_message("CFLAGS: ${EXPORT_CFLAGS}")
+        debug_message("CXXFLAGS: ${EXPORT_CXXFLAGS}")
+        debug_message("LDFLAGS: ${EXPORT_LDFLAGS}")
         file(MAKE_DIRECTORY ${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-rel)
 
         vcpkg_execute_required_process(

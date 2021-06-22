@@ -1,25 +1,25 @@
 #!/bin/sh
 # C compiler
-export CC="@CMAKE_C_COMPILER@"
+export CC="@EXPORT_C_COMPILER@"
 export CFLAGS="@EXPORT_CFLAGS@"
 export CPPFLAGS="@EXPORT_CFLAGS@"
 
 # C++ compiler
-export CXX="@CMAKE_CXX_COMPILER@"
+export CXX="@EXPORT_CXX_COMPILER@"
 export CXXFLAGS="@EXPORT_CXXFLAGS@"
 
 # Fortran compiler
-export FC="@CMAKE_Fortran_COMPILER@"
+export FC="@EXPORT_FC_COMPILER@"
 export FFLAGS="@EXPORT_FCFLAGS@"
 export FCFLAGS="@EXPORT_FCFLAGS@"
 
 # Linker
-export LD="@LINKER_EXECUTABLE@"
+export LD="@EXPORT_LD@"
 export LDFLAGS="@EXPORT_LDFLAGS@"
 
 # Tools
-export AR="@CMAKE_AR@"
-export RANLIB=@CMAKE_RANLIB@
+export AR="@EXPORT_AR@"
+export RANLIB=@EXPORT_RANLIB@
 
 export WANT_AUTOMAKE=latest
 export PKG_CONFIG_SYSROOT_DIR=@CURRENT_INSTALLED_DIR@

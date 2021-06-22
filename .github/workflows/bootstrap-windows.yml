@@ -8,9 +8,16 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/setup-python@v1
+    - name: Install python
+      uses: actions/setup-python@v1
       with:
         python-version: '3.x'
-    - uses: actions/checkout@v1
+    -
+      name: Install ninja
+      uses: crazy-max/ghaction-chocolatey@v1
+      with:
+        args: install ninja --no-progress
+    - name: Checkout the code
+      uses: actions/checkout@v1
     - name: Bootstrap the ports on windows
       run: python scripts/buildtools/vcpkg.py --triplet x64-windows-static-vs2019 --ports-dir . --clean-after-build

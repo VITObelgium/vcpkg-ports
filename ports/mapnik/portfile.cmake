@@ -8,29 +8,23 @@ set(PACKAGE ${PACKAGE_NAME}.tar.bz2)
 vcpkg_fail_port_install(ON_TARGET "Windows" MESSAGE "Mapnik is not supported on windows")
 vcpkg_find_acquire_program(PYTHON3)
 
-# Extract source into architecture specific directory, because GDALs' build currently does not
-# support out of source builds.
-set(SOURCE_PATH_DEBUG   ${CURRENT_BUILDTREES_DIR}/src-${TARGET_TRIPLET}-debug/${PORT}-${VERSION})
-set(SOURCE_PATH_RELEASE ${CURRENT_BUILDTREES_DIR}/src-${TARGET_TRIPLET}-release/${PORT}-${VERSION})
-
 vcpkg_download_distfile(ARCHIVE
     URLS "https://github.com/${PORT}/${PORT}/releases/download/${VERSION}/${PACKAGE}"
     FILENAME "${PACKAGE}"
     SHA512 5558af3f728462fba4ddd1b00085029d061c686e67c013a0d383ea9cd90c83775c39eb9f29340c2fb8602a4b8193544965d3c5b09f0749a4c00efd483b9be509
 )
 
-foreach(BUILD_TYPE debug release)
-    set(CONFIG_SOURCE_PATH ${CURRENT_BUILDTREES_DIR}/src-${TARGET_TRIPLET}-${BUILD_TYPE})
-    file(REMOVE_RECURSE ${CONFIG_SOURCE_PATH})
-    vcpkg_extract_source_archive(${ARCHIVE} ${CONFIG_SOURCE_PATH})
-    vcpkg_apply_patches(
-        SOURCE_PATH ${CONFIG_SOURCE_PATH}/${PACKAGE_NAME}
+foreach(BUILD_TYPE DEBUG RELEASE)
+    vcpkg_extract_source_archive_ex(
+        OUT_SOURCE_PATH SOURCE_PATH_${BUILD_TYPE}
+        ARCHIVE ${ARCHIVE}
+        REF ${PORT}-${BUILD_TYPE}
         PATCHES
-        ${CMAKE_CURRENT_LIST_DIR}/mapnik-render-link.patch
-        ${CMAKE_CURRENT_LIST_DIR}/tiff-link.patch
-        ${CMAKE_CURRENT_LIST_DIR}/icu-link.patch
-        ${CMAKE_CURRENT_LIST_DIR}/config-path.patch
-        ${CMAKE_CURRENT_LIST_DIR}/gdallib-detection.patch
+            ${CMAKE_CURRENT_LIST_DIR}/mapnik-render-link.patch
+            ${CMAKE_CURRENT_LIST_DIR}/tiff-link.patch
+            ${CMAKE_CURRENT_LIST_DIR}/icu-link.patch
+            ${CMAKE_CURRENT_LIST_DIR}/config-path.patch
+            ${CMAKE_CURRENT_LIST_DIR}/gdallib-detection.patch
     )
 endforeach()
 
@@ -99,6 +93,13 @@ endif ()
 
 list(APPEND SCONS_OPTIONS INPUT_PLUGINS=${MAPNIK_INPUT_PLUGINS})
 
+STRING(JOIN " " MAPNIK_CFLAGS_DEB ${MAPNIK_CFLAGS_DEB})
+STRING(JOIN " " MAPNIK_CFLAGS_REL ${MAPNIK_CFLAGS_REL})
+STRING(JOIN " " MAPNIK_CXXFLAGS_DEB ${MAPNIK_CXXFLAGS_DEB})
+STRING(JOIN " " MAPNIK_CXXFLAGS_REL ${MAPNIK_CXXFLAGS_REL})
+STRING(JOIN " " MAPNIK_LDFLAGS_DEB ${MAPNIK_LDFLAGS_DEB})
+STRING(JOIN " " MAPNIK_LDFLAGS_REL ${MAPNIK_LDFLAGS_REL})
+
 set(SCONS_OPTIONS_REL
     CUSTOM_CFLAGS=${MAPNIK_CFLAGS_REL}
     CUSTOM_CXXFLAGS=${MAPNIK_CXXFLAGS_REL}
@@ -133,9 +134,10 @@ set(SCONS_OPTIONS_DBG
 
 message(STATUS "Configuring ${TARGET_TRIPLET}-rel")
 message(STATUS "${SCONS_OPTIONS_REL}")
+
 vcpkg_execute_required_process(
-    COMMAND ${PYTHON3} scons/scons.py configure
-    "${SCONS_OPTIONS_REL}"
+    COMMAND ${PYTHON3} scons/scons.py configure --no-cache
+    ${SCONS_OPTIONS_REL}
     WORKING_DIRECTORY ${SOURCE_PATH_RELEASE}
     LOGNAME scons-configure-${TARGET_TRIPLET}-release
 )
@@ -143,7 +145,7 @@ vcpkg_execute_required_process(
 message(STATUS "Configuring ${TARGET_TRIPLET}-dbg")
 vcpkg_execute_required_process(
     COMMAND ${PYTHON3} scons/scons.py configure
-    "${SCONS_OPTIONS_DBG}"
+    ${SCONS_OPTIONS_DBG}
     WORKING_DIRECTORY ${SOURCE_PATH_DEBUG}
     LOGNAME scons-configure-${TARGET_TRIPLET}-debug
 )

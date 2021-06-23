@@ -10,17 +10,10 @@ else()
     set(CMAKE_SYSTEM_PROCESSOR "x86_64" CACHE STRING "")
 endif()
 
-if (EXISTS /usr/local/opt/gcc)
-    set(CMAKE_SYSROOT CACHE PATH "/usr/local/opt/gcc")
-elseif(EXISTS /opt/homebrew/opt/gcc)
-    set(CMAKE_SYSROOT CACHE PATH "/opt/homebrew/opt/gcc")
-endif ()
-
 set(CMAKE_SYSTEM_NAME Darwin CACHE STRING "")
 set(CMAKE_MACOSX_RPATH ON CACHE BOOL "")
 
 set(CMAKE_Fortran_COMPILER gfortran-11 CACHE STRING "")
-set(CMAKE_CXX_COMPILER g++-11 CACHE STRING "" FORCE)
 set(CMAKE_C_VISIBILITY_PRESET hidden)
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)

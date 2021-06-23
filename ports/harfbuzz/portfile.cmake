@@ -2,8 +2,8 @@
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO harfbuzz/harfbuzz
-    REF 2.6.4
-    SHA512 c9b1ad32658d9cd2a8cd0eb25ced9c4beeb40c56c9c8b5388535d9d7b9867eee3a4b455359538b0858267e4d4f1cc3b066297bc0083dfcd4eb8fb97b578ede8c
+    REF 2.8.1
+    SHA512 16e43b9182d3ebd2394c2c0e0df815ca9e715d55dc7e46de4eafcde49ddf59cccae69a5340e05c8aa2ee6bc2ba46d1cffae8252d1b2a004ffe9d70c62628cf73
     HEAD_REF master
     PATCHES find-package-freetype-2.patch
 )

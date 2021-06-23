@@ -67,7 +67,7 @@ set (B2_OPTIONS_REL
     variant=release
 )
 
-if (NOT VCPKG_CMAKE_SYSTEM_NAME)
+if (NOT VCPKG_TARGET_IS_WINDOWS)
     # windows native build
     set(CONFIG_CMD bootstrap.bat)
     set(BUILD_CMD b2)
@@ -89,16 +89,16 @@ else ()
     set(CONFIG_CMD sh ./bootstrap.sh)
     set(BUILD_CMD ./b2)
     list(APPEND B2_OPTIONS --layout=system)
-    if(VCPKG_CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    if(VCPKG_TARGET_IS_OSX)
         set (TOOLSET darwin-vcpkg)
     else()
         set (TOOLSET gcc-vcpkg)
     endif()
 endif ()
 
-if (VCPKG_CMAKE_SYSTEM_NAME STREQUAL Windows AND CMAKE_HOST_UNIX)
+if (VCPKG_TARGET_IS_WINDOWS AND CMAKE_HOST_UNIX)
     list(APPEND B2_OPTIONS --target-os=windows)
-elseif(VCPKG_CMAKE_SYSTEM_NAME STREQUAL Linux AND NOT CMAKE_HOST_UNIX)
+elseif(VCPKG_TARGET_IS_LINUX AND NOT CMAKE_HOST_UNIX)
     list(APPEND B2_OPTIONS --target-os=linux)
 endif ()
 

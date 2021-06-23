@@ -9,8 +9,16 @@ set(VCPKG_BUILD_OUTPUT ${VCPKG_BUILD_DIR}/build)
 file(MAKE_DIRECTORY ${BUILD_DIR} ${BIN_DIR})
 file(REMOVE_RECURSE ${VCPKG_BUILD_DIR})
 
+if (WIN32)
+    set(GENERATOR "Visual Studio 16 2019")
+    set(CONFIG_ARGS -A x64 -DCMAKE_CXX_FLAGS=/MP)
+    set(BUILD_ARGS --config Release)
+else ()
+    set(GENERATOR Ninja)
+endif ()
+
 execute_process(
-    COMMAND ${GIT_EXECUTABLE} -c advice.detachedHead=false clone --branch ${VCPKG_TAG} https://github.com/microsoft/vcpkg-tool.git
+    COMMAND ${GIT_EXECUTABLE} -c advice.detachedHead=false clone --depth 1 --branch ${VCPKG_TAG} https://github.com/microsoft/vcpkg-tool.git
     WORKING_DIRECTORY ${BUILD_DIR}
     RESULT_VARIABLE CMD_ERROR
 )
@@ -27,8 +35,9 @@ if (CMD_ERROR)
     message(FATAL_ERROR "Failed to apply vcpkg patch (Error: ${CMD_ERROR})")
 endif ()
 
+
 execute_process(
-    COMMAND cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DVCPKG_ALLOW_APPLE_CLANG=ON -DBUILD_TESTING=OFF -S ${VCPKG_BUILD_DIR} -B ${VCPKG_BUILD_OUTPUT}
+    COMMAND cmake -G ${GENERATOR} ${CONFIG_ARGS} -DCMAKE_BUILD_TYPE=Release -DVCPKG_ALLOW_APPLE_CLANG=ON -DBUILD_TESTING=OFF -S ${VCPKG_BUILD_DIR} -B ${VCPKG_BUILD_OUTPUT}
     RESULT_VARIABLE CMD_ERROR
 )
 
@@ -37,7 +46,7 @@ if (CMD_ERROR)
 endif ()
 
 execute_process(
-    COMMAND cmake --build ${VCPKG_BUILD_OUTPUT}
+    COMMAND cmake --build ${VCPKG_BUILD_OUTPUT} ${BUILD_ARGS}
     RESULT_VARIABLE CMD_ERROR
 )
 
@@ -45,7 +54,7 @@ if (CMD_ERROR)
     message(FATAL_ERROR "Failed to build vcpkg (Error: ${CMD_ERROR})")
 endif ()
 
-find_program(VCPKG_PATH vcpkg PATHS ${VCPKG_BUILD_OUTPUT} NO_DEFAULT_PATH)
+find_program(VCPKG_PATH vcpkg PATHS ${VCPKG_BUILD_OUTPUT} PATH_SUFFIXES Release NO_DEFAULT_PATH)
 if (NOT VCPKG_PATH)
     message(FATAL_ERROR "Could not find vcpkg binary")
 endif ()

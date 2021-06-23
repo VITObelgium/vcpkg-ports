@@ -213,6 +213,9 @@ def vcpkg_install_ports(
     if overlay_triplets:
         args.append(f"--overlay-triplets={overlay_triplets}")
 
+    if 'vs2019' in triplet:
+        args.append(f"--host-triplet={triplet}")
+
     args += ports
     run_vcpkg(triplet, args)
 

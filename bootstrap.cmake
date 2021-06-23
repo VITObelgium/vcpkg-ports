@@ -18,7 +18,7 @@ else ()
 endif ()
 
 execute_process(
-    COMMAND ${GIT_EXECUTABLE} -c advice.detachedHead=false clone --depth 1 --branch ${VCPKG_TAG} https://github.com/microsoft/vcpkg-tool.git
+    COMMAND ${GIT_EXECUTABLE} -c advice.detachedHead=false clone --depth 1 --quiet --branch ${VCPKG_TAG} https://github.com/microsoft/vcpkg-tool.git
     WORKING_DIRECTORY ${BUILD_DIR}
     RESULT_VARIABLE CMD_ERROR
 )

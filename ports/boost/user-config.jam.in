@@ -1,8 +1,8 @@
-if "@VCPKG_DETECTED_CMAKE_SYSTEM_NAME@" = "Windows"
+if "@VCPKG_TARGET_IS_WINDOWS@" = "ON"
 {
     using msvc ; 
 }
-else if "@VCPKG_DETECTED_CMAKE_SYSTEM_NAME@" = "Darwin"
+else if "@VCPKG_TARGET_IS_OSX@" = "ON"
 {
     using darwin : vcpkg : @BOOST_CXX_COMPILER@ :
         <cxxstd>17

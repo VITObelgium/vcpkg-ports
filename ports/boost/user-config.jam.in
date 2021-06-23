@@ -8,7 +8,6 @@ else if "@VCPKG_TARGET_IS_OSX@" = "ON"
         <cxxstd>17
         <cxxflags>"@BOOST_CXX_FLAGS@"
         <ranlib>@BOOST_RANLIB@
-        <archiver>@BOOST_AR@
         <linkflags>"@BOOST_LINKER_FLAGS@"
         ;
 }

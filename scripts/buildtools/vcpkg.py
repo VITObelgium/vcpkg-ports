@@ -131,9 +131,6 @@ def cmake_configure(
     if not cmake_bin:
         raise RuntimeError("cmake executable could not be found")
 
-    cwd = os.getcwd()
-    os.chdir(build_dir)
-
     args = [cmake_bin]
     # args.append("--trace-expand")
     args.append("-G")
@@ -169,22 +166,41 @@ def cmake_configure(
         os.path.join(vcpkg_root, "scripts", "buildsystems", "vcpkg.cmake")
     )
     args.append("-DCMAKE_TOOLCHAIN_FILE={}".format(toolchain))
-    
+
     if triplet is not None:
-        toolchain_chainload_file = os.path.abspath(
+        triplet_file = os.path.abspath(
             os.path.join(vcpkg_root, "triplets", f"{triplet}.cmake")
         )
-        args.append("-DVCPKG_CHAINLOAD_TOOLCHAIN_FILE={}".format(toolchain_chainload_file))
+
+        with open(triplet_file) as f:
+            if not "VCPKG_CHAINLOAD_TOOLCHAIN_FILE" in f.read():
+                default_toolchain = None
+                # no toolchain chainload set in the triplet, set the default
+                if "windows" in triplet:
+                    default_toolchain = "windows.cmake"
+                elif "linux" in triplet:
+                    default_toolchain = "linux.cmake"
+                elif "osx" in triplet:
+                    default_toolchain = "osx.cmake"
+
+                if default_toolchain is not None:
+                    chainload_file = os.path.abspath(
+                        os.path.join(
+                            vcpkg_root, "scripts", "toolchains", default_toolchain
+                        )
+                    )
+                    args.append(f"-DVCPKG_CHAINLOAD_TOOLCHAIN_FILE={chainload_file}")
+
+        args.extend(["-C", triplet_file])
         args.append("-DVCPKG_TARGET_TRIPLET={}".format(triplet))
 
     args.append("-DVCPKG_APPLOCAL_DEPS=OFF")
     args.append("-DVCPKG_VERBOSE=ON")
     args.extend(cmake_args)
-    args.append(source_dir)
+    args.extend(["-S", source_dir, "-B", build_dir])
 
     print(" ".join(args))
     subprocess.check_call(args)
-    os.chdir(cwd)
 
 
 def cmake_build(build_dir, config=None, targets=[]):
@@ -214,7 +230,7 @@ def vcpkg_install_ports(
     if overlay_triplets:
         args.append(f"--overlay-triplets={overlay_triplets}")
 
-    if 'vs2019' in triplet:
+    if "vs2019" in triplet:
         args.append(f"--host-triplet={triplet}")
 
     args += ports

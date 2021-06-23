@@ -125,6 +125,7 @@ def cmake_configure(
     triplet=None,
     generator=None,
     verbose=False,
+    build_config="Release",
 ):
     cmake_bin = find_cmake_binary()
     if not cmake_bin:
@@ -139,7 +140,7 @@ def cmake_configure(
     if generator is not None:
         args.append(generator)
         if generator == "Ninja" or generator == "Unix Makefiles":
-            args.append("-DCMAKE_BUILD_TYPE=Release")
+            args.append(f"-DCMAKE_BUILD_TYPE={build_config}")
     elif triplet == "x64-windows-static-vs2019" or triplet == "x64-windows-vs2019":
         args.append("Visual Studio 16 2019")
         args.extend(["-A", "x64"])
@@ -155,7 +156,7 @@ def cmake_configure(
         generator = "Ninja"
         args.append(generator)
         # do not append build type for msvc builds, otherwise debug libraries are not found (multi-config build)
-        args.append("-DCMAKE_BUILD_TYPE=Release")
+        args.append(f"-DCMAKE_BUILD_TYPE={build_config}")
 
     if generator == "Ninja":
         ninja_bin = find_ninja_binary()
@@ -186,7 +187,7 @@ def cmake_configure(
     os.chdir(cwd)
 
 
-def cmake_build(build_dir, config=None, target=None):
+def cmake_build(build_dir, config=None, targets=[]):
     cmake_bin = find_cmake_binary()
     if not cmake_bin:
         raise RuntimeError("cmake executable could not be found")
@@ -195,7 +196,7 @@ def cmake_build(build_dir, config=None, target=None):
     if config is not None:
         args.extend(["--config", config])
 
-    if target is not None:
+    for target in targets:
         args.extend(["--target", target])
     subprocess.check_call(args)
 
@@ -424,11 +425,12 @@ def build_project(
     build_dir=None,
     install_dir=None,
     generator=None,
-    target=None,
+    targets=[],
     build_name=None,
     verbose=False,
     run_tests_after_build=False,
     test_arguments=None,
+    build_config="Release",
 ):
     if triplet is None:
         triplet = prompt_for_triplet()
@@ -457,8 +459,9 @@ def build_project(
             triplet,
             generator=generator,
             verbose=verbose,
+            build_config=build_config,
         )
-        cmake_build(build_dir, config="Release", target=target)
+        cmake_build(build_dir, config=build_config, targets=targets)
     except subprocess.CalledProcessError as e:
         raise RuntimeError("Build failed: {}".format(e))
 
@@ -469,7 +472,7 @@ def build_project(
                 triplet,
                 build_dir,
                 build_name,
-                config="Release",
+                config=build_config,
                 extra_args=_args_to_array(test_arguments),
             )
         except subprocess.CalledProcessError as e:
@@ -482,9 +485,10 @@ def build_project_release(
     cmake_args=[],
     build_name=None,
     install_dir=None,
-    target=None,
+    targets=[],
     run_tests_after_build=False,
     test_arguments=None,
+    build_config="Release",
 ):
     if not git_status_is_clean():
         raise RuntimeError("Git status is not clean")
@@ -506,7 +510,7 @@ def build_project_release(
         triplet,
         cmake_args,
         build_dir,
-        target=target,
+        targets=targets,
         install_dir=install_dir,
     )
 
@@ -517,7 +521,7 @@ def build_project_release(
                 triplet,
                 build_dir,
                 build_name,
-                config="Release",
+                config=build_config,
                 extra_args=_args_to_array(test_arguments),
             )
         except subprocess.CalledProcessError as e:

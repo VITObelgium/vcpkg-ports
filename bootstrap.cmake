@@ -35,7 +35,6 @@ if (CMD_ERROR)
     message(FATAL_ERROR "Failed to apply vcpkg patch (Error: ${CMD_ERROR})")
 endif ()
 
-
 execute_process(
     COMMAND cmake -G ${GENERATOR} ${CONFIG_ARGS} -DCMAKE_BUILD_TYPE=Release -DVCPKG_ALLOW_APPLE_CLANG=ON -DBUILD_TESTING=OFF -S ${VCPKG_BUILD_DIR} -B ${VCPKG_BUILD_OUTPUT}
     RESULT_VARIABLE CMD_ERROR

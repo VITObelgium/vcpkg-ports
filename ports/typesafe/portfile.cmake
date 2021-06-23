@@ -1,14 +1,12 @@
-vcpkg_from_git(
-    URL https://github.com/foonathan/type_safe.git
+vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
-    REF v0.2.1
-    HEAD_REF master
-    SHA512 0
-    RECURSE_SUBMODULES
+    REPO foonathan/type_safe
+    REF da1d15abc612afbdc81d70c817b49ba1752177de
+    SHA512 5b344af89378e34f05d96bff2de61615bc16e21601d9fe9d0886c71db211bd3b42afb2467dd2eb7f3d11176dc9adc2d71c6dc0b60722e12aaf8c1d79ea869289
+    HEAD_REF v0.2.1
+    PATCHES
+        disable_tests.patch
 )
-
-# avoid always building the tests and examples
-vcpkg_replace_string(${SOURCE_PATH}/CMakeLists.txt " OR (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)" "")
 
 vcpkg_configure_cmake(
     SOURCE_PATH ${SOURCE_PATH}
@@ -18,8 +16,11 @@ vcpkg_configure_cmake(
 )
 
 vcpkg_install_cmake()
-file(INSTALL ${CMAKE_CURRENT_LIST_DIR}/FindTypesafe.cmake DESTINATION ${CURRENT_PACKAGES_DIR}/share/cmake)
-file(INSTALL ${SOURCE_PATH}/LICENSE DESTINATION ${CURRENT_PACKAGES_DIR}/share/${PORT} RENAME copyright)
-file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug)
 
-vcpkg_test_cmake(PACKAGE_NAME Typesafe MODULE)
+vcpkg_fixup_cmake_targets(CONFIG_PATH lib/cmake/type_safe TARGET_PATH share/type_safe)
+
+file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug ${CURRENT_PACKAGES_DIR}/lib)
+
+vcpkg_copy_pdbs()
+
+file(INSTALL ${SOURCE_PATH}/LICENSE DESTINATION ${CURRENT_PACKAGES_DIR}/share/${PORT} RENAME copyright)

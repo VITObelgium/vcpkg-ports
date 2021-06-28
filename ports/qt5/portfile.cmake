@@ -78,18 +78,20 @@ endif()
 if(NOT "qml" IN_LIST FEATURES)
     list(APPEND OPTIONAL_ARGS -skip qtquickcontrols -skip qtquickcontrols2 -skip qtdeclarative)
 else()
+    # d3d12 is not available on windows server 2012
     list(APPEND OPTIONAL_ARGS
-        -no-feature-geoservices_here
-        -no-feature-geoservices_mapbox
-        -no-feature-geoservices_mapboxgl
         -no-feature-d3d12
     )
-
-    # d3d12 is not available on windows server 2012
 endif()
 
 if(NOT "location" IN_LIST FEATURES)
     list(APPEND OPTIONAL_ARGS -skip qtlocation)
+else ()
+    list(APPEND OPTIONAL_ARGS
+        -no-feature-geoservices_here
+        -no-feature-geoservices_mapbox
+        -no-feature-geoservices_mapboxgl
+    )
 endif()
 
 if(NOT "sql" IN_LIST FEATURES)
@@ -224,16 +226,12 @@ elseif(VCPKG_CMAKE_SYSTEM_NAME STREQUAL "Linux")
     list(APPEND PLATFORM_OPTIONS -no-pch -c++std c++17)
     #-device-option CROSS_COMPILE=${CROSS}
 elseif(VCPKG_CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    list(APPEND PLATFORM_OPTIONS -c++std c++17 -no-pch)
-
-    if (${TARGET_TRIPLET} STREQUAL "arm64-osx")
-        list(APPEND PLATFORM_OPTIONS QMAKE_APPLE_DEVICE_ARCHS=arm64)
-    endif ()
+    list(APPEND PLATFORM_OPTIONS -c++std c++17 -no-pch QMAKE_APPLE_DEVICE_ARCHS=${VCPKG_OSX_ARCHITECTURES})
 
     # change the minumum deployment target so the c++17 features become available
     vcpkg_replace_string(${SOURCE_PATH}/qtbase/mkspecs/common/macx.conf
         "QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.13"
-        "QMAKE_MACOSX_DEPLOYMENT_TARGET = ${CMAKE_OSX_DEPLOYMENT_TARGET}"
+        "QMAKE_MACOSX_DEPLOYMENT_TARGET = ${VCPKG_OSX_DEPLOYMENT_TARGET}"
     )
 elseif (MINGW AND (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin"))
     set(PLATFORM -xplatform win32-g++)

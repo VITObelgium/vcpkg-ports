@@ -261,6 +261,7 @@ function(vcpkg_configure_cmake)
         "-D_VCPKG_ROOT_DIR=${VCPKG_ROOT_DIR}"
         "-D_VCPKG_INSTALLED_DIR=${_VCPKG_INSTALLED_DIR}"
         "-DVCPKG_MANIFEST_INSTALL=OFF"
+        "-DCMAKE_DEBUG_POSTFIX=d"
     )
 
     if(DEFINED ARCH)

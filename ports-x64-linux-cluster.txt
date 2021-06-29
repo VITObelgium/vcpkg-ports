@@ -52,7 +52,7 @@ tbb
 tiff[lzw]
 tomlplusplus
 trompeloeil
-typesafe
+type-safe
 vc
 zlib
 zstr

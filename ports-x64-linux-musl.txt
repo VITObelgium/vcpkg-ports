@@ -44,7 +44,7 @@ sqlpp11-connector-sqlite3
 tiff[lzw]
 tomlplusplus
 trompeloeil
-typesafe
+type-safe
 vc
 zlib
 zstr

@@ -29,6 +29,6 @@ sqlite3
 tbb
 tomlplusplus
 trompeloeil
-typesafe
+type-safe
 vc
 zlib

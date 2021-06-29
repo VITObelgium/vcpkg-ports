@@ -1,8 +1,8 @@
-set(LIBSPATIALITE_VERSION_STR "4.3.0a")
+set(LIBSPATIALITE_VERSION_STR "5.0.1")
 vcpkg_download_distfile(ARCHIVE
     URLS "http://www.gaia-gis.it/gaia-sins/libspatialite-sources/libspatialite-${LIBSPATIALITE_VERSION_STR}.tar.gz"
     FILENAME "libspatialite-${LIBSPATIALITE_VERSION_STR}.tar.gz"
-    SHA512 adfd63e8dde0f370b07e4e7bb557647d2bfb5549205b60bdcaaca69ff81298a3d885e7c1ca515ef56dd0aca152ae940df8b5dbcb65bb61ae0a9337499895c3c0
+    SHA512 c2552994bc30d69d1e80aa274760f048cd384f71e8350a1e48a47cb8222ba71a1554a69c6534eedde9a09dc582c39c089967bcc1c57bf158cc91a3e7b1840ddf
 )
 
 vcpkg_extract_source_archive_ex(
@@ -10,8 +10,7 @@ vcpkg_extract_source_archive_ex(
     ARCHIVE ${ARCHIVE}
     PATCHES
         fix-latin-literals.patch
-        fix-sources.patch
-        msvc-config.patch # make sure freexl support can be toggled
+        config.patch # make sure freexl support can be toggled
 )
 
 file(
@@ -25,9 +24,9 @@ file(
 TEST_FEATURE("freexl" WITH_FREEXL)
 
 set (GEOPKG_SUPPORT ON)
-if (VCPKG_TARGET_IS_WINDOWS)
-    set (GEOPKG_SUPPORT OFF)
-endif ()
+#if (VCPKG_TARGET_IS_WINDOWS)
+#    set (GEOPKG_SUPPORT OFF)
+#ndif ()
 
 vcpkg_configure_cmake(
     SOURCE_PATH ${SOURCE_PATH}
@@ -37,7 +36,7 @@ vcpkg_configure_cmake(
         -DENABLE_GEOPACKAGE=${GEOPKG_SUPPORT}
         -DENABLE_LIBXML2=ON
         -DENABLE_FREEXL=${WITH_FREEXL}
-        -DENABLE_LWGEOM=OFF
+        -DENABLE_RTTOPO=ON
         -DGEOS_ADVANCED=ON
         -DGEOS_TRUNK=OFF
         -DBUILD_EXAMPLES=OFF

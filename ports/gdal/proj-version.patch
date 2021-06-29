@@ -1,0 +1,30 @@
+diff -Naur a/ogr/ogrct.cpp b/ogr/ogrct.cpp
+--- a/ogr/ogrct.cpp	2020-01-08 12:43:45.000000000 +0100
++++ b/ogr/ogrct.cpp	2021-06-29 12:13:51.905645900 +0200
+@@ -1288,7 +1288,7 @@
+             memcpy(padfOriZ, z, sizeof(double)*nCount);
+         }
+ 
+-#if PROJ_VERSION == 5
++#if PROJ_VERSION >= 5
+         size_t nRet = proj_trans_generic (m_pj, PJ_FWD,
+                                 x, sizeof(double), nCount,
+                                 y, sizeof(double), nCount,
+@@ -1308,7 +1308,7 @@
+                 memcpy(padfTargetZ, z, sizeof(double) * nCount);
+             }
+ 
+-#if PROJ_VERSION == 5
++#if PROJ_VERSION >= 5
+             nRet = proj_trans_generic (m_pj, PJ_INV,
+                 padfTargetX, sizeof(double), nCount,
+                 padfTargetY, sizeof(double), nCount,
+@@ -1338,7 +1338,7 @@
+     }
+     else
+     {
+-#if PROJ_VERSION == 5
++#if PROJ_VERSION >= 5
+         size_t nRet = proj_trans_generic (m_pj, PJ_FWD,
+                                 x, sizeof(double), nCount,
+                                 y, sizeof(double), nCount,

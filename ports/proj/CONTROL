@@ -1,4 +1,4 @@
 Source: proj
-Version: 0
-Description: a stub package that pulls in proj4. Do not depend on this package.
-Build-Depends: proj4
+Version: 8.0.1
+Description: PROJ library for cartographic projections
+Build-Depends: sqlite3[tool]

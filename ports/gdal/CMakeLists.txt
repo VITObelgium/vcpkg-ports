@@ -150,13 +150,8 @@ if (GDAL_OGR_FRMTS_XLSX)
     add_compile_definitions(HAVE_EXPAT)
 endif ()
 
-find_package(PROJ4 REQUIRED)
-add_compile_definitions(PROJ_STATIC)
-if(${PROJ4_VERSION} VERSION_LESS 5)
-    add_compile_definitions(PROJ_VERSION=4)
-else ()
-    add_compile_definitions(PROJ_VERSION=5)
-endif ()
+find_package(PROJ CONFIG REQUIRED)
+add_compile_definitions(PROJ_STATIC PROJ_VERSION=${PROJ_VERSION_MAJOR})
 
 if (NOT MSVC)
     check_include_file(stdlib.h STDC_HEADERS)
@@ -1323,7 +1318,7 @@ PRIVATE
 
 target_link_libraries(ogr PRIVATE
     gcore
-    proj
+    PROJ::proj
     $<TARGET_NAME_IF_EXISTS:GEOS::geos>
     $<TARGET_NAME_IF_EXISTS:ZLIB::ZLIB>
 )
@@ -1404,7 +1399,7 @@ PRIVATE
 
 target_link_libraries(alg PRIVATE
     port
-    proj
+    PROJ::proj
     $<TARGET_NAME_IF_EXISTS:GEOS::geos_c>
     $<TARGET_NAME_IF_EXISTS:OpenCL::OpenCL>
 )

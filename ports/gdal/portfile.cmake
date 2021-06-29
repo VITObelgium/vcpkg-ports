@@ -19,6 +19,7 @@ vcpkg_extract_source_archive_ex(
         copylayer-crash-2.patch # fixed upstream in next release
         netcdf-non-ascii.patch # fixed upstream in 3.x releases
         vrtfilter.patch
+        proj-version.patch
 )
 
 file(COPY ${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt

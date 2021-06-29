@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.15)
 include(CMakeDependentOption)
 
 project(libspatialite
-    VERSION 4.3.0
+    VERSION 5.0.1
     LANGUAGES C
     HOMEPAGE_URL "https://www.gaia-gis.it/fossil/libspatialite/index"
 )
@@ -14,6 +14,7 @@ include(CheckIncludeFile)
 include(CheckCSourceCompiles)
 include(CheckStructHasMember)
 include(CheckFunctionExists)
+include(CheckSymbolExists)
 include(CMakePackageConfigHelpers)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
@@ -21,8 +22,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 option(ENABLE_GCP "Enable GCP support" ON)
 option(ENABLE_GEOPACKAGE "Enable GeoPackage support" ON)
 option(ENABLE_LIBXML2 "Enable libxml2 support" ON)
-option(ENABLE_LWGEOM "Enable lwgeom support" OFF)
 option(ENABLE_FREEXL "Enable freexl support" OFF)
+option(ENABLE_RTTOPO "Enable rttopo support" OFF)
 option(GEOS_ADVANCED "Enable geos advanced support" OFF)
 option(GEOS_TRUNK "Enable geos trunk experimental support" OFF)
 option(INSTALL_DATA_FILES "Install the data files" ON)
@@ -39,9 +40,9 @@ find_package(LibXml2 REQUIRED)
 find_package(GEOS CONFIG REQUIRED)
 find_package(Sqlite3 CONFIG REQUIRED)
 find_package(ZLIB REQUIRED)
-find_package(ZLIB REQUIRED)
-find_package(PROJ4 REQUIRED)
+find_package(PROJ CONFIG REQUIRED)
 find_package(Threads REQUIRED)
+find_package(Rttopo REQUIRED)
 
 if (ENABLE_FREEXL)
     find_package(Freexl REQUIRED)
@@ -64,8 +65,9 @@ endif ()
 set(HAVE_SQLITE3_H TRUE)
 set(HAVE_LIBSQLITE3 TRUE)
 set(HAVE_LIBZ TRUE)
-set(HAVE_PROJ_API_H TRUE)
+set(HAVE_PROJ_H TRUE)
 set(HAVE_ZIB_H TRUE)
+set(HAVE_LIBRTTOPO_H TRUE)
 
 if (NOT MSVC)
     set (CHECK_HEADERS
@@ -73,7 +75,6 @@ if (NOT MSVC)
         fcntl.h
         float.h
         inttypes.h
-        liblwgeom.h
         math.h
         memory.h
         sqlite3ext.h
@@ -127,6 +128,8 @@ if (NOT MSVC)
     if (NOT TM_IN_TIME)
         set(TM_IN_SYS_TIME TRUE)
     endif ()
+
+    check_symbol_exists(SQLITE_INDEX_CONSTRAINT_LIKE "sqlite3.h" HAVE_DECL_SQLITE_INDEX_CONSTRAINT_LIKE)
     
     check_c_source_compiles("
         #include <sys/types.h>
@@ -145,11 +148,14 @@ endif ()
 
 add_library(spatialitecommon OBJECT
     src/connection_cache/alloc_cache.c
+    src/connection_cache/gg_sequence.c
 
     src/control_points/gaia_control_points.c
     src/control_points/grass_crs3d.c
     src/control_points/grass_georef_tps.c
     src/control_points/grass_georef.c
+
+    src/cutter/gaia_cutter.c
 
     src/dxf/dxf_load_distinct.c
     src/dxf/dxf_load_mixed.c
@@ -162,10 +168,6 @@ add_library(spatialitecommon OBJECT
 
     src/gaiaexif/gaia_exif.c
 
-    # src/gaiageo/Ewkt.c
-    # src/gaiageo/Gml.c
-    # src/gaiageo/Kml.c
-    # src/gaiageo/geoJSON.c
     src/gaiageo/gg_advanced.c
     src/gaiageo/gg_endian.c
     src/gaiageo/gg_ewkt.c
@@ -176,10 +178,10 @@ add_library(spatialitecommon OBJECT
     src/gaiageo/gg_geoscvt.c
     src/gaiageo/gg_gml.c
     src/gaiageo/gg_kml.c
-    src/gaiageo/gg_lwgeom.c
     src/gaiageo/gg_matrix.c
     src/gaiageo/gg_relations.c
     src/gaiageo/gg_relations_ext.c
+    src/gaiageo/gg_rttopo.c
     src/gaiageo/gg_shape.c
     src/gaiageo/gg_transform.c
     src/gaiageo/gg_vanuatu.c
@@ -187,24 +189,19 @@ add_library(spatialitecommon OBJECT
     src/gaiageo/gg_wkb.c
     src/gaiageo/gg_wkt.c
     src/gaiageo/gg_xml.c
-    # src/gaiageo/lex.Ewkt.c
-    # src/gaiageo/lex.GeoJson.c
-    # src/gaiageo/lex.Gml.c
-    # src/gaiageo/lex.Kml.c
-    # src/gaiageo/lex.VanuatuWkt.c
-    # src/gaiageo/vanuatuWkt.c
-    # src/gaiageo/lemon/lemon_src/lemon.c
-    # src/gaiageo/lemon/lemon_src/lempar.c
 
     src/md5/md5.c
     src/md5/gaia_md5.c
 
     src/shapefiles/shapefiles.c
     src/shapefiles/validator.c
-    
+
+    src/spatialite/create_routing.c
+    src/spatialite/dbobj_scopes.c
     src/spatialite/extra_tables.c
     src/spatialite/mbrcache.c
     src/spatialite/metatables.c
+    src/spatialite/pause.c
     src/spatialite/se_helpers.c
     src/spatialite/spatialite.c
     src/spatialite/spatialite_init.c
@@ -216,8 +213,11 @@ add_library(spatialitecommon OBJECT
     src/spatialite/virtualdbf.c
     src/spatialite/virtualelementary.c
     src/spatialite/virtualfdo.c
+    src/spatialite/virtualgeojson.c
     src/spatialite/virtualgpkg.c
+    src/spatialite/virtualknn.c
     src/spatialite/virtualnetwork.c
+    src/spatialite/virtualrouting.c
     src/spatialite/virtualshape.c
     src/spatialite/virtualspatialindex.c
     src/spatialite/virtualxpath.c
@@ -269,11 +269,37 @@ add_library(spatialitecommon OBJECT
     src/srsinit/epsg_inlined_44.c
     src/srsinit/epsg_inlined_45.c
     src/srsinit/epsg_inlined_46.c
+    src/srsinit/epsg_inlined_47.c
+    src/srsinit/epsg_inlined_48.c
+    src/srsinit/epsg_inlined_49.c
+    src/srsinit/epsg_inlined_50.c
+    src/srsinit/epsg_inlined_51.c
+    src/srsinit/epsg_inlined_52.c
+    src/srsinit/epsg_inlined_53.c
+    src/srsinit/epsg_inlined_54.c
+    src/srsinit/epsg_inlined_55.c
+    src/srsinit/epsg_inlined_56.c
+    src/srsinit/epsg_inlined_57.c
+    src/srsinit/epsg_inlined_58.c
+    src/srsinit/epsg_inlined_59.c
     src/srsinit/epsg_inlined_extra.c
     src/srsinit/epsg_inlined_prussian.c
     src/srsinit/epsg_inlined_wgs84_00.c
     src/srsinit/epsg_inlined_wgs84_01.c
     src/srsinit/srs_init.c
+    
+    src/stored_procedures/stored_procedures.c
+
+    src/topology/gaia_topology.c
+    src/topology/gaia_auxtopo.c
+    src/topology/gaia_auxtopo_table.c
+    src/topology/gaia_topostmts.c
+    src/topology/topo_callbacks.c
+    src/topology/lwn_network.c
+    src/topology/gaia_network.c
+    src/topology/gaia_auxnet.c
+    src/topology/gaia_netstmts.c
+    src/topology/net_callbacks.c
 
     src/virtualtext/virtualtext.c
 
@@ -306,6 +332,8 @@ PUBLIC
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src/headers>
     $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+PRIVATE
+    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src/topology>
 )
 
 target_link_libraries(spatialitecommon 
@@ -314,12 +342,13 @@ PUBLIC
 PRIVATE
     ${CMAKE_DL_LIBS}
     Threads::Threads
-    $<TARGET_NAME_IF_EXISTS:LibXml2::LibXml2>
-    $<TARGET_NAME_IF_EXISTS:GEOS::geos_c>
-    $<TARGET_NAME_IF_EXISTS:proj>
-    $<TARGET_NAME_IF_EXISTS:ZLIB::ZLIB>
+    LibXml2::LibXml2
+    GEOS::geos_c
+    PROJ::proj
+    ZLIB::ZLIB
+    Iconv::Iconv
+    rttopo::rttopo
     $<TARGET_NAME_IF_EXISTS:freexl::freexl>
-    $<TARGET_NAME_IF_EXISTS:Iconv::Iconv>
 )
 
 add_library(spatialite $<TARGET_OBJECTS:spatialitecommon> src/versioninfo/version.c)
@@ -372,11 +401,25 @@ if (INSTALL_DATA_FILES)
             PATTERN "*.h"
             PATTERN "*_private.h" EXCLUDE
     )
+
+    if (WIN32 AND NOT MINGW)
+        install(FILES
+            ${CMAKE_BINARY_DIR}/spatialite/gaiaconfig-msvc.h
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/spatialite
+        )
+    else ()
+        install(FILES
+            ${CMAKE_BINARY_DIR}/spatialite/gaiaconfig.h
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/spatialite
+        )
+    endif ()
 endif ()
 
-if (MSVC)
-    configure_file(config-msvc.h ${CMAKE_BINARY_DIR}/config-msvc.h)
+if (WIN32 AND NOT MINGW)
+    configure_file(config-msvc.h.in ${CMAKE_BINARY_DIR}/config-msvc.h)
+    configure_file(src/headers/spatialite/gaiaconfig-msvc.h.in ${CMAKE_BINARY_DIR}/spatialite/gaiaconfig-msvc.h)
 else ()
     configure_file(config.h.cmake.in ${CMAKE_BINARY_DIR}/config.h)
+    configure_file(src/headers/spatialite/gaiaconfig.h.in ${CMAKE_BINARY_DIR}/spatialite/gaiaconfig.h)
 endif ()
 

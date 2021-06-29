@@ -51,6 +51,7 @@ vcpkg_configure_cmake(
         -DBUILD_GIE=OFF
         -DBUILD_PROJINFO=OFF
         -DENABLE_CURL=OFF # required for the projsync utility
+        -DENABLE_TIFF=OFF
         -DBUILD_PROJSYNC=OFF
         -DUSE_THREAD=${THREAD_SUPPORT}
         -DVCPKG_INSTALL_PREFIX=${CURRENT_INSTALLED_DIR}

@@ -13,7 +13,6 @@ vcpkg_download_distfile(ARCHIVE
 vcpkg_extract_source_archive_ex(
     ARCHIVE ${ARCHIVE}
     OUT_SOURCE_PATH SOURCE_PATH
-    DISABLE_PARALLEL_CONFIGURE
     PATCHES
         transitive-mpi.patch
         transitive-zlib.patch
@@ -41,6 +40,7 @@ TEST_FEATURE("tools" ENABLE_TOOLS)
 
 vcpkg_configure_cmake(
     SOURCE_PATH ${SOURCE_PATH}/${PACKAGE_NAME}
+    DISABLE_PARALLEL_CONFIGURE
     PREFER_NINJA
     OPTIONS
         "${INIT_CACHE_ARG}"

@@ -176,7 +176,7 @@ if(VCPKG_CRT_LINKAGE STREQUAL "static")
     list(APPEND QT_OPTIONS -static-runtime)
 endif()
 
-if (CMAKE_CXX_VISIBILITY_PRESET STREQUAL hidden)
+if (VCPKG_CXX_VISIBILITY_PRESET STREQUAL hidden)
     list(APPEND QT_OPTIONS -reduce-exports)
 else ()
     list(APPEND QT_OPTIONS -no-reduce-exports)

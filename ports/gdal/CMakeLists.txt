@@ -1291,7 +1291,10 @@ if (GDAL_OGR_FRMTS_XLSX)
         ogr/ogrsf_frmts/xlsx/ogrxlsxdatasource.cpp
         ogr/ogrsf_frmts/xlsx/ogrxlsxdriver.cpp
     )
-    target_compile_definitions(ogr PRIVATE XLSX_ENABLED PUBLIC XML_STATIC)
+    target_compile_definitions(ogr PRIVATE XLSX_ENABLED)
+    if (NOT BUILD_SHARED_LIBS)
+        target_compile_definitions(ogr PUBLIC XML_STATIC)
+    endif ()
     target_link_libraries(ogr PRIVATE EXPAT::EXPAT)
 endif ()
 

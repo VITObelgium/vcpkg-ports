@@ -220,7 +220,7 @@ def cmake_build(build_dir, config=None, targets=[]):
 def vcpkg_install_ports(
     triplet, ports, clean_after_build=False, overlay_ports=None, overlay_triplets=None
 ):
-    args = ["install", "--recurse", "--feature-flags=-manifests"]
+    args = ["install", "--recurse", "--feature-flags=-manifests", "--clean-packages-after-build"]
     if clean_after_build:
         args.append("--clean-after-build")
 

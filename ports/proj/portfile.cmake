@@ -1,13 +1,13 @@
 set(MAJOR 8)
-set(MINOR 0)
-set(REVISION 1)
+set(MINOR 1)
+set(REVISION 0)
 set(VERSION ${MAJOR}.${MINOR}.${REVISION})
 set(PACKAGE proj-${VERSION}.tar.gz)
 
 vcpkg_download_distfile(ARCHIVE
     URLS "http://download.osgeo.org/proj/${PACKAGE}"
     FILENAME "${PACKAGE}"
-    SHA512 cb5550a9fbccfc680bebb3b8c5ad347d53c38cb526edf4dcaa3af0eff57410b4d4d028e246954c4202a1d637e1e6f4e7a6a33e8741e8aa0a58bdfc8a5dbc68c9
+    SHA512 0c11d43bcdf97fbb3be9238c77cc111ae6df7948dc5076b1a31350c84a60299964ea1a320edfbee0568a2d9d3c7f80eafa6322adfdf99aea5f06172d7ee53a2f
 )
 
 vcpkg_extract_source_archive_ex(
@@ -42,6 +42,7 @@ vcpkg_configure_cmake(
     SOURCE_PATH ${SOURCE_PATH}
     PREFER_NINJA
     OPTIONS ${CMAKE_OPTIONS}
+        -DNLOHMANN_JSON_ORIGIN="internal"
         -DBUILD_TESTING=OFF
         -DBUILD_NAD2BIN=OFF
         -DBUILD_PROJ=OFF

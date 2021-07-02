@@ -1,0 +1,12 @@
+diff -Naur a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt	2021-06-30 10:19:55.000000000 +0200
++++ b/CMakeLists.txt	2021-07-02 11:10:04.120082600 +0200
+@@ -214,7 +214,7 @@
+             DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
+             COMPONENT devel)
+     file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
+-               "include(\${CMAKE_CURRENT_LIST_DIR}/${PROJECT_NAME}Targets.cmake)\n")
++               "include(CMakeFindDependencyMacro)\nfind_dependency(Threads REQUIRED)\ninclude(\${CMAKE_CURRENT_LIST_DIR}/${PROJECT_NAME}Targets.cmake)\n")
+ 
+     write_basic_package_version_file("${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
+                                      COMPATIBILITY AnyNewerVersion)

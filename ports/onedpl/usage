@@ -1,0 +1,4 @@
+The package onedpl provides CMake targets:
+
+    find_package(oneDPL CONFIG REQUIRED)
+    target_link_libraries(main PRIVATE oneDPL)

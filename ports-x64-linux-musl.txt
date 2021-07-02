@@ -30,7 +30,7 @@ mio
 netcdf-c
 netcdf-cxx4
 nlohmann-json
-parallelstl
+onedpl
 pugixml
 reproc
 restinio[boost]

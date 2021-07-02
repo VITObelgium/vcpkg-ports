@@ -34,7 +34,7 @@ netcdf-c
 netcdf-cxx4
 netcdf-fortran
 nlohmann-json
-parallelstl
+onedpl
 pugixml
 pybind11
 reproc

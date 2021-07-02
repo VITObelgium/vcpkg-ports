@@ -1,75 +1,32 @@
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO oneapi-src/oneTBB
-    REF 2019_U9
-    SHA512 ac1710ddfccfc431ffee2b9083b0892ee51b51929fe4de6444587c470d5274e22b265a63a4ea6c84471214aae42ec5c9f13c6512d33ef0d915e6235279b8f61e
-    HEAD_REF tbb_2019
+    REF v2021.3.0
+    SHA512 969bc8d1dcf50bd12f70633d0319e46308eb1667cdc6f0503b373a35dcb2fe6b2adf59c26bd3c8e2a99a8d2d8b9f64088db5a43e784218b163b3661d12908c0e
+    HEAD_REF master
+    PATCHES threads-target.patch
 )
-
-# cmake file source: https://github.com/wjakob/tbb
-file(COPY ${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt DESTINATION ${SOURCE_PATH})
-file(COPY ${CMAKE_CURRENT_LIST_DIR}/version_string.ver.in DESTINATION ${SOURCE_PATH}/build)
-
-string(COMPARE EQUAL "${VCPKG_LIBRARY_LINKAGE}" "static" TBB_STATIC)
-string(COMPARE EQUAL "${VCPKG_LIBRARY_LINKAGE}" "shared" TBB_SHARED)
 
 vcpkg_configure_cmake(
     SOURCE_PATH ${SOURCE_PATH}
     PREFER_NINJA
     OPTIONS
-        ${TBB_OPTIONS}
-        -DTBB_BUILD_STATIC=${TBB_STATIC}
-        -DTBB_BUILD_SHARED=${TBB_SHARED}
-        -DTBB_BUILD_TESTS=OFF
-        -DTBB_BUILD_TBBMALLOC_PROXY=${TBB_SHARED}
+        -DTBB_TEST=OFF
+        -DTBB_EXAMPLES=OFF
+        -DTBB_STRICT=OFF
+        -DTBB4PY_BUILD=OFF
+        -DTBB_CPF=OFF
+        -DTBB_DISABLE_HWLOC_AUTOMATIC_SEARCH=ON
 )
 
 vcpkg_install_cmake()
+vcpkg_fixup_cmake_targets(CONFIG_PATH lib/cmake/TBB)
 
-file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/include)
-
-# Settings for TBBConfigForSource.cmake.in
-if(VCPKG_CMAKE_SYSTEM_NAME AND NOT VCPKG_CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
-    set(TBB_LIB_EXT a)
-    set(TBB_LIB_PREFIX lib)
-else()
-    set(TBB_LIB_EXT lib)
-    set(TBB_LIB_PREFIX)
-endif()
-
-if(TBB_STATIC)
-    set(TBB_DEFAULT_COMPONENTS tbb tbbmalloc)
-else()
-    set(TBB_DEFAULT_COMPONENTS tbb tbbmalloc tbbmalloc_proxy)
-endif()
-file(READ "${SOURCE_PATH}/include/tbb/tbb_stddef.h" _tbb_stddef)
-string(REGEX REPLACE ".*#define TBB_VERSION_MAJOR ([0-9]+).*" "\\1" _tbb_ver_major "${_tbb_stddef}")
-string(REGEX REPLACE ".*#define TBB_VERSION_MINOR ([0-9]+).*" "\\1" _tbb_ver_minor "${_tbb_stddef}")
-string(REGEX REPLACE ".*#define TBB_INTERFACE_VERSION ([0-9]+).*" "\\1" TBB_INTERFACE_VERSION "${_tbb_stddef}")
-set(TBB_VERSION "${_tbb_ver_major}.${_tbb_ver_minor}")
-set(TBB_RELEASE_LIB_PATH "\${_tbb_root}/lib")
-set(TBB_DEBUG_LIB_PATH "\${_tbb_root}/debug/lib")
-
-configure_file(
-    ${SOURCE_PATH}/cmake/templates/TBBConfigInternal.cmake.in
-    ${CURRENT_PACKAGES_DIR}/share/tbb/TBBConfig.cmake
-    @ONLY
-)
-
-file(READ ${CURRENT_PACKAGES_DIR}/share/tbb/TBBConfig.cmake _contents)
-string(REPLACE
-    "get_filename_component(_tbb_root \"\${_tbb_root}\" PATH)"
-    "get_filename_component(_tbb_root \"\${_tbb_root}\" PATH)\nget_filename_component(_tbb_root \"\${_tbb_root}\" PATH)"
-    _contents
-    "${_contents}"
-)
-string(REPLACE "SHARED IMPORTED)" "UNKNOWN IMPORTED)" _contents "${_contents}")
-string(REPLACE "_debug." "d." _contents "${_contents}")
-file(WRITE ${CURRENT_PACKAGES_DIR}/share/tbb/TBBConfig.cmake "${_contents}")
+file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/include")
+file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/share")
 
 # Handle copyright
-file(INSTALL ${SOURCE_PATH}/LICENSE DESTINATION ${CURRENT_PACKAGES_DIR}/share/${PORT} RENAME copyright)
+file(INSTALL ${SOURCE_PATH}/LICENSE.txt DESTINATION ${CURRENT_PACKAGES_DIR}/share/${PORT} RENAME copyright)
 file(INSTALL ${CMAKE_CURRENT_LIST_DIR}/usage DESTINATION ${CURRENT_PACKAGES_DIR}/share/${PORT})
-
 
 vcpkg_test_cmake(PACKAGE_NAME TBB)

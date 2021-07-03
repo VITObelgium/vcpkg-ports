@@ -15,12 +15,6 @@ vcpkg_extract_source_archive_ex(
     OUT_SOURCE_PATH SOURCE_PATH
 )
 
-if (VCPKG_LIBRARY_LINKAGE STREQUAL dynamic)
-    list(APPEND CMAKE_OPTIONS "-DBUILD_LIBPROJ_SHARED=YES")
-else()
-    list(APPEND CMAKE_OPTIONS "-DBUILD_LIBPROJ_SHARED=NO")
-endif()
-
 if (VCPKG_TARGET_IS_WINDOWS)
     vcpkg_replace_string(${SOURCE_PATH}/src/lib_proj.cmake "if(WIN32)" "if(MSVC)")
 endif ()

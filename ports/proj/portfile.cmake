@@ -13,13 +13,12 @@ vcpkg_download_distfile(ARCHIVE
 vcpkg_extract_source_archive_ex(
     ARCHIVE ${ARCHIVE}
     OUT_SOURCE_PATH SOURCE_PATH
+    PATCHES json-external.patch
 )
 
 if (VCPKG_TARGET_IS_WINDOWS)
     vcpkg_replace_string(${SOURCE_PATH}/src/lib_proj.cmake "if(WIN32)" "if(MSVC)")
 endif ()
-
-vcpkg_replace_string(${SOURCE_PATH}/CMakeLists.txt "add_subdirectory(test)" "#add_subdirectory(test)")
 
 if (VCPKG_CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
     set (THREAD_SUPPORT OFF)
@@ -27,10 +26,10 @@ else ()
     set (THREAD_SUPPORT ON)
 endif ()
 
-vcpkg_replace_string(${SOURCE_PATH}/src/lib_proj.cmake
-    "-DPROJ_LIB=\"\${CMAKE_INSTALL_PREFIX}/\${DATADIR}\""
-    "-DPROJ_LIB=\"\${VCPKG_INSTALL_PREFIX}/\${DATADIR}\""
-)
+# vcpkg_replace_string(${SOURCE_PATH}/src/lib_proj.cmake
+#     "-DPROJ_LIB=\"\${CMAKE_INSTALL_PREFIX}/\${DATADIR}\""
+#     "-DPROJ_LIB=\"\${VCPKG_INSTALL_PREFIX}/\${DATADIR}\""
+# )
 
 vcpkg_configure_cmake(
     SOURCE_PATH ${SOURCE_PATH}

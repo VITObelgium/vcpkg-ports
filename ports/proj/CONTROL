@@ -1,5 +1,5 @@
 Source: proj
 Version: 8.1.0
-Port-Version: 1
+Port-Version: 2
 Description: PROJ library for cartographic projections
-Build-Depends: sqlite3[tool]
+Build-Depends: sqlite3[tool], nlohmann-json

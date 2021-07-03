@@ -48,7 +48,8 @@ endif ()
 
 vcpkg_configure_cmake(
     SOURCE_PATH ${SOURCE_PATH}
-    PREFER_NINJA # Disable this option if project cannot be built with Ninja
+    PREFER_NINJA
+    DISABLE_PARALLEL_CONFIGURE
     OPTIONS
         -C${INIT_CACHE_ARG}
         ${LIBM_CONFIG}

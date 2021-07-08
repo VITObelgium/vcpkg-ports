@@ -42,7 +42,6 @@ find_package(Sqlite3 CONFIG REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(PROJ CONFIG REQUIRED)
 find_package(Threads REQUIRED)
-find_package(Rttopo REQUIRED)
 
 if (ENABLE_FREEXL)
     find_package(Freexl REQUIRED)
@@ -67,7 +66,6 @@ set(HAVE_LIBSQLITE3 TRUE)
 set(HAVE_LIBZ TRUE)
 set(HAVE_PROJ_H TRUE)
 set(HAVE_ZIB_H TRUE)
-set(HAVE_LIBRTTOPO_H TRUE)
 
 if (NOT MSVC)
     set (CHECK_HEADERS
@@ -347,7 +345,6 @@ PRIVATE
     PROJ::proj
     ZLIB::ZLIB
     Iconv::Iconv
-    rttopo::rttopo
     $<TARGET_NAME_IF_EXISTS:freexl::freexl>
 )
 

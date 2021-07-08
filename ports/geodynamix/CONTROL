@@ -1,0 +1,8 @@
+Source: geodynamix
+Version: 0.13.0
+Description: c++ raster library
+Build-Depends: infra[log,gdal],eigen3,vc
+
+Feature: testutils
+Description: Unit test utilities
+Build-Depends: infra[testutils],doctest

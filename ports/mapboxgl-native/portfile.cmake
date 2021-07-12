@@ -6,12 +6,6 @@ if (NOT Git_FOUND)
     message(FATAL_ERROR "Could not find git binary")
 endif ()
 
-if (VCPKG_TARGET_IS_WINDOWS)
-    vcpkg_find_acquire_program(LLVM)
-    get_filename_component(CLANG_EXE_PATH ${LLVM} DIRECTORY)
-    set(ADDITIONAL_ARGS -DVCPKG_CLANG=ON -DVCPKG_CLANG_PATH=${CLANG_EXE_PATH})
-endif ()
-
 file(REMOVE_RECURSE ${CURRENT_BUILDTREES_DIR}/src)
 
 vcpkg_from_git_mod(
@@ -51,6 +45,7 @@ vcpkg_apply_patches(
         iterator-include.patch
         tuple.patch
         glyph-rasterizer.patch
+        msvc.patch
 )
     
 vcpkg_configure_cmake(

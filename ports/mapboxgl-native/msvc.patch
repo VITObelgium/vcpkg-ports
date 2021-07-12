@@ -1,0 +1,886 @@
+From 5ec5c644224d02afd9b9147d01368d47b9e86eac Mon Sep 17 00:00:00 2001
+From: Dirk Vanden Boer <dirk.vdb@gmail.com>
+Date: Sun, 11 Jul 2021 10:31:28 +0200
+Subject: [PATCH] Support msvc compilation
+
+---
+ CMakeLists.txt                                | 16 ++++-
+ include/mbgl/style/expression/expression.hpp  |  3 +
+ include/mbgl/style/expression/value.hpp       |  5 ++
+ include/mbgl/util/chrono.hpp                  |  8 ---
+ include/mbgl/util/enum.hpp                    | 32 ++++-----
+ .../default/src/mbgl/gl/headless_backend.cpp  |  2 +
+ platform/default/src/mbgl/storage/sqlite3.cpp | 12 +++-
+ .../default/src/mbgl/util/compression.cpp     |  2 +-
+ platform/qt/qt.cmake                          | 20 +++---
+ render-test/manifest_parser.cpp               |  7 ++
+ src/mbgl/gfx/attribute.hpp                    | 24 ++++---
+ src/mbgl/gl/context.cpp                       |  2 +-
+ src/mbgl/gl/context.hpp                       |  4 +-
+ src/mbgl/gl/index_buffer_resource.cpp         |  2 +-
+ src/mbgl/gl/index_buffer_resource.hpp         |  2 +-
+ src/mbgl/gl/offscreen_texture.cpp             |  2 +
+ src/mbgl/gl/renderbuffer_resource.hpp         |  2 +
+ src/mbgl/gl/texture_resource.cpp              |  2 +-
+ src/mbgl/gl/texture_resource.hpp              |  2 +-
+ src/mbgl/gl/vertex_buffer_resource.cpp        |  2 +-
+ src/mbgl/gl/vertex_buffer_resource.hpp        |  2 +-
+ src/mbgl/layout/symbol_layout.cpp             |  8 +--
+ src/mbgl/layout/symbol_projection.cpp         |  2 +-
+ src/mbgl/style/expression/coercion.cpp        |  2 +-
+ .../style/expression/compound_expression.cpp  |  2 +-
+ src/mbgl/style/rapidjson_conversion.hpp       |  6 ++
+ src/mbgl/util/geometry_util.cpp               |  6 +-
+ src/mbgl/util/rapidjson.hpp                   |  6 ++
+ test/storage/http_file_source.test.cpp        |  2 +-
+ test/storage/local_file_source.test.cpp       | 17 +++--
+ test/storage/offline_database.test.cpp        |  2 +-
+ test/style/expression/expression.test.cpp     | 67 +++++++++++++------
+ test/style/style_parser.test.cpp              | 57 ++++++++++++----
+ test/util/memory.test.cpp                     |  2 +
+ test/util/thread.test.cpp                     |  2 +-
+ vendor/nunicode.cmake                         |  2 +-
+ 36 files changed, 229 insertions(+), 107 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index ad989ba8386..01e72d3ed67 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -29,6 +29,16 @@ add_library(
+ 
+ set(UBSAN_BLACKLIST ${PROJECT_SOURCE_DIR}/scripts/ubsan.blacklist)
+ 
++target_compile_definitions(
++    mbgl-compiler-options
++    INTERFACE
++        $<$<CXX_COMPILER_ID:MSVC>:NOMINMAX>
++        $<$<CXX_COMPILER_ID:MSVC>:WIN32_LEAN_AND_MEAN>
++        $<$<CXX_COMPILER_ID:MSVC>:_CRT_SECURE_NO_WARNINGS>
++        $<$<CXX_COMPILER_ID:MSVC>:_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS>
++        $<$<CXX_COMPILER_ID:MSVC>:BOOST_STRICT_CONFIG>
++)
++
+ target_compile_options(
+     mbgl-compiler-options
+     INTERFACE
+@@ -60,6 +70,10 @@ target_compile_options(
+         $<$<CXX_COMPILER_ID:AppleClang>:-Wno-error=deprecated-declarations>
+         $<$<CXX_COMPILER_ID:AppleClang>:-Wno-error=unused-parameter>
+         $<$<CXX_COMPILER_ID:AppleClang>:-Wno-error=unused-property-ivar>
++        $<$<CXX_COMPILER_ID:MSVC>:/MP>
++        $<$<CXX_COMPILER_ID:MSVC>:/utf-8>
++        $<$<CXX_COMPILER_ID:MSVC>:/permissive->
++        $<$<CXX_COMPILER_ID:MSVC>:/wd4068 /wd4244 /wd4305>
+ )
+ 
+ target_link_libraries(
+@@ -73,7 +87,7 @@ target_link_libraries(
+ 
+ cmake_policy(SET CMP0063 NEW)
+ set(CMAKE_CXX_EXTENSIONS OFF)
+-set(CMAKE_CXX_STANDARD 14)
++set(CMAKE_CXX_STANDARD 17)
+ set(CMAKE_CXX_STANDARD_REQUIRED ON)
+ set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+ set(CMAKE_C_EXTENSIONS OFF)
+diff --git a/include/mbgl/style/expression/expression.hpp b/include/mbgl/style/expression/expression.hpp
+index 51cc3b0f159..c7d4a91e63a 100644
+--- a/include/mbgl/style/expression/expression.hpp
++++ b/include/mbgl/style/expression/expression.hpp
+@@ -78,6 +78,9 @@ class Result : private variant<EvaluationError, T> {
+     
+     Result() = default;
+ 
++    template <typename U>
++    VARIANT_INLINE Result(U&& val) : variant<EvaluationError, T>(val) {}
++
+     explicit operator bool () const {
+         return this->template is<T>();
+     }
+diff --git a/include/mbgl/style/expression/value.hpp b/include/mbgl/style/expression/value.hpp
+index ad11d1ceb42..a3e920760b0 100644
+--- a/include/mbgl/style/expression/value.hpp
++++ b/include/mbgl/style/expression/value.hpp
+@@ -33,6 +33,11 @@ using ValueBase = variant<NullValue,
+                           mapbox::util::recursive_wrapper<std::unordered_map<std::string, Value>>>;
+ struct Value : ValueBase {
+     using ValueBase::ValueBase;
++
++    Value() noexcept = default;
++
++    template <typename T>
++    VARIANT_INLINE Value(T&& val) : ValueBase(val) {}
+     
+     // Javascript's Number.MAX_SAFE_INTEGER
+     static uint64_t maxSafeInteger() { return 9007199254740991ULL; }
+diff --git a/include/mbgl/util/chrono.hpp b/include/mbgl/util/chrono.hpp
+index d736b4f8264..adb84529b35 100644
+--- a/include/mbgl/util/chrono.hpp
++++ b/include/mbgl/util/chrono.hpp
+@@ -34,14 +34,6 @@ Timestamp parseTimestamp(const char *);
+ 
+ Timestamp parseTimestamp(int32_t timestamp);
+ 
+-// C++17 polyfill
+-template <class Rep, class Period, class = std::enable_if_t<
+-   std::chrono::duration<Rep, Period>::min() < std::chrono::duration<Rep, Period>::zero()>>
+-constexpr std::chrono::duration<Rep, Period> abs(std::chrono::duration<Rep, Period> d)
+-{
+-    return d >= d.zero() ? d : -d;
+-}
+-
+ } // namespace util
+ 
+ } // namespace mbgl
+diff --git a/include/mbgl/util/enum.hpp b/include/mbgl/util/enum.hpp
+index 608befd3c4e..0c0684fd836 100644
+--- a/include/mbgl/util/enum.hpp
++++ b/include/mbgl/util/enum.hpp
+@@ -16,22 +16,22 @@ class Enum {
+     static optional<T> toEnum(const std::string&);
+ };
+ 
+-#define MBGL_DEFINE_ENUM(T, values...)                                          \
+-                                                                                \
+-static const constexpr std::pair<const T, const char *> T##_names[] = values;   \
+-                                                                                \
+-template <>                                                                     \
+-const char * Enum<T>::toString(T t) {                                           \
+-    auto it = std::find_if(std::begin(T##_names), std::end(T##_names),          \
+-        [&] (const auto& v) { return t == v.first; });                          \
+-    assert(it != std::end(T##_names)); return it->second;                       \
+-}                                                                               \
+-                                                                                \
+-template <>                                                                     \
+-optional<T> Enum<T>::toEnum(const std::string& s) {                             \
+-    auto it = std::find_if(std::begin(T##_names), std::end(T##_names),          \
+-        [&] (const auto& v) { return s == v.second; });                         \
+-    return it == std::end(T##_names) ? optional<T>() : it->first;               \
++#define MBGL_DEFINE_ENUM(T, ...)                                                    \
++                                                                                    \
++static const constexpr std::pair<const T, const char*> T##_names[] = __VA_ARGS__;   \
++                                                                                    \
++template <>                                                                         \
++const char * Enum<T>::toString(T t) {                                               \
++    auto it = std::find_if(std::begin(T##_names), std::end(T##_names),              \
++        [&] (const auto& v) { return t == v.first; });                              \
++    assert(it != std::end(T##_names)); return it->second;                           \
++}                                                                                   \
++                                                                                    \
++template <>                                                                         \
++optional<T> Enum<T>::toEnum(const std::string& s) {                                 \
++    auto it = std::find_if(std::begin(T##_names), std::end(T##_names),              \
++        [&] (const auto& v) { return s == v.second; });                             \
++    return it == std::end(T##_names) ? optional<T>() : it->first;                   \
+ }
+ 
+ } // namespace mbgl
+diff --git a/platform/default/src/mbgl/gl/headless_backend.cpp b/platform/default/src/mbgl/gl/headless_backend.cpp
+index 697c560f76a..61cb2fa8da9 100644
+--- a/platform/default/src/mbgl/gl/headless_backend.cpp
++++ b/platform/default/src/mbgl/gl/headless_backend.cpp
+@@ -19,6 +19,8 @@ class HeadlessRenderableResource final : public gl::RenderableResource {
+           depthStencil(context.createRenderbuffer<gfx::RenderbufferPixelType::DepthStencil>(size_)),
+           framebuffer(context.createFramebuffer(color, depthStencil)) {}
+ 
++    ~HeadlessRenderableResource() noexcept override = default;
++
+     void bind() override {
+         context.bindFramebuffer = framebuffer.framebuffer;
+         context.scissorTest = false;
+diff --git a/platform/default/src/mbgl/storage/sqlite3.cpp b/platform/default/src/mbgl/storage/sqlite3.cpp
+index de389e54314..6264dcf7d2f 100644
+--- a/platform/default/src/mbgl/storage/sqlite3.cpp
++++ b/platform/default/src/mbgl/storage/sqlite3.cpp
+@@ -11,6 +11,15 @@
+ #include <mbgl/util/logging.hpp>
+ #include <mbgl/util/optional.hpp>
+ 
++
++#define MBGL_CONSTRUCTOR(f)   \
++    static void f(void);      \
++    struct f##_t_ {           \
++        f##_t_(void) { f(); } \
++    };                        \
++    static f##_t_ f##_;       \
++    static void f(void)
++
+ namespace mapbox {
+ namespace sqlite {
+ 
+@@ -102,8 +111,7 @@ void logSqlMessage(void *, const int err, const char *msg) {
+ }
+ #endif
+ 
+-__attribute__((constructor))
+-static void initalize() {
++MBGL_CONSTRUCTOR(initialize) {
+     if (sqlite3_libversion_number() / 1000000 != SQLITE_VERSION_NUMBER / 1000000) {
+         char message[96];
+         snprintf(message, 96,
+diff --git a/platform/default/src/mbgl/util/compression.cpp b/platform/default/src/mbgl/util/compression.cpp
+index b6af7b4463f..ad8f8f1e446 100644
+--- a/platform/default/src/mbgl/util/compression.cpp
++++ b/platform/default/src/mbgl/util/compression.cpp
+@@ -7,7 +7,7 @@
+ #include <stdexcept>
+ 
+ // Check zlib library version.
+-const static bool zlibVersionCheck __attribute__((unused)) = []() {
++const static bool zlibVersionCheck [[gnu::unused]] = []() {
+     const char *const version = zlibVersion();
+     if (version[0] != ZLIB_VERSION[0]) {
+         char message[96];
+diff --git a/platform/qt/qt.cmake b/platform/qt/qt.cmake
+index 1ede14b3a2b..669abf556ee 100644
+--- a/platform/qt/qt.cmake
++++ b/platform/qt/qt.cmake
+@@ -8,15 +8,17 @@ find_package(Qt5Widgets REQUIRED)
+ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+     add_definitions("-DQT_COMPILING_QIMAGE_COMPAT_CPP")
+     add_definitions("-D_USE_MATH_DEFINES")
+-    add_definitions("-Wno-deprecated-declarations")
+-    add_definitions("-Wno-inconsistent-missing-override")
+-    add_definitions("-Wno-macro-redefined")
+-    add_definitions("-Wno-microsoft-exception-spec")
+-    add_definitions("-Wno-unknown-argument")
+-    add_definitions("-Wno-unknown-warning-option")
+-    add_definitions("-Wno-unused-command-line-argument")
+-    add_definitions("-Wno-unused-local-typedef")
+-    add_definitions("-Wno-unused-private-field")
++    if (NOT MSVC)
++        add_definitions("-Wno-deprecated-declarations")
++        add_definitions("-Wno-inconsistent-missing-override")
++        add_definitions("-Wno-macro-redefined")
++        add_definitions("-Wno-microsoft-exception-spec")
++        add_definitions("-Wno-unknown-argument")
++        add_definitions("-Wno-unknown-warning-option")
++        add_definitions("-Wno-unused-command-line-argument")
++        add_definitions("-Wno-unused-local-typedef")
++        add_definitions("-Wno-unused-private-field")
++    endif ()
+ endif()
+ 
+ target_sources(
+diff --git a/render-test/manifest_parser.cpp b/render-test/manifest_parser.cpp
+index 2e1b34df916..6a55e2b7a34 100644
+--- a/render-test/manifest_parser.cpp
++++ b/render-test/manifest_parser.cpp
+@@ -7,6 +7,13 @@
+ #include <algorithm>
+ #include <random>
+ 
++#if defined(_MSC_VER) && !defined(__clang__)
++#ifdef GetObject
++#undef GetObject
++#endif
++#endif
++
++
+ Manifest::Manifest() {
+     const char* envToken = getenv("MAPBOX_ACCESS_TOKEN");
+     if (envToken != nullptr) {
+diff --git a/src/mbgl/gfx/attribute.hpp b/src/mbgl/gfx/attribute.hpp
+index 907087d8bb3..62873d971ee 100644
+--- a/src/mbgl/gfx/attribute.hpp
++++ b/src/mbgl/gfx/attribute.hpp
+@@ -19,7 +19,11 @@
+         }                                                                                          \
+     }
+ 
++#if defined(_MSC_VER) && !defined(__clang__)
++#define MBGL_VERTEX_ALIGN __declspec(align(4))
++#else
+ #define MBGL_VERTEX_ALIGN __attribute__((aligned(4)))
++#endif
+ 
+ namespace mbgl {
+ namespace gfx {
+@@ -106,44 +110,44 @@ template <class...>
+ struct VertexType;
+ 
+ template <class A1>
+-struct VertexType<A1> {
++struct MBGL_VERTEX_ALIGN VertexType<A1> {
+     using Type = VertexType<A1>;
+     typename A1::Value a1;
+-} MBGL_VERTEX_ALIGN;
++};
+ 
+ template <class A1, class A2>
+-struct VertexType<A1, A2> {
++struct MBGL_VERTEX_ALIGN VertexType<A1, A2> {
+     using Type = VertexType<A1, A2>;
+     typename A1::Value a1;
+     typename A2::Value a2;
+-} MBGL_VERTEX_ALIGN;
++};
+ 
+ template <class A1, class A2, class A3>
+-struct VertexType<A1, A2, A3> {
++struct MBGL_VERTEX_ALIGN VertexType<A1, A2, A3> {
+     using Type = VertexType<A1, A2, A3>;
+     typename A1::Value a1;
+     typename A2::Value a2;
+     typename A3::Value a3;
+-} MBGL_VERTEX_ALIGN;
++};
+ 
+ template <class A1, class A2, class A3, class A4>
+-struct VertexType<A1, A2, A3, A4> {
++struct MBGL_VERTEX_ALIGN VertexType<A1, A2, A3, A4> {
+     using Type = VertexType<A1, A2, A3, A4>;
+     typename A1::Value a1;
+     typename A2::Value a2;
+     typename A3::Value a3;
+     typename A4::Value a4;
+-} MBGL_VERTEX_ALIGN;
++};
+ 
+ template <class A1, class A2, class A3, class A4, class A5>
+-struct VertexType<A1, A2, A3, A4, A5> {
++struct MBGL_VERTEX_ALIGN VertexType<A1, A2, A3, A4, A5> {
+     using Type = VertexType<A1, A2, A3, A4, A5>;
+     typename A1::Value a1;
+     typename A2::Value a2;
+     typename A3::Value a3;
+     typename A4::Value a4;
+     typename A5::Value a5;
+-} MBGL_VERTEX_ALIGN;
++};
+ 
+ template <class>
+ struct Descriptor;
+diff --git a/src/mbgl/gl/context.cpp b/src/mbgl/gl/context.cpp
+index 533d8f57c3a..4ae114e05bb 100644
+--- a/src/mbgl/gl/context.cpp
++++ b/src/mbgl/gl/context.cpp
+@@ -59,7 +59,7 @@ Context::Context(RendererBackend& backend_)
+       backend(backend_),
+       stats() {}
+ 
+-Context::~Context() {
++Context::~Context() noexcept {
+     if (cleanupOnDestruction) {
+         reset();
+         assert(stats.isZero());
+diff --git a/src/mbgl/gl/context.hpp b/src/mbgl/gl/context.hpp
+index f9ca036d2c9..c16fc6cb98e 100644
+--- a/src/mbgl/gl/context.hpp
++++ b/src/mbgl/gl/context.hpp
+@@ -37,7 +37,7 @@ class Debugging;
+ class Context final : public gfx::Context {
+ public:
+     Context(RendererBackend&);
+-    ~Context() override;
++    ~Context() noexcept override;
+     Context(const Context&) = delete;
+     Context& operator=(const Context& other) = delete;
+ 
+@@ -149,7 +149,7 @@ class Context final : public gfx::Context {
+     State<value::BindVertexBuffer> vertexBuffer;
+ 
+     State<value::BindVertexArray, const Context&> bindVertexArray { *this };
+-    VertexArrayState globalVertexArrayState { UniqueVertexArray(0, { this }) };
++    VertexArrayState globalVertexArrayState { UniqueVertexArray(0, { const_cast<Context*>(this) }) };
+ 
+     State<value::PixelStorePack> pixelStorePack;
+     State<value::PixelStoreUnpack> pixelStoreUnpack;
+diff --git a/src/mbgl/gl/index_buffer_resource.cpp b/src/mbgl/gl/index_buffer_resource.cpp
+index 2ef178846b3..616fbf5e679 100644
+--- a/src/mbgl/gl/index_buffer_resource.cpp
++++ b/src/mbgl/gl/index_buffer_resource.cpp
+@@ -4,7 +4,7 @@
+ namespace mbgl {
+ namespace gl {
+ 
+-IndexBufferResource::~IndexBufferResource() {
++IndexBufferResource::~IndexBufferResource() noexcept {
+     auto& stats = buffer.get_deleter().context.renderingStats();
+     stats.memIndexBuffers -= byteSize;
+     assert(stats.memIndexBuffers >= 0);
+diff --git a/src/mbgl/gl/index_buffer_resource.hpp b/src/mbgl/gl/index_buffer_resource.hpp
+index 4187994a225..10d9bfc8014 100644
+--- a/src/mbgl/gl/index_buffer_resource.hpp
++++ b/src/mbgl/gl/index_buffer_resource.hpp
+@@ -9,7 +9,7 @@ namespace gl {
+ class IndexBufferResource : public gfx::IndexBufferResource {
+ public:
+     IndexBufferResource(UniqueBuffer&& buffer_, int byteSize_) : buffer(std::move(buffer_)), byteSize(byteSize_) {}
+-    ~IndexBufferResource() override;
++    ~IndexBufferResource() noexcept override;
+ 
+     UniqueBuffer buffer;
+     int byteSize;
+diff --git a/src/mbgl/gl/offscreen_texture.cpp b/src/mbgl/gl/offscreen_texture.cpp
+index 92f80a87b43..cba697558da 100644
+--- a/src/mbgl/gl/offscreen_texture.cpp
++++ b/src/mbgl/gl/offscreen_texture.cpp
+@@ -15,6 +15,8 @@ class OffscreenTextureResource final : public gl::RenderableResource {
+         assert(!size.isEmpty());
+     }
+ 
++    ~OffscreenTextureResource() noexcept override = default;
++
+     void bind() override {
+         if (!framebuffer) {
+             assert(!texture);
+diff --git a/src/mbgl/gl/renderbuffer_resource.hpp b/src/mbgl/gl/renderbuffer_resource.hpp
+index 52865b42f74..9a318cbd48a 100644
+--- a/src/mbgl/gl/renderbuffer_resource.hpp
++++ b/src/mbgl/gl/renderbuffer_resource.hpp
+@@ -12,6 +12,8 @@ class RenderbufferResource final : public gfx::RenderbufferResource {
+         : renderbuffer(std::move(renderbuffer_)) {
+     }
+ 
++    ~RenderbufferResource() noexcept override = default;
++
+     UniqueRenderbuffer renderbuffer;
+ };
+ 
+diff --git a/src/mbgl/gl/texture_resource.cpp b/src/mbgl/gl/texture_resource.cpp
+index b9bf620eeab..ffdd4c7d887 100644
+--- a/src/mbgl/gl/texture_resource.cpp
++++ b/src/mbgl/gl/texture_resource.cpp
+@@ -31,7 +31,7 @@ static int channelStorageSize(gfx::TextureChannelDataType type) {
+     }
+ }
+ 
+-TextureResource::~TextureResource() {
++TextureResource::~TextureResource() noexcept {
+     auto& stats = texture.get_deleter().context->renderingStats();
+     stats.memTextures -= byteSize;
+     assert(stats.memTextures >= 0);
+diff --git a/src/mbgl/gl/texture_resource.hpp b/src/mbgl/gl/texture_resource.hpp
+index fd4f69084f1..e2162beb8a5 100644
+--- a/src/mbgl/gl/texture_resource.hpp
++++ b/src/mbgl/gl/texture_resource.hpp
+@@ -9,7 +9,7 @@ namespace gl {
+ class TextureResource : public gfx::TextureResource {
+ public:
+     TextureResource(UniqueTexture&& texture_, int byteSize_) : texture(std::move(texture_)), byteSize(byteSize_) {}
+-    ~TextureResource() override;
++    ~TextureResource() noexcept override;
+ 
+     static int getStorageSize(const Size& size, gfx::TexturePixelType format, gfx::TextureChannelDataType type);
+ 
+diff --git a/src/mbgl/gl/vertex_buffer_resource.cpp b/src/mbgl/gl/vertex_buffer_resource.cpp
+index cddbdd43d0a..f44464fdbc3 100644
+--- a/src/mbgl/gl/vertex_buffer_resource.cpp
++++ b/src/mbgl/gl/vertex_buffer_resource.cpp
+@@ -4,7 +4,7 @@
+ namespace mbgl {
+ namespace gl {
+ 
+-VertexBufferResource::~VertexBufferResource() {
++VertexBufferResource::~VertexBufferResource() noexcept {
+     auto& stats = buffer.get_deleter().context.renderingStats();
+     stats.memVertexBuffers -= byteSize;
+     assert(stats.memVertexBuffers >= 0);
+diff --git a/src/mbgl/gl/vertex_buffer_resource.hpp b/src/mbgl/gl/vertex_buffer_resource.hpp
+index cbd73482a3f..c14ac00cfab 100644
+--- a/src/mbgl/gl/vertex_buffer_resource.hpp
++++ b/src/mbgl/gl/vertex_buffer_resource.hpp
+@@ -9,7 +9,7 @@ namespace gl {
+ class VertexBufferResource : public gfx::VertexBufferResource {
+ public:
+     VertexBufferResource(UniqueBuffer&& buffer_, int byteSize_) : buffer(std::move(buffer_)), byteSize(byteSize_) {}
+-    ~VertexBufferResource() override;
++    ~VertexBufferResource() noexcept override;
+ 
+     UniqueBuffer buffer;
+     int byteSize;
+diff --git a/src/mbgl/layout/symbol_layout.cpp b/src/mbgl/layout/symbol_layout.cpp
+index 48e2f9d5c5a..b35719b988f 100644
+--- a/src/mbgl/layout/symbol_layout.cpp
++++ b/src/mbgl/layout/symbol_layout.cpp
+@@ -645,8 +645,8 @@ void SymbolLayout::addFeature(const std::size_t layoutFeatureIndex,
+             Anchors anchors = getAnchors(line,
+                                          symbolSpacing,
+                                          textMaxAngle,
+-                                         (shapedTextOrientations.vertical ?: getDefaultHorizontalShaping(shapedTextOrientations)).left,
+-                                         (shapedTextOrientations.vertical ?: getDefaultHorizontalShaping(shapedTextOrientations)).right,
++                                         (shapedTextOrientations.vertical ? shapedTextOrientations.vertical : getDefaultHorizontalShaping(shapedTextOrientations)).left,
++                                         (shapedTextOrientations.vertical ? shapedTextOrientations.vertical : getDefaultHorizontalShaping(shapedTextOrientations)).right,
+                                          (shapedIcon ? shapedIcon->left() : 0),
+                                          (shapedIcon ? shapedIcon->right() : 0),
+                                          glyphSize,
+@@ -666,8 +666,8 @@ void SymbolLayout::addFeature(const std::size_t layoutFeatureIndex,
+             if (line.size() > 1) {
+                 optional<Anchor> anchor = getCenterAnchor(line,
+                                                           textMaxAngle,
+-                                                          (shapedTextOrientations.vertical ?: getDefaultHorizontalShaping(shapedTextOrientations)).left,
+-                                                          (shapedTextOrientations.vertical ?: getDefaultHorizontalShaping(shapedTextOrientations)).right,
++                                                          (shapedTextOrientations.vertical ? shapedTextOrientations.vertical : getDefaultHorizontalShaping(shapedTextOrientations)).left,
++                                                          (shapedTextOrientations.vertical ? shapedTextOrientations.vertical : getDefaultHorizontalShaping(shapedTextOrientations)).right,
+                                                           (shapedIcon ? shapedIcon->left() : 0),
+                                                           (shapedIcon ? shapedIcon->right() : 0),
+                                                           glyphSize,
+diff --git a/src/mbgl/layout/symbol_projection.cpp b/src/mbgl/layout/symbol_projection.cpp
+index eecaced8244..f53ee1e3c0e 100644
+--- a/src/mbgl/layout/symbol_projection.cpp
++++ b/src/mbgl/layout/symbol_projection.cpp
+@@ -95,7 +95,7 @@ namespace mbgl {
+     PointAndCameraDistance project(const Point<float>& point, const mat4& matrix) {
+         vec4 pos = {{ point.x, point.y, 0, 1 }};
+         matrix::transformMat4(pos, pos, matrix);
+-        return {{ static_cast<float>(pos[0] / pos[3]), static_cast<float>(pos[1] / pos[3]) }, pos[3] };
++        return {{ static_cast<float>(pos[0] / pos[3]), static_cast<float>(pos[1] / pos[3])}, static_cast<float>(pos[3])};
+     }
+ 
+     float evaluateSizeForFeature(const ZoomEvaluatedSize& zoomEvaluatedSize, const PlacedSymbol& placedSymbol) {
+diff --git a/src/mbgl/style/expression/coercion.cpp b/src/mbgl/style/expression/coercion.cpp
+index 518d1277200..fa2256ca110 100644
+--- a/src/mbgl/style/expression/coercion.cpp
++++ b/src/mbgl/style/expression/coercion.cpp
+@@ -53,7 +53,7 @@ EvaluationResult toColor(const Value& colorValue) {
+                 };
+             }
+         },
+-        [&](const std::vector<Value>& components) -> EvaluationResult {
++        [&colorValue](const std::vector<Value>& components) -> EvaluationResult {
+             std::size_t len = components.size();
+             bool isNumeric = std::all_of(components.begin(), components.end(), [](const Value& item) {
+                 return item.template is<double>();
+diff --git a/src/mbgl/style/expression/compound_expression.cpp b/src/mbgl/style/expression/compound_expression.cpp
+index bae0258aa0c..21df82257a6 100644
+--- a/src/mbgl/style/expression/compound_expression.cpp
++++ b/src/mbgl/style/expression/compound_expression.cpp
+@@ -225,7 +225,7 @@ Value featureIdAsExpressionValue(const EvaluationContext& params) {
+ optional<Value> featurePropertyAsExpressionValue(const EvaluationContext& params, const std::string& key) {
+     assert(params.feature);
+     auto property = params.feature->getValue(key);
+-    return property ? toExpressionValue(*property) : optional<Value>();
++    return property ? optional<Value>(toExpressionValue(*property)) : optional<Value>();
+ };
+ 
+ optional<std::string> featureTypeAsString(FeatureType type) {
+diff --git a/src/mbgl/style/rapidjson_conversion.hpp b/src/mbgl/style/rapidjson_conversion.hpp
+index c563fa384f7..1bfc226e7fe 100644
+--- a/src/mbgl/style/rapidjson_conversion.hpp
++++ b/src/mbgl/style/rapidjson_conversion.hpp
+@@ -1,5 +1,11 @@
+ #pragma once
+ 
++#if defined(_MSC_VER) && !defined(__clang__)
++#ifdef GetObject
++#undef GetObject
++#endif
++#endif
++
+ #include <mbgl/util/rapidjson.hpp>
+ #include <mbgl/style/conversion_impl.hpp>
+ 
+diff --git a/src/mbgl/util/geometry_util.cpp b/src/mbgl/util/geometry_util.cpp
+index 5cade1eff8f..f354359f7f5 100644
+--- a/src/mbgl/util/geometry_util.cpp
++++ b/src/mbgl/util/geometry_util.cpp
+@@ -149,10 +149,10 @@ template bool pointOnBoundary(const Point<int64_t>& p, const Point<int64_t>& p1,
+ template bool lineIntersectPolygon(const Point<int64_t>& p1, const Point<int64_t>& p2, const Polygon<int64_t>& polygon);
+ template bool pointWithinPolygon(const Point<int64_t>& point,
+                                  const Polygon<int64_t>& polygon,
+-                                 bool trueOnBoundary = false);
++                                 bool trueOnBoundary);
+ template bool pointWithinPolygons(const Point<int64_t>& point,
+                                   const MultiPolygon<int64_t>& polygons,
+-                                  bool trueOnBoundary = false);
++                                  bool trueOnBoundary);
+ template bool lineStringWithinPolygon(const LineString<int64_t>& line, const Polygon<int64_t>& polygon);
+ template bool lineStringWithinPolygons(const LineString<int64_t>& line, const MultiPolygon<int64_t>& polygons);
+ 
+@@ -164,6 +164,6 @@ template bool segmentIntersectSegment(const Point<double>& a,
+                                       const Point<double>& d);
+ template bool pointWithinPolygon(const Point<double>& point,
+                                  const Polygon<double>& polygon,
+-                                 bool trueOnBoundary = false);
++                                 bool trueOnBoundary);
+ 
+ } // namespace mbgl
+diff --git a/src/mbgl/util/rapidjson.hpp b/src/mbgl/util/rapidjson.hpp
+index 2fb2a07c9fd..163b9f529cc 100644
+--- a/src/mbgl/util/rapidjson.hpp
++++ b/src/mbgl/util/rapidjson.hpp
+@@ -1,5 +1,11 @@
+ #pragma once
+ 
++#if defined(_MSC_VER) && !defined(__clang__)
++#ifdef GetObject
++#undef GetObject
++#endif
++#endif
++
+ #include <rapidjson/document.h>
+ #include <rapidjson/error/en.h>
+ 
+diff --git a/test/storage/http_file_source.test.cpp b/test/storage/http_file_source.test.cpp
+index 37476c8e7c4..7dde1cb8270 100644
+--- a/test/storage/http_file_source.test.cpp
++++ b/test/storage/http_file_source.test.cpp
+@@ -156,7 +156,7 @@ TEST(HTTPFileSource, TEST_REQUIRES_SERVER(CacheControlParsing)) {
+         EXPECT_EQ(nullptr, res.error);
+         ASSERT_TRUE(res.data.get());
+         EXPECT_EQ("Hello World!", *res.data);
+-        EXPECT_GT(Seconds(2), util::abs(*res.expires - util::now() - Seconds(120))) << "Expiration date isn't about 120 seconds in the future";
++        EXPECT_GT(Seconds(2), std::chrono::abs(*res.expires - util::now() - Seconds(120))) << "Expiration date isn't about 120 seconds in the future";
+         EXPECT_FALSE(res.mustRevalidate);
+         EXPECT_FALSE(bool(res.modified));
+         EXPECT_FALSE(bool(res.etag));
+diff --git a/test/storage/local_file_source.test.cpp b/test/storage/local_file_source.test.cpp
+index 45c8c54d917..1e7d7945153 100644
+--- a/test/storage/local_file_source.test.cpp
++++ b/test/storage/local_file_source.test.cpp
+@@ -3,10 +3,19 @@
+ #include <mbgl/util/platform.hpp>
+ #include <mbgl/util/run_loop.hpp>
+ 
+-#include <unistd.h>
+ #include <climits>
++#include <vector>
+ #include <gtest/gtest.h>
+ 
++#if defined(WIN32)
++#include <Windows.h>
++#ifndef PATH_MAX
++#define PATH_MAX MAX_PATH
++#endif /* PATH_MAX */
++#else
++#include <unistd.h>
++#endif
++
+ namespace {
+ 
+ std::string toAbsoluteURL(const std::string& fileName) {
+@@ -135,10 +144,10 @@ TEST(LocalFileSource, URLLimit) {
+ 
+     size_t length = PATH_MAX - toAbsoluteURL("").size();
+     LocalFileSource fs;
+-    char filename[length];
+-    memset(filename, 'x', length);
++    std::vector<char> filename(length);
++    memset(filename.data(), 'x', length);
+ 
+-    std::string url(filename, length);
++    std::string url(filename.data(), length);
+ 
+     std::unique_ptr<AsyncRequest> req = fs.request({ Resource::Unknown, toAbsoluteURL(url) }, [&](Response res) {
+         req.reset();
+diff --git a/test/storage/offline_database.test.cpp b/test/storage/offline_database.test.cpp
+index 6b444bf3d1a..e900b59cc4c 100644
+--- a/test/storage/offline_database.test.cpp
++++ b/test/storage/offline_database.test.cpp
+@@ -44,7 +44,7 @@ static FixtureLog::Message error(ResultCode code, const char* message) {
+     return { EventSeverity::Error, Event::Database, static_cast<int64_t>(code), message };
+ }
+ 
+-static __attribute__((unused)) FixtureLog::Message warning(ResultCode code, const char* message) {
++static [[gcc::unused]] FixtureLog::Message warning(ResultCode code, const char* message) {
+     return { EventSeverity::Warning, Event::Database, static_cast<int64_t>(code), message };
+ }
+ 
+diff --git a/test/style/expression/expression.test.cpp b/test/style/expression/expression.test.cpp
+index 07f6cf173aa..efbc4cb3ae9 100644
+--- a/test/style/expression/expression.test.cpp
++++ b/test/style/expression/expression.test.cpp
+@@ -9,7 +9,14 @@
+ 
+ #include <iostream>
+ #include <fstream>
++#if defined(_MSC_VER) && !defined(__clang__)
++#include <Windows.h>
++#ifdef GetObject
++#undef GetObject
++#endif
++#else
+ #include <dirent.h>
++#endif
+ 
+ 
+ using namespace mbgl;
+@@ -79,28 +86,50 @@ TEST_P(ExpressionEqualityTest, ExpressionEquality) {
+     EXPECT_TRUE(*expression_a1 != *expression_b);
+ }
+ 
+-INSTANTIATE_TEST_SUITE_P(Expression, ExpressionEqualityTest, ::testing::ValuesIn([] {
+-                             std::vector<std::string> names;
+-                             const std::string ending = ".a.json";
++static void populateNames(std::vector<std::string>& names) {
++    const std::string ending = ".a.json";
++
++    std::string style_directory = "test/fixtures/expression_equality";
+ 
+-                             const std::string style_directory = "test/fixtures/expression_equality";
+-                             DIR* dir = opendir(style_directory.c_str());
+-                             if (dir != nullptr) {
+-                                 for (dirent* dp = nullptr; (dp = readdir(dir)) != nullptr;) {
+-                                     const std::string name = dp->d_name;
++    auto testName = [&](const std::string& name) {
++        if (name.length() >= ending.length() &&
++            name.compare(name.length() - ending.length(), ending.length(), ending) == 0) {
++            names.push_back(name.substr(0, name.length() - ending.length()));
++        }
++    };
++
++#if defined(_MSC_VER) && !defined(__clang__)
++    style_directory += "/*";
++    WIN32_FIND_DATA ffd;
++    HANDLE hFind = FindFirstFile(style_directory.c_str(), &ffd);
++    if (hFind != INVALID_HANDLE_VALUE) {
++        do {
++            const std::string name = ffd.cFileName;
++            testName(name);
++        } while (FindNextFile(hFind, &ffd) != 0);
++        FindClose(hFind);
++    }
++#else
++    DIR* dir = opendir(style_directory.c_str());
++    if (dir != nullptr) {
++        for (dirent* dp = nullptr; (dp = readdir(dir)) != nullptr;) {
++            const std::string name = dp->d_name;
+ #if ANDROID
+-                                     // Android unit test uses number-format stub implementation so skip the tests
+-                                     if (name.find("number-format") != std::string::npos) {
+-                                         continue;
+-                                     }
++            // Android unit test uses number-format stub implementation so skip the tests
++            if (name.find("number-format") != std::string::npos) {
++                continue;
++            }
++#endif
++            testName(name);
++        }
++        closedir(dir);
++    }
+ #endif
+-                                     if (name.length() >= ending.length() &&
+-                                         name.compare(name.length() - ending.length(), ending.length(), ending) == 0) {
+-                                         names.push_back(name.substr(0, name.length() - ending.length()));
+-                                     }
+-                                 }
+-                                 closedir(dir);
+-                             }
++}
++
++INSTANTIATE_TEST_SUITE_P(Expression, ExpressionEqualityTest, ::testing::ValuesIn([] {
++                             std::vector<std::string> names;
++                             populateNames(names);
+ 
+                              EXPECT_GT(names.size(), 0u);
+                              return names;
+diff --git a/test/style/style_parser.test.cpp b/test/style/style_parser.test.cpp
+index 7607dbd0777..02ecb72dbc5 100644
+--- a/test/style/style_parser.test.cpp
++++ b/test/style/style_parser.test.cpp
+@@ -13,7 +13,14 @@
+ #include <fstream>
+ #include <set>
+ 
++#if defined(_MSC_VER) && !defined(__clang__)
++#include <Windows.h>
++#ifdef GetObject
++#undef GetObject
++#endif
++#else
+ #include <dirent.h>
++#endif
+ 
+ using namespace mbgl;
+ 
+@@ -74,22 +81,44 @@ TEST_P(StyleParserTest, ParseStyle) {
+     }
+ }
+ 
++static void populateNames(std::vector<std::string> &names) {
++    const std::string ending = ".info.json";
++
++    std::string style_directory = "test/fixtures/style_parser";
++
++    auto testName = [&](const std::string &name) {
++        if (name.length() >= ending.length() &&
++            name.compare(name.length() - ending.length(), ending.length(), ending) == 0) {
++            names.push_back(name.substr(0, name.length() - ending.length()));
++        }
++    };
++
++#if defined(_MSC_VER) && !defined(__clang__)
++    style_directory += "/*";
++    WIN32_FIND_DATA ffd;
++    HANDLE hFind = FindFirstFile(style_directory.c_str(), &ffd);
++    if (hFind != INVALID_HANDLE_VALUE) {
++        do {
++            const std::string name = ffd.cFileName;
++            testName(name);
++        } while (FindNextFile(hFind, &ffd) != 0);
++        FindClose(hFind);
++    }
++#else
++    DIR *dir = opendir(style_directory.c_str());
++    if (dir != nullptr) {
++        for (dirent *dp = nullptr; (dp = readdir(dir)) != nullptr;) {
++            const std::string name = dp->d_name;
++            testName(name);
++        }
++        closedir(dir);
++    }
++#endif
++}
++
+ INSTANTIATE_TEST_SUITE_P(StyleParser, StyleParserTest, ::testing::ValuesIn([] {
+                              std::vector<std::string> names;
+-                             const std::string ending = ".info.json";
+-
+-                             const std::string style_directory = "test/fixtures/style_parser";
+-                             DIR *dir = opendir(style_directory.c_str());
+-                             if (dir != nullptr) {
+-                                 for (dirent *dp = nullptr; (dp = readdir(dir)) != nullptr;) {
+-                                     const std::string name = dp->d_name;
+-                                     if (name.length() >= ending.length() &&
+-                                         name.compare(name.length() - ending.length(), ending.length(), ending) == 0) {
+-                                         names.push_back(name.substr(0, name.length() - ending.length()));
+-                                     }
+-                                 }
+-                                 closedir(dir);
+-                             }
++                             populateNames(names);
+ 
+                              EXPECT_GT(names.size(), 0u);
+                              return names;
+diff --git a/test/util/memory.test.cpp b/test/util/memory.test.cpp
+index bf14c704195..d77af82bdd2 100644
+--- a/test/util/memory.test.cpp
++++ b/test/util/memory.test.cpp
+@@ -18,7 +18,9 @@
+ #include <memory>
+ 
+ #include <cstdlib>
++#if !defined(_MSC_VER) || defined(__clang__)
+ #include <unistd.h>
++#endif
+ 
+ using namespace mbgl;
+ using namespace std::literals::string_literals;
+diff --git a/test/util/thread.test.cpp b/test/util/thread.test.cpp
+index 49735585c6a..a4c44b86c39 100644
+--- a/test/util/thread.test.cpp
++++ b/test/util/thread.test.cpp
+@@ -198,7 +198,7 @@ TEST(Thread, ReferenceCanOutliveThread) {
+         worker.invoke(&TestWorker::send, [&] { ADD_FAILURE() << "Should never happen"; });
+     }
+ 
+-    usleep(10000);
++    std::this_thread::sleep_for(std::chrono::microseconds(10000));
+ }
+ 
+ TEST(Thread, DeletePausedThread) {
+diff --git a/vendor/nunicode.cmake b/vendor/nunicode.cmake
+index f13492de78d..c2e79484828 100644
+--- a/vendor/nunicode.cmake
++++ b/vendor/nunicode.cmake
+@@ -18,7 +18,7 @@ target_compile_definitions(
+     PRIVATE NU_BUILD_STATIC
+ )
+ 
+-target_compile_options(mbgl-vendor-nunicode PRIVATE -Wno-error)
++target_compile_options(mbgl-vendor-nunicode PRIVATE $<$<CXX_COMPILER_ID:GNU>:-Wno-error>)
+ 
+ target_include_directories(
+     mbgl-vendor-nunicode SYSTEM

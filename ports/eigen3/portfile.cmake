@@ -1,10 +1,16 @@
-vcpkg_from_gitlab(
-    GITLAB_URL https://gitlab.com
+set(EIGEN_VERSION 3.3.9)
+set(PACKAGE eigen-${EIGEN_VERSION}.tar.bz2)
+vcpkg_download_distfile(ARCHIVE
+    URLS
+        https://gitlab.com/libeigen/eigen/-/archive/${EIGEN_VERSION}/${PACKAGE}
+        https://fossies.org/linux/privat/${PACKAGE}
+    FILENAME ${PACKAGE}
+    SHA512 6f222e27480d02d90f258c94a4a4787771491fc30c73d5fb025a8089484fdeb2c65d464172f5c29d0c3096b69ff98027a18a40c04b006da670733a2c75f55b65
+)
+    
+vcpkg_extract_source_archive_ex(
+    ARCHIVE ${ARCHIVE}
     OUT_SOURCE_PATH SOURCE_PATH
-    REPO libeigen/eigen
-    REF 3.3.9
-    SHA512 16244cc89f2e1879543232b965cbf653b3ccf10e967c8c437a41e27d8320392bdf584d8c24b8a97406ab7d1481d5154da74e0702ec1334ae6a46de83f4573a46
-    HEAD_REF master
     PATCHES disable_pkgconfig_absolute_path_check.patch
 )
 

@@ -14,7 +14,12 @@ if (WIN32)
     set(CONFIG_ARGS -A x64 -DCMAKE_CXX_FLAGS=/MP)
     set(BUILD_ARGS --config Release)
 else ()
-    set(GENERATOR Ninja)
+    find_program(NINJA ninja)
+    if (NINJA)
+        set(GENERATOR Ninja)
+    else ()
+        set(GENERATOR "Unix Makefiles")
+    endif ()
 endif ()
 
 execute_process(

@@ -1,0 +1,28 @@
+Source: qt6
+Version: 6.1.1
+Description: Complete software development framework
+Build-Depends: zlib, freetype (linux), harfbuzz (linux), libjpeg-turbo, libpng, pcre2
+
+Feature: qml
+Description: qml support
+
+Feature: location
+Description: location support
+
+Feature: sql
+Description: sql support
+Build-Depends: sqlite3
+
+Feature: tiff
+Description: tiff support
+Build-Depends: tiff[lzw]
+
+Feature: ssl
+Description: enable ssl
+Build-Depends: libressl (linux)
+
+Feature: charts
+Description: enable the qtcharts component
+
+Feature: tools
+Description: enable the tools

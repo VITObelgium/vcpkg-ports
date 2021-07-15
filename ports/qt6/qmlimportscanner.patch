@@ -1,0 +1,30 @@
+diff -Naur a/qtdeclarative/tools/qmlimportscanner/Qt5QmlImportScannerConfig.cmake.in b/qtdeclarative/tools/qmlimportscanner/Qt5QmlImportScannerConfig.cmake.in
+--- a/qtdeclarative/tools/qmlimportscanner/Qt5QmlImportScannerConfig.cmake.in	2020-04-05 12:06:37.865236000 +0200
++++ b/qtdeclarative/tools/qmlimportscanner/Qt5QmlImportScannerConfig.cmake.in	2020-04-05 14:56:35.012750100 +0200
+@@ -134,21 +134,19 @@
+                     \"${imported_target}\"
+                     RELEASE
+                     \"${entry_PATH}/$$QMAKE_PREFIX_STATICLIB${entry_PLUGIN}$${CMAKE_QML_PLUGIN_SUFFIX_RELEASE}.$$QMAKE_EXTENSION_STATICLIB\"
+-                     $${CMAKE_DEBUG_AND_RELEASE})
++                     TRUE)
+ !!ENDIF
+-
+-!!IF !isEmpty(CMAKE_DEBUG_TYPE)
++                string(REPLACE "/qml/" "/debug/qml/" entry_PATH_DEBUG ${entry_PATH})
+                 _qt5_Core_process_prl_file(
+-                    \"${entry_PATH}/$$QMAKE_PREFIX_STATICLIB${entry_PLUGIN}$${CMAKE_QML_PLUGIN_SUFFIX_DEBUG}.prl\" DEBUG
++                    \"${entry_PATH_DEBUG}/$$QMAKE_PREFIX_STATICLIB${entry_PLUGIN}$${CMAKE_QML_PLUGIN_SUFFIX_DEBUG}.prl\" DEBUG
+                     _Qt5${entry_PLUGIN}_STATIC_DEBUG_LIB_DEPENDENCIES
+                     _Qt5${entry_PLUGIN}_STATIC_DEBUG_LINK_FLAGS
+                 )
+                 _qt5_link_to_QmlImportScanner_library_dependencies(
+                     \"${imported_target}\"
+                     DEBUG
+-                    \"${entry_PATH}/$$QMAKE_PREFIX_STATICLIB${entry_PLUGIN}$${CMAKE_QML_PLUGIN_SUFFIX_DEBUG}.$$QMAKE_EXTENSION_STATICLIB\"
+-                     $${CMAKE_DEBUG_AND_RELEASE})
+-!!ENDIF
++                    \"${entry_PATH_DEBUG}/$$QMAKE_PREFIX_STATICLIB${entry_PLUGIN}$${CMAKE_QML_PLUGIN_SUFFIX_DEBUG}.$$QMAKE_EXTENSION_STATICLIB\"
++                     TRUE)
+             endif()
+         endforeach()
+ 

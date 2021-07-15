@@ -23,11 +23,6 @@ if (CMAKE_HOST_WIN32 AND NOT MINGW)
     vcpkg_find_acquire_program("JOM")
 endif ()
 
-set (OPTIONAL_ARGS)
-if(NOT "tools" IN_LIST FEATURES)
-    list(APPEND OPTIONAL_SKIPS -skip qttools)
-endif ()
-
 vcpkg_download_distfile(ARCHIVE
     URLS "http://download.qt.io/archive/qt/${MAJOR}.${MINOR}/${VERSION}/single/${PACKAGE}"
     FILENAME "${PACKAGE}"

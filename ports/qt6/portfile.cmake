@@ -1,10 +1,5 @@
-set(MAJOR 6)
-set(MINOR 1)
-set(REVISION 1)
-set(VERSION ${MAJOR}.${MINOR}.${REVISION})
-set(RELEASE official)
-set(PACKAGE_NAME qt-everywhere-src-${VERSION})
-set(PACKAGE ${PACKAGE_NAME}.tar.xz)
+set(VERSION 6.1.1)
+set(PACKAGE qt-everywhere-src-${VERSION}.tar.xz)
 
 vcpkg_download_distfile(ARCHIVE
     URLS "http://download.qt.io/archive/qt/${MAJOR}.${MINOR}/${VERSION}/single/${PACKAGE}"
@@ -40,147 +35,6 @@ vcpkg_add_to_path(${PYTHON_DIR})
 get_filename_component(PERL_DIR ${PERL} DIRECTORY)
 message(STATUS "Perl directory: ${PERL_DIR}")
 vcpkg_add_to_path(${PERL_DIR})
-
-set(OPTIONAL_ARGS)
-set(OPTIONAL_CMAKE_ARGS)
-
-set(QT_OPTIONS
-    -I ${CURRENT_INSTALLED_DIR}/include
-    -nomake examples
-    -nomake tests
-    -no-dbus
-    -no-icu
-    -no-glib
-    -no-webp
-    -no-cups
-    -no-feature-zstd
-    -no-feature-accessibility
-    -system-zlib
-    -system-libpng
-    -system-libjpeg
-    -system-pcre
-    -skip qtdoc
-    -skip qt3d
-    -skip qtquick3d
-    -skip qtshadertools
-    -skip qt5compat
-    -skip qtcanvas3d
-    -skip qtconnectivity
-    -skip qtdatavis3d
-    -skip qtcharts
-    -skip qtdeclarative
-    -skip qtmultimedia
-    -skip qtpurchasing
-    -skip qtremoteobjects
-    -skip qtscript
-    -skip qtsensors
-    -skip qtserialbus
-    -skip qtserialport
-    -skip qtscxml
-    -skip qtspeech
-    -skip qtvirtualkeyboard
-    -skip qtwebengine
-    -skip qtwebchannel
-    -skip qtwebsockets
-    -skip qtwebview
-    -skip qtcoap
-    -skip qtmqtt
-    -skip qtopcua
-    ${OPTIONAL_ARGS}
-)
-
-set(EXEC_COMMAND)
-
-set(PLATFORM_OPTIONS)
-if(VCPKG_TARGET_IS_WINDOWS)
-    list(APPEND PLATFORM_OPTIONS -opengl desktop)
-
-    set(CONFIG_SUFFIX .bat)
-    list(APPEND QT_OPTIONS -platform win32-msvc2017)
-    list(APPEND PLATFORM_OPTIONS -mp)
-elseif(VCPKG_TARGET_IS_LINUX)
-    if (HOST MATCHES "x86_64-unknown-linux-gnu")
-        list(APPEND PLATFORM_OPTIONS -no-opengl -sysroot ${CMAKE_SYSROOT})
-    elseif (CMAKE_COMPILER_IS_GNUCXX)
-        set(PLATFORM -platform linux-g++)
-    else ()
-        set(PLATFORM -platform linux-clang)
-    endif ()
-    list(APPEND PLATFORM_OPTIONS -no-pch -c++std c++17)
-    #-device-option CROSS_COMPILE=${CROSS}
-elseif(VCPKG_TARGET_IS_OSX)
-    list(APPEND PLATFORM_OPTIONS -c++std c++17 -no-pch -DCMAKE_OSX_ARCHITECTURES=${VCPKG_OSX_ARCHITECTURES})
-
-    # change the minumum deployment target so the c++17 features become available
-    vcpkg_replace_string(${SOURCE_PATH}/qtbase/mkspecs/common/macx.conf
-        "QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.13"
-        "QMAKE_MACOSX_DEPLOYMENT_TARGET = ${VCPKG_OSX_DEPLOYMENT_TARGET}"
-    )
-elseif (MINGW AND (VCPKG_TARGET_IS_LINUX OR VCPKG_TARGET_IS_OSX))
-    set(PLATFORM -xplatform win32-g++)
-    list(APPEND PLATFORM_OPTIONS -opengl desktop)
-elseif (MINGW)
-    set (DIRECTX_SDK_DIR "c:/Program Files (x86)/Microsoft DirectX SDK (June 2010)/")
-    if (NOT EXISTS ${DIRECTX_SDK_DIR})
-        message (FATAL_ERROR "The DirectX SDK needs to be installed in: ${DIRECTX_SDK_DIR}")
-    endif ()
-
-    set(BUILD_COMMAND jom)
-    set(ENV{DXSDK_DIR} "${DIRECTX_SDK_DIR}")
-    vcpkg_replace_string(${SOURCE_PATH}/qtbase/src/angle/src/common/common.pri "Utilities\\\\bin\\\\x64\\\\fxc.exe" "Utilities/bin/x64/fxc.exe")
-    vcpkg_replace_string(${SOURCE_PATH}/qtbase/src/angle/src/common/common.pri "Utilities\\\\bin\\\\x86\\\\fxc.exe" "Utilities/bin/x86/fxc.exe")
-
-    set(PLATFORM -platform win32-g++)
-    list(APPEND PLATFORM_OPTIONS -angle)
-    set(EXEC_COMMAND sh)
-endif()
-
-list(APPEND QT_OPTIONS ${PLATFORM} ${PLATFORM_OPTIONS})
-
-set (CMAKE_FIND_ROOT_PATH_MODE_LIBRARY_BACKUP ${CMAKE_FIND_ROOT_PATH_MODE_LIBRARY})
-set (CMAKE_FIND_ROOT_PATH_MODE_LIBRARY NEVER)
-find_library(ZLIB_RELEASE NAMES z zlib PATHS "${CURRENT_INSTALLED_DIR}/lib" NO_DEFAULT_PATH)
-find_library(ZLIB_DEBUG NAMES zd zlibd z zlib PATHS "${CURRENT_INSTALLED_DIR}/debug/lib" NO_DEFAULT_PATH)
-find_library(JPEG_RELEASE NAMES jpeg jpeg-static PATHS "${CURRENT_INSTALLED_DIR}/lib" NO_DEFAULT_PATH)
-find_library(JPEG_DEBUG NAMES jpeg jpeg-static jpegd jpeg-staticd PATHS "${CURRENT_INSTALLED_DIR}/debug/lib" NO_DEFAULT_PATH)
-find_library(LIBPNG_RELEASE NAMES png libpng PATHS "${CURRENT_INSTALLED_DIR}/lib" NO_DEFAULT_PATH) #Depends on zlib
-find_library(LIBPNG_DEBUG NAMES png pngd libpng libpngd PATHS "${CURRENT_INSTALLED_DIR}/debug/lib" NO_DEFAULT_PATH)
-find_library(PCRE2_RELEASE NAMES pcre2-16 PATHS "${CURRENT_INSTALLED_DIR}/lib" NO_DEFAULT_PATH)
-find_library(PCRE2_DEBUG NAMES pcre2-16 pcre2-16d PATHS "${CURRENT_INSTALLED_DIR}/debug/lib" NO_DEFAULT_PATH)
-#find_library(FREETYPE_RELEASE NAMES freetype PATHS "${CURRENT_INSTALLED_DIR}/lib" NO_DEFAULT_PATH) #zlib, bzip2, libpng
-#find_library(FREETYPE_DEBUG NAMES freetype freetyped PATHS "${CURRENT_INSTALLED_DIR}/debug/lib" NO_DEFAULT_PATH)
-#find_library(DOUBLECONVERSION_RELEASE NAMES double-conversion PATHS "${CURRENT_INSTALLED_DIR}/lib" NO_DEFAULT_PATH) 
-#find_library(DOUBLECONVERSION_DEBUG NAMES double-conversion PATHS "${CURRENT_INSTALLED_DIR}/debug/lib" NO_DEFAULT_PATH)
-#find_library(HARFBUZZ_RELEASE NAMES harfbuzz PATHS "${CURRENT_INSTALLED_DIR}/lib" NO_DEFAULT_PATH) 
-#find_library(HARFBUZZ_DEBUG NAMES harfbuzz PATHS "${CURRENT_INSTALLED_DIR}/debug/lib" NO_DEFAULT_PATH)
-
-if("sql" IN_LIST FEATURES)
-    #find_library(PSQL_RELEASE NAMES pq libpq PATHS "${CURRENT_INSTALLED_DIR}/lib" NO_DEFAULT_PATH) # Depends on openssl and zlib(linux)
-    #find_library(PSQL_DEBUG NAMES pq libpq pqd libpqd PATHS "${CURRENT_INSTALLED_DIR}/debug/lib" NO_DEFAULT_PATH)
-    find_library(SQLITE_RELEASE NAMES sqlite3 PATHS "${CURRENT_INSTALLED_DIR}/lib" NO_DEFAULT_PATH)
-    find_library(SQLITE_DEBUG NAMES sqlite3 sqlite3d PATHS "${CURRENT_INSTALLED_DIR}/debug/lib" NO_DEFAULT_PATH)
-    if (VCPKG_TARGET_IS_WINDOWS)
-        list(APPEND QT_OPTIONS_REL "SQLITE_LIBS=${SQLITE_RELEASE}")
-        list(APPEND QT_OPTIONS_DBG "SQLITE_LIBS=${SQLITE_DEBUG}")
-    elseif (VCPKG_TARGET_IS_OSX)
-        list(APPEND QT_OPTIONS_REL "SQLITE_LIBS=${SQLITE_RELEASE} -lpthread")
-        list(APPEND QT_OPTIONS_DBG "SQLITE_LIBS=${SQLITE_DEBUG} -lpthread")
-    else ()
-        list(APPEND QT_OPTIONS_REL "SQLITE_LIBS=${SQLITE_RELEASE} -ld -lpthread")
-        list(APPEND QT_OPTIONS_DBG "SQLITE_LIBS=${SQLITE_DEBUG} -ld -lpthread")
-    endif ()
-endif()
-
-if("tiff" IN_LIST FEATURES)
-    find_library(LZMA_RELEASE NAMES lzma PATHS "${CURRENT_INSTALLED_DIR}/lib" NO_DEFAULT_PATH)
-    find_library(LZMA_DEBUG NAMES lzmad PATHS "${CURRENT_INSTALLED_DIR}/debug/lib" NO_DEFAULT_PATH)
-    find_library(TIFF_RELEASE NAMES tiff PATHS "${CURRENT_INSTALLED_DIR}/lib" NO_DEFAULT_PATH)
-    find_library(TIFF_DEBUG NAMES tiffd PATHS "${CURRENT_INSTALLED_DIR}/debug/lib" NO_DEFAULT_PATH)
-    list(APPEND QT_OPTIONS_REL "TIFF_LIBS=${TIFF_RELEASE} ${LZMA_RELEASE} ${ZLIB_RELEASE}")
-    list(APPEND QT_OPTIONS_DBG "TIFF_LIBS=${TIFF_DEBUG} ${LZMA_DEBUG} ${ZLIB_DEBUG}")
-endif()
-
-# set (CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ${CMAKE_FIND_ROOT_PATH_MODE_LIBRARY_BACKUP})
 
 if (VCPKG_TARGET_IS_LINUX)
     set(FREETYPE_HARFBUZZ ON)
@@ -223,6 +77,7 @@ vcpkg_configure_cmake(
         -DQT_NO_MAKE_TESTS:BOOL=TRUE
         -DFEATURE_cpus=OFF
         -DFEATURE_webp=OFF
+        -DFEATURE_jasper=OFF
         -DFEATURE_dbus=OFF
         -DFEATURE_zstd=OFF
         -DFEATURE_icu=OFF
@@ -283,7 +138,6 @@ vcpkg_configure_cmake(
         -DBUILD_qtquicktimeline=${FEATURE_qml}
         -DBUILD_qtdeclarative=${FEATURE_qml}
         -DBUILD_qtwayland=${FEATURE_qml}
-        -DFEATURE_d3d12=OFF # d3d12 is not available on windows server 2012
 
         -DBUILD_qtlocation=${FEATURE_location}
         -DFEATURE_geoservices_here=OFF
@@ -334,6 +188,17 @@ foreach(_comp IN LISTS COMPONENTS)
     endif()
 endforeach()
 
+#fix debug plugin paths (should probably be fixed in vcpkg_fixup_pkgconfig)
+file(GLOB_RECURSE DEBUG_CMAKE_TARGETS "${CURRENT_PACKAGES_DIR}/share/**/*Targets-debug.cmake")
+debug_message("DEBUG_CMAKE_TARGETS:${DEBUG_CMAKE_TARGETS}")
+foreach(_debug_target IN LISTS DEBUG_CMAKE_TARGETS)
+    vcpkg_replace_string("${_debug_target}" "{_IMPORT_PREFIX}/${qt_plugindir}" "{_IMPORT_PREFIX}/debug/${qt_plugindir}")
+    vcpkg_replace_string("${_debug_target}" "{_IMPORT_PREFIX}/${qt_qmldir}" "{_IMPORT_PREFIX}/debug/${qt_qmldir}")
+endforeach()
+
+file(GLOB BIN_FILES ${CURRENT_PACKAGES_DIR}/bin/*)
+file(COPY ${BIN_FILES} DESTINATION ${CURRENT_PACKAGES_DIR}/tools/qt6)
+
 file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/include")
 file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/share")
 file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/tools")
@@ -356,27 +221,4 @@ endif()
 #configure_file(${CMAKE_CURRENT_LIST_DIR}/qt_debug.conf ${CURRENT_PACKAGES_DIR}/tools/qt_debug.conf)
 #configure_file(${CMAKE_CURRENT_LIST_DIR}/qt_release.conf ${CURRENT_PACKAGES_DIR}/tools/qt_release.conf)
 
-# file(RENAME ${CURRENT_PACKAGES_DIR}/lib/cmake ${CURRENT_PACKAGES_DIR}/share/cmake)
-
-# file(GLOB BIN_FILES ${CURRENT_PACKAGES_DIR}/bin/*)
-# file(COPY ${BIN_FILES} DESTINATION ${CURRENT_PACKAGES_DIR}/tools)
-# file(REMOVE_RECURSE
-#     ${CURRENT_PACKAGES_DIR}/debug/bin
-#     ${CURRENT_PACKAGES_DIR}/debug/tools
-#     ${CURRENT_PACKAGES_DIR}/debug/include
-#     ${CURRENT_PACKAGES_DIR}/debug/lib/pkgconfig
-#     ${CURRENT_PACKAGES_DIR}/debug/lib/cmake
-#     ${CURRENT_PACKAGES_DIR}/debug/share
-#     ${CURRENT_PACKAGES_DIR}/bin
-# )
-
-# # bootstrap libs are only used for the tools and cause errors on windows as they link to a different crt
-# file(REMOVE
-#     ${CURRENT_PACKAGES_DIR}/debug/lib/Qt5Bootstrap.lib
-#     ${CURRENT_PACKAGES_DIR}/debug/lib/Qt5Bootstrap.prl
-#     ${CURRENT_PACKAGES_DIR}/lib/Qt5Bootstrap.lib
-#     ${CURRENT_PACKAGES_DIR}/lib/Qt5Bootstrap.prl
-# )
-
-# file(INSTALL ${CMAKE_CURRENT_LIST_DIR}/FindQmlPlugin.cmake DESTINATION ${CURRENT_PACKAGES_DIR}/share/cmake)
 file(INSTALL ${SOURCE_PATH}/LICENSE.LGPLv3 DESTINATION  ${CURRENT_PACKAGES_DIR}/share/${PORT} RENAME copyright)

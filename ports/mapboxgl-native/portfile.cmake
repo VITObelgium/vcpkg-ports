@@ -46,6 +46,7 @@ vcpkg_apply_patches(
         tuple.patch
         glyph-rasterizer.patch
         msvc.patch
+        qt6-support.patch
 )
     
 vcpkg_configure_cmake(

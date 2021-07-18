@@ -262,6 +262,7 @@ function(vcpkg_configure_cmake)
         "-D_VCPKG_INSTALLED_DIR=${_VCPKG_INSTALLED_DIR}"
         "-DVCPKG_MANIFEST_INSTALL=OFF"
         "-DCMAKE_DEBUG_POSTFIX=d"
+        "-DCMAKE_POLICY_DEFAULT_CMP0063=NEW"
     )
 
     if(DEFINED ARCH)

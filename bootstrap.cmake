@@ -1,6 +1,6 @@
 find_package(Git)
 
-set(VCPKG_TAG "2021-06-29")
+set(VCPKG_TAG "2021-07-16")
 set(BUILD_DIR ${CMAKE_CURRENT_LIST_DIR}/buildtrees)
 set(BIN_DIR ${CMAKE_CURRENT_LIST_DIR})
 set(VCPKG_BUILD_DIR ${BUILD_DIR}/vcpkg-tool)
@@ -31,14 +31,14 @@ if (CMD_ERROR)
     message(FATAL_ERROR "Failed to clone vcpkg tag ${VCPKG_TAG} (Error: ${CMD_ERROR})")
 endif ()
 
-execute_process(
-    COMMAND ${GIT_EXECUTABLE} --work-tree=. --git-dir=.git apply ${CMAKE_CURRENT_LIST_DIR}/vcpkg-llvm.patch --ignore-whitespace --whitespace=nowarn --verbose
-    WORKING_DIRECTORY ${VCPKG_BUILD_DIR}
-    RESULT_VARIABLE CMD_ERROR
-)
-if (CMD_ERROR)
-    message(FATAL_ERROR "Failed to apply vcpkg patch (Error: ${CMD_ERROR})")
-endif ()
+# execute_process(
+#     COMMAND ${GIT_EXECUTABLE} --work-tree=. --git-dir=.git apply ${CMAKE_CURRENT_LIST_DIR}/vcpkg-llvm.patch --ignore-whitespace --whitespace=nowarn --verbose
+#     WORKING_DIRECTORY ${VCPKG_BUILD_DIR}
+#     RESULT_VARIABLE CMD_ERROR
+# )
+# if (CMD_ERROR)
+#     message(FATAL_ERROR "Failed to apply vcpkg patch (Error: ${CMD_ERROR})")
+# endif ()
 
 execute_process(
     COMMAND cmake -G ${GENERATOR} ${CONFIG_ARGS} -DCMAKE_BUILD_TYPE=Release -DVCPKG_ALLOW_APPLE_CLANG=ON -DBUILD_TESTING=OFF -S ${VCPKG_BUILD_DIR} -B ${VCPKG_BUILD_OUTPUT}

@@ -1,7 +1,7 @@
 Source: qt6
 Version: 6.1.1
 Description: Complete software development framework
-Build-Depends: zlib, freetype (linux), harfbuzz (linux), libjpeg-turbo, libpng, pcre2
+Build-Depends: zlib, freetype, harfbuzz, libjpeg-turbo, libpng, pcre2
 
 Feature: qml
 Description: qml support

@@ -220,7 +220,12 @@ def cmake_build(build_dir, config=None, targets=[]):
 def vcpkg_install_ports(
     triplet, ports, clean_after_build=False, overlay_ports=None, overlay_triplets=None
 ):
-    args = ["install", "--recurse", "--feature-flags=-manifests", "--clean-packages-after-build"]
+    args = [
+        "install",
+        "--recurse",
+        "--feature-flags=-manifests",
+        "--clean-packages-after-build",
+    ]
     if clean_after_build:
         args.append("--clean-after-build")
 
@@ -234,6 +239,23 @@ def vcpkg_install_ports(
         args.append(f"--host-triplet={triplet}")
 
     args += ports
+    run_vcpkg(triplet, args)
+
+
+def vcpkg_install_manifest(
+    triplet, clean_after_build=False, overlay_ports=None, overlay_triplets=None
+):
+    args = ["install"]
+
+    if overlay_ports:
+        args.append(f"--overlay-ports={overlay_ports}")
+
+    if overlay_triplets:
+        args.append(f"--overlay-triplets={overlay_triplets}")
+
+    if clean_after_build:
+        args.append("--clean-after-build")
+
     run_vcpkg(triplet, args)
 
 
@@ -414,22 +436,30 @@ def bootstrap(
     if triplet is None:
         triplet = prompt_for_triplet()
 
-    ports_file = select_ports_file(ports_dir, triplet)
-    print("Using ports defined in: {}".format(os.path.abspath(ports_file)))
-    ports_to_install = read_ports_from_ports_file(ports_file, triplet)
-    ports_to_install.extend(additional_ports)
-    if len(ports_to_install) == 0:
-        return
-
     try:
-        vcpkg_upgrade_ports(triplet, overlay_ports, overlay_triplets)
-        vcpkg_install_ports(
-            triplet,
-            ports_to_install,
-            clean_after_build,
-            overlay_ports,
-            overlay_triplets,
-        )
+        manifest_path = pathlib.Path(ports_dir) / ".." / "vcpkg.json"
+        if manifest_path.exists():
+            print(f"Bootstrap using manifest: {manifest_path.resolve()}")
+            vcpkg_install_manifest(
+                triplet, clean_after_build, overlay_ports, overlay_triplets
+            )
+        else:
+            # deprecated bootstrap using the ports.txt file
+            ports_file = select_ports_file(ports_dir, triplet)
+            print(f"Using ports defined in: {os.path.abspath(ports_file)}")
+            ports_to_install = read_ports_from_ports_file(ports_file, triplet)
+            ports_to_install.extend(additional_ports)
+            if len(ports_to_install) == 0:
+                return
+
+            vcpkg_upgrade_ports(triplet, overlay_ports, overlay_triplets)
+            vcpkg_install_ports(
+                triplet,
+                ports_to_install,
+                clean_after_build,
+                overlay_ports,
+                overlay_triplets,
+            )
     except subprocess.CalledProcessError as e:
         raise RuntimeError("Bootstrap failed: {}".format(e))
 

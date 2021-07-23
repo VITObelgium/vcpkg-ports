@@ -199,6 +199,11 @@ def cmake_configure(
     args.extend(cmake_args)
     args.extend(["-S", source_dir, "-B", build_dir])
 
+    manifest_path = pathlib.Path(source_dir) / "vcpkg.json"
+    if manifest_path.exists():
+        manifest_install_path = pathlib.Path(source_dir) / "vcpkg_installed"
+        args.append(f"-DVCPKG_INSTALLED_DIR={manifest_install_path.as_posix()}")
+
     print(" ".join(args))
     subprocess.check_call(args)
 

@@ -17,6 +17,7 @@ vcpkg_extract_source_archive_ex(
     PATCHES
         config_install.patch
         harfbuzz.patch
+        angle.patch
         optional-printsupport.patch # included in next release
 )
 
@@ -29,6 +30,7 @@ FEATURES
     "tools"         FEATURE_tools
     "charts"        FEATURE_charts
     "tiff"          FEATURE_tiff
+    "angle"         FEATURE_angle
 )
 
 vcpkg_find_acquire_program(PYTHON3)
@@ -42,10 +44,20 @@ get_filename_component(PERL_DIR ${PERL} DIRECTORY)
 message(STATUS "Perl directory: ${PERL_DIR}")
 vcpkg_add_to_path(${PERL_DIR})
 
+set(EXTRA_ARGS)
 set(SECURETRANSPORT)
 
 set (FREETYPE_HARFBUZZ system)
 set (OPENGL desktop)
+if (FEATURE_angle)
+    set (OPENGL es2)
+    list (APPEND EXTRA_ARGS
+        -DFEATURE_opengl_dynamic=OFF
+        -DFEATURE_opengles2=ON
+        -DFEATURE_egl=ON
+        -DFEATURE_eglfs=OFF
+    )
+endif()
 
 if (VCPKG_TARGET_IS_OSX)
     set(ALLOW_SYSTEM_LIBS ON)
@@ -74,7 +86,6 @@ set(SQLITE no)
 if (FEATURE_sql)
     set(SQLITE system)
 endif()
-
 
 set(QT6_DIRECTORY_PREFIX "qt6/")
 set(qt_plugindir ${QT6_DIRECTORY_PREFIX}plugins)
@@ -118,11 +129,11 @@ vcpkg_configure_cmake(
         -DFEATURE_clangcpp=OFF
 
         -DINPUT_opengl=${OPENGL}
+        -DINPUT_libjpeg=system
+        -DINPUT_libpng=system
         
         -DFEATURE_system_zlib=ON
-        -DFEATURE_system_png=ON
         -DFEATURE_system_pcre2=ON
-        -DFEATURE_system_jpeg=ON
 
         -DINPUT_freetype=${FREETYPE_HARFBUZZ}
         
@@ -198,7 +209,9 @@ vcpkg_configure_cmake(
         -DFEATURE_distancefieldgenerator=OFF
         -DFEATURE_pixeltool=OFF
         -DFEATURE_assistant=OFF
-        
+
+        ${EXTRA_ARGS}
+
     OPTIONS_RELEASE
         -DINPUT_debug=no
         -DFEATURE_optimize_full=ON

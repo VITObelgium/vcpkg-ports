@@ -26,3 +26,7 @@ Description: enable the qtcharts component
 
 Feature: tools
 Description: enable the tools
+
+Feature: angle
+Description: build with angle support
+Build-Depends: angle (windows)

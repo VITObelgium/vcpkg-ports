@@ -13,3 +13,11 @@ jobs:
       run: |
         brew install nasm ninja automake autoconf
         python3 scripts/buildtools/vcpkg.py --triplet x64-osx-10_15 --ports-dir . --clean-after-build
+    - name: Archive build logs
+      if: ${{ always() }}
+      uses: actions/upload-artifact@v2
+      with:
+        name: build-logs
+        path: |
+          buildtrees/**/config*.log
+          buildtrees/**/install*.log

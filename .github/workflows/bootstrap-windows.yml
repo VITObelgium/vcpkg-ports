@@ -22,6 +22,7 @@ jobs:
     - name: Bootstrap the ports on windows
       run: python scripts/buildtools/vcpkg.py --triplet x64-windows-static-vs2019 --ports-dir . --clean-after-build
     - name: Archive build logs
+      if: ${{ always() }}
       uses: actions/upload-artifact@v2
       with:
         name: build-logs

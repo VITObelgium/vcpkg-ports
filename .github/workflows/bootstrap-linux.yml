@@ -13,3 +13,11 @@ jobs:
       run: sudo apt-get install nasm openssl ninja-build
     - name: Bootstrap the ports
       run: python3 scripts/buildtools/vcpkg.py --triplet x64-linux --ports-dir . --clean-after-build
+    - name: Archive build logs
+      if: ${{ always() }}
+      uses: actions/upload-artifact@v2
+      with:
+        name: build-logs
+        path: |
+          buildtrees/**/config*.log
+          buildtrees/**/install*.log

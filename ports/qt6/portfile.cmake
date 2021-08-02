@@ -57,6 +57,10 @@ if (FEATURE_angle)
         -DFEATURE_egl=ON
         -DFEATURE_eglfs=OFF
     )
+else ()
+    list (APPEND EXTRA_ARGS
+        -DFEATURE_egl=OFF
+    )
 endif()
 
 if (VCPKG_TARGET_IS_OSX)

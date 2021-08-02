@@ -8,6 +8,16 @@ endif ()
 
 file(REMOVE_RECURSE ${CURRENT_BUILDTREES_DIR}/src)
 
+vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
+FEATURES
+    "qt5"           FEATURE_qt5
+    "qt6"           FEATURE_qt6
+)
+
+if (FEATURE_qt5 EQUAL FEATURE_qt6)
+    message(FATAL_ERROR "Enable either qt5 or qt6 support")
+endif ()
+
 vcpkg_from_git_mod(
     URL https://github.com/mapbox/mapbox-gl-native.git
     OUT_SOURCE_PATH SOURCE_PATH

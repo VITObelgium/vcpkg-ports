@@ -1,0 +1,41 @@
+{
+    "name": "mapboxgl-native",
+    "version-string": "1.6.0",
+    "port-version": 0,
+    "homepage": "https://github.com/mapbox/mapbox-gl-native",
+    "description": "Interactive, thoroughly customizable maps for native c++",
+    "dependencies": [
+        "zlib",
+        "icu",
+        "libjpeg-turbo",
+        "libpng",
+        "sqlite3"
+    ],
+    "features": {
+        "qt5": {
+            "description": "Build against qt5",
+            "dependencies": [
+                {
+                    "name": "qt5",
+                    "features": [
+                        "ssl"
+                    ]
+                }
+            ]
+        },
+        "qt6": {
+            "description": "Build against qt6",
+            "dependencies": [
+                {
+                    "name": "qt6",
+                    "features": [
+                        "ssl"
+                    ]
+                }
+            ]
+        }
+    },
+    "default-features": [
+        "qt6"
+    ]
+}

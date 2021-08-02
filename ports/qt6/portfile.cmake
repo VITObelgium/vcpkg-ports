@@ -106,7 +106,7 @@ vcpkg_configure_cmake(
     SOURCE_PATH "${SOURCE_PATH}"
     PREFER_NINJA
     OPTIONS
-        -DCMAKE_OBJECT_PATH_MAX=260
+        -DCMAKE_OBJECT_PATH_MAX=280
         -DINSTALL_BINDIR:STRING=tools/qt6
         -DINSTALL_LIBEXECDIR:STRING=bin
         -DINSTALL_PLUGINSDIR:STRING=${qt_plugindir}

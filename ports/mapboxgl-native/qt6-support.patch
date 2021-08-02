@@ -1,0 +1,194 @@
+From 3e6977b061f2b2f5d248a813d89f759932ff2d22 Mon Sep 17 00:00:00 2001
+From: Dirk Vanden Boer <dirk.vdb@gmail.com>
+Date: Fri, 16 Jul 2021 21:15:32 +0200
+Subject: [PATCH] Qt6 support
+
+---
+ CMakeLists.txt                             |  5 +++-
+ platform/qt/qt.cmake                       | 29 +++++++++++-----------
+ platform/qt/src/headless_backend_qt.cpp    | 15 ++++++++---
+ platform/qt/src/http_file_source.cpp       |  2 +-
+ platform/qt/src/local_glyph_rasterizer.cpp |  6 ++---
+ platform/qt/src/qt_image.cpp               |  4 +--
+ 6 files changed, 36 insertions(+), 25 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 01e72d3ed67..d0753ee1010 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -100,7 +100,10 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+ set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
+ 
+ if(MBGL_WITH_QT)
+-    find_package(Qt5Core REQUIRED)
++    find_package(Qt6 COMPONENTS Core)
++    if (NOT Qt6_FOUND)
++        find_package(Qt5 5.15 COMPONENTS Core REQUIRED)
++    endif ()
+     set(CMAKE_AUTOMOC ON)
+     set(CMAKE_AUTORCC ON)
+ endif()
+diff --git a/platform/qt/qt.cmake b/platform/qt/qt.cmake
+index 669abf556ee..2eb3e921f36 100644
+--- a/platform/qt/qt.cmake
++++ b/platform/qt/qt.cmake
+@@ -1,9 +1,9 @@
+ # Note: Using Sqlite instead of QSqlDatabase for better compatibility.
+ 
+-find_package(Qt5Gui REQUIRED)
+-find_package(Qt5Network REQUIRED)
+-find_package(Qt5OpenGL REQUIRED)
+-find_package(Qt5Widgets REQUIRED)
++find_package(Qt6 COMPONENTS Gui Network OpenGL OpenGLWidgets Widgets)
++if (NOT Qt6_FOUND)
++    find_package(Qt5 5.15 COMPONENTS Gui Network OpenGL Widgets REQUIRED)
++endif ()
+ 
+ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+     add_definitions("-DQT_COMPILING_QIMAGE_COMPAT_CPP")
+@@ -92,10 +92,11 @@ target_link_libraries(
+     PRIVATE
+         ZLIB::ZLIB
+         ICU::i18n ICU::uc
+-        Qt5::Core
+-        Qt5::Gui
+-        Qt5::Network
+-        Qt5::OpenGL
++        Qt::Core
++        Qt::Gui
++        Qt::Network
++        Qt::OpenGL
++        $<TARGET_NAME_IF_EXISTS:Qt::OpenGLWidgets>
+         mbgl-vendor-nunicode
+         sqlite3
+ )
+@@ -140,8 +141,8 @@ target_compile_definitions(
+ target_link_libraries(
+     qmapboxgl
+     PRIVATE
+-        Qt5::Core
+-        Qt5::Gui
++        Qt::Core
++        Qt::Gui
+         mbgl-compiler-options
+         mbgl-core
+ )
+@@ -160,8 +161,8 @@ set_property(TARGET mbgl-qt PROPERTY CXX_STANDARD 98)
+ target_link_libraries(
+     mbgl-qt
+     PRIVATE
+-        Qt5::Widgets
+-        Qt5::Gui
++        Qt::Widgets
++        Qt::Gui
+         mbgl-compiler-options
+         qmapboxgl
+ )
+@@ -184,8 +185,8 @@ target_compile_definitions(
+ target_link_libraries(
+     mbgl-test-runner
+     PRIVATE
+-        Qt5::Gui
+-        Qt5::OpenGL
++        Qt::Gui
++        Qt::OpenGL
+         mbgl-compiler-options
+         pthread
+ )
+diff --git a/platform/qt/src/headless_backend_qt.cpp b/platform/qt/src/headless_backend_qt.cpp
+index 1d62afabffb..03bf3bfb16b 100644
+--- a/platform/qt/src/headless_backend_qt.cpp
++++ b/platform/qt/src/headless_backend_qt.cpp
+@@ -1,6 +1,6 @@
+ #include <mbgl/gl/headless_backend.hpp>
+ 
+-#include <QGLWidget>
++#include <QOffscreenSurface>
+ #include <QOpenGLContext>
+ 
+ #include <cassert>
+@@ -10,6 +10,12 @@ namespace gl {
+ 
+ class QtBackendImpl final : public HeadlessBackend::Impl {
+ public:
++    QtBackendImpl() {
++        // QtBackendImpl must be created in the main/GUI thread on platforms
++        // that have a QWindow-based QOffscreenSurface.
++        surface.create();
++        context.create();
++    }
+     ~QtBackendImpl() = default;
+ 
+     gl::ProcAddress getExtensionFunctionPointer(const char* name) {
+@@ -18,15 +24,16 @@ class QtBackendImpl final : public HeadlessBackend::Impl {
+     }
+ 
+     void activateContext() {
+-        widget.makeCurrent();
++        context.makeCurrent(&surface);
+     }
+ 
+     void deactivateContext() {
+-        widget.doneCurrent();
++        context.doneCurrent();
+     }
+ 
+ private:
+-    QGLWidget widget;
++    QOpenGLContext context;
++    QOffscreenSurface surface;
+ };
+ 
+ void HeadlessBackend::createImpl() {
+diff --git a/platform/qt/src/http_file_source.cpp b/platform/qt/src/http_file_source.cpp
+index e4d89e3d644..7effca3e890 100644
+--- a/platform/qt/src/http_file_source.cpp
++++ b/platform/qt/src/http_file_source.cpp
+@@ -29,7 +29,7 @@ void HTTPFileSource::Impl::request(HTTPRequest* req)
+     }
+ 
+     QNetworkRequest networkRequest = req->networkRequest();
+-    networkRequest.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
++    networkRequest.setAttribute(QNetworkRequest::RedirectPolicyAttribute, true);
+ 
+     data.first = m_manager->get(networkRequest);
+     connect(data.first, SIGNAL(finished()), this, SLOT(onReplyFinished()));
+diff --git a/platform/qt/src/local_glyph_rasterizer.cpp b/platform/qt/src/local_glyph_rasterizer.cpp
+index 31abfd4503b..2f7662ea47c 100644
+--- a/platform/qt/src/local_glyph_rasterizer.cpp
++++ b/platform/qt/src/local_glyph_rasterizer.cpp
+@@ -52,7 +52,7 @@ Glyph LocalGlyphRasterizer::rasterizeGlyph(const FontStack&, GlyphID glyphID) {
+         return glyph;
+     }
+ 
+-    glyph.metrics.width = impl->metrics->width(glyphID);
++    glyph.metrics.width = impl->metrics->horizontalAdvance(glyphID);
+     glyph.metrics.height = impl->metrics->height();
+     glyph.metrics.left = 3;
+     glyph.metrics.top = -8;
+@@ -68,8 +68,8 @@ Glyph LocalGlyphRasterizer::rasterizeGlyph(const FontStack&, GlyphID glyphID) {
+     // Render at constant baseline, to align with glyphs that are rendered by node-fontnik.
+     painter.drawText(QPointF(0, 20), QString(QChar(glyphID)));
+ 
+-    auto img = std::make_unique<uint8_t[]>(image.byteCount());
+-    memcpy(img.get(), image.constBits(), image.byteCount());
++    auto img = std::make_unique<uint8_t[]>(image.sizeInBytes());
++    memcpy(img.get(), image.constBits(), image.sizeInBytes());
+ 
+     glyph.bitmap = AlphaImage { size, std::move(img) };
+ 
+diff --git a/platform/qt/src/qt_image.cpp b/platform/qt/src/qt_image.cpp
+index 302d3987391..519e9df4f8f 100644
+--- a/platform/qt/src/qt_image.cpp
++++ b/platform/qt/src/qt_image.cpp
+@@ -45,8 +45,8 @@ PremultipliedImage decodeImage(const std::string& string) {
+         throw std::runtime_error("Unsupported image type");
+     }
+ 
+-    auto img = std::make_unique<uint8_t[]>(image.byteCount());
+-    memcpy(img.get(), image.constBits(), image.byteCount());
++    auto img = std::make_unique<uint8_t[]>(image.sizeInBytes());
++    memcpy(img.get(), image.constBits(), image.sizeInBytes());
+ 
+     return { { static_cast<uint32_t>(image.width()), static_cast<uint32_t>(image.height()) },
+              std::move(img) };

@@ -1,0 +1,69 @@
+From 9d84bafebabb48b83edd6392027238d7a4dd3581 Mon Sep 17 00:00:00 2001
+From: Joerg Bornemann <joerg.bornemann@qt.io>
+Date: Tue, 2 Feb 2021 11:51:59 +0100
+Subject: [PATCH] Make it possible to disable the PrintSupport module
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Introduce the 'printsupport' feature to control whether the PrintSupport
+module is built.
+
+[ChangeLog][QtPrintSupport] Building of QtPrintSupport can be disabled
+by passing -no-feature-printsupport to configure.
+
+Fixes: QTBUG-90778
+Change-Id: I8a9a4b7f8dd8f39a81565c8eb14ce1ae0839267d
+Reviewed-by: Alexey Edelev <alexey.edelev@qt.io>
+Reviewed-by: Nodir Temirkhodjaev <nodir.temir@gmail.com>
+Reviewed-by: Tor Arne Vestbø <tor.arne.vestbo@qt.io>
+---
+ configure.cmake       | 4 ++++
+ configure.json        | 5 +++++
+ src/CMakeLists.txt    | 2 +-
+ 4 files changed, 14 insertions(+), 1 deletion(-)
+
+diff --git a/qtbase/configure.cmake b/qtbase/configure.cmake
+index d0767902c8c..830a408b7b2 100644
+--- a/qtbase/configure.cmake
++++ b/qtbase/configure.cmake
+@@ -898,6 +898,10 @@ qt_feature_config("gui" QMAKE_PUBLIC_QT_CONFIG
+ qt_feature("network" PRIVATE
+     LABEL "Qt Network"
+ )
++qt_feature("printsupport" PRIVATE
++    LABEL "Qt PrintSupport"
++    CONDITION QT_FEATURE_widgets
++)
+ qt_feature("sql" PRIVATE
+     LABEL "Qt Sql"
+     CONDITION QT_FEATURE_thread
+diff --git a/qtbase/configure.json b/qtbase/configure.json
+index a9249e1ed29..84798d3a0e8 100644
+--- a/qtbase/configure.json
++++ b/qtbase/configure.json
+@@ -1344,6 +1344,11 @@
+             "label": "Qt Network",
+             "output": [ "privateFeature" ]
+         },
++        "printsupport": {
++            "label": "Qt PrintSupport",
++            "condition": "features.widgets",
++            "output": [ "privateFeature" ]
++        },
+         "sql": {
+             "label": "Qt Sql",
+             "condition": "features.thread",
+diff --git a/qtbase/src/CMakeLists.txt b/qtbase/src/CMakeLists.txt
+index bf71322b44c..62daf295e7b 100644
+--- a/qtbase/src/CMakeLists.txt
++++ b/qtbase/src/CMakeLists.txt
+@@ -67,7 +67,7 @@ endif()
+ if (QT_FEATURE_testlib)
+     add_subdirectory(testlib)
+ endif()
+-if(QT_FEATURE_gui AND QT_FEATURE_widgets)
++if(QT_FEATURE_printsupport)
+    add_subdirectory(printsupport)
+ endif()
+ add_subdirectory(plugins)

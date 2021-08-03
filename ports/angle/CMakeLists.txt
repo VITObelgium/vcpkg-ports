@@ -372,6 +372,7 @@ else()
                 "-DGL_API="
                 "-DGL_APICALL="
                 "-DEGLAPI="
+                "-DANGLE_STATIC"
         )
     else()
         target_compile_definitions(libGLESv2 PRIVATE

@@ -99,6 +99,12 @@ SET(QT_DECLARATIVE OFF)
 
 if (FEATURE_tools OR FEATURE_qml)
     set(QT_DECLARATIVE ON)
+    list (APPEND EXTRA_ARGS
+        -DFEATURE_qml_itemmodel=OFF
+        -DFEATURE_qml_profiler=OFF
+        -DFEATURE_qml_debug=OFF
+        -DFEATURE_qml_animation=OFF
+    )
 endif ()
 
 
@@ -127,7 +133,6 @@ vcpkg_configure_cmake(
         -DFEATURE_zstd=OFF
         -DFEATURE_icu=OFF
         -DFEATURE_glib=OFF
-        -DFEATURE_accessibility=OFF
         -DFEATURE_brotli=OFF
         -DFEATURE_clang=OFF
         -DFEATURE_clangcpp=OFF
@@ -174,7 +179,6 @@ vcpkg_configure_cmake(
         -DBUILD_qtlottie=${FEATURE_qml}
         -DBUILD_qtquicktimeline=${FEATURE_qml}
         -DBUILD_qtwayland=${FEATURE_qml}
-        -DFEATURE_qml_devtools=OFF
         
         -DBUILD_qtlocation=${FEATURE_location}
         -DFEATURE_geoservices_here=OFF

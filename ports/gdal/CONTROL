@@ -1,7 +1,7 @@
 Source: gdal
 Version: 2.4.4-8
 Description: The Geographic Data Abstraction Library for reading and writing geospatial raster and vector data.
-Build-Depends: proj, tiff[lzw], liblzma, libpng (windows), libiconv
+Build-Depends: proj, tiff[lzma], liblzma, libpng (windows), libiconv
 
 Feature: png
 Description: Png support

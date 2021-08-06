@@ -223,7 +223,12 @@ def cmake_build(build_dir, config=None, targets=[]):
 
 
 def vcpkg_install_ports(
-    triplet, ports, clean_after_build=False, overlay_ports=None, overlay_triplets=None
+    triplet,
+    ports,
+    clean_after_build=False,
+    overlay_ports=None,
+    overlay_triplets=None,
+    build_root=None,
 ):
     args = [
         "install",
@@ -240,6 +245,9 @@ def vcpkg_install_ports(
     if overlay_triplets:
         args.append(f"--overlay-triplets={overlay_triplets}")
 
+    if build_root:
+        args.append(f"--x-buildtrees-root={build_root}")
+
     if "vs2019" in triplet or "cluster" in triplet or "musl" in triplet:
         args.append(f"--host-triplet={triplet}")
 
@@ -248,7 +256,7 @@ def vcpkg_install_ports(
 
 
 def vcpkg_install_manifest(
-    triplet, clean_after_build=False, overlay_ports=None, overlay_triplets=None
+    triplet, clean_after_build=False, overlay_ports=None, overlay_triplets=None, build_root=None,
 ):
     args = ["install"]
 
@@ -257,6 +265,9 @@ def vcpkg_install_manifest(
 
     if overlay_triplets:
         args.append(f"--overlay-triplets={overlay_triplets}")
+
+    if build_root:
+        args.append(f"--x-buildtrees-root={build_root}")
 
     if clean_after_build:
         args.append("--clean-after-build")
@@ -426,6 +437,11 @@ def bootstrap_argparser():
         dest="parent",
         help="bootstrap in the parent directory",
     )
+    parser.add_argument(
+        "--build-root",
+        dest="build_root",
+        help="customize buildtrees directory location",
+    )
 
     return parser
 
@@ -437,6 +453,7 @@ def bootstrap(
     clean_after_build=False,
     overlay_ports=None,
     overlay_triplets=None,
+    build_root=None,
 ):
     if triplet is None:
         triplet = prompt_for_triplet()
@@ -446,7 +463,11 @@ def bootstrap(
         if manifest_path.exists():
             print(f"Bootstrap using manifest: {manifest_path.resolve()}")
             vcpkg_install_manifest(
-                triplet, clean_after_build, overlay_ports, overlay_triplets
+                triplet,
+                clean_after_build,
+                overlay_ports,
+                overlay_triplets,
+                build_root,
             )
         else:
             # deprecated bootstrap using the ports.txt file
@@ -464,6 +485,7 @@ def bootstrap(
                 clean_after_build,
                 overlay_ports,
                 overlay_triplets,
+                build_root,
             )
     except subprocess.CalledProcessError as e:
         raise RuntimeError("Bootstrap failed: {}".format(e))

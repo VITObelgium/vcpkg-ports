@@ -203,6 +203,7 @@ def cmake_configure(
     if manifest_path.exists():
         manifest_install_path = pathlib.Path(source_dir) / "vcpkg_installed"
         args.append(f"-DVCPKG_INSTALLED_DIR={manifest_install_path.as_posix()}")
+        args.append("-DVCPKG_MANIFEST_MODE=OFF")
 
     print(" ".join(args))
     subprocess.check_call(args)
@@ -256,7 +257,11 @@ def vcpkg_install_ports(
 
 
 def vcpkg_install_manifest(
-    triplet, clean_after_build=False, overlay_ports=None, overlay_triplets=None, build_root=None,
+    triplet,
+    clean_after_build=False,
+    overlay_ports=None,
+    overlay_triplets=None,
+    build_root=None,
 ):
     args = ["install"]
 

@@ -18,6 +18,7 @@ vcpkg_extract_source_archive_ex(
         config_install.patch
         harfbuzz.patch
         angle.patch
+        allow_outside_prefix.patch
         optional-printsupport.patch # included in next release
 )
 
@@ -100,10 +101,8 @@ SET(QT_DECLARATIVE OFF)
 if (FEATURE_tools OR FEATURE_qml)
     set(QT_DECLARATIVE ON)
     list (APPEND EXTRA_ARGS
-        -DFEATURE_qml_itemmodel=OFF
         -DFEATURE_qml_profiler=OFF
         -DFEATURE_qml_debug=OFF
-        -DFEATURE_qml_animation=OFF
     )
 endif ()
 
@@ -117,11 +116,6 @@ vcpkg_configure_cmake(
         -DINSTALL_LIBEXECDIR:STRING=bin
         -DINSTALL_PLUGINSDIR:STRING=${qt_plugindir}
         -DINSTALL_QMLDIR:STRING=${qt_qmldir}
-        -DINSTALL_DOCDIR:STRING=doc/${QT6_DIRECTORY_PREFIX}
-        -DINSTALL_INCLUDEDIR:STRING=include/${QT6_DIRECTORY_PREFIX}
-        -DINSTALL_DESCRIPTIONSDIR:STRING=share/qt6/modules
-        -DINSTALL_MKSPECSDIR:STRING=share/qt6/mkspecs
-        -DINSTALL_TRANSLATIONSDIR:STRING=translations/${QT6_DIRECTORY_PREFIX}
 
         -DVCPKG_ALLOW_SYSTEM_LIBS=${ALLOW_SYSTEM_LIBS}
         -DQT_NO_MAKE_EXAMPLES:BOOL=TRUE
@@ -223,9 +217,20 @@ vcpkg_configure_cmake(
     OPTIONS_RELEASE
         -DINPUT_debug=no
         -DFEATURE_optimize_full=ON
+        -DINSTALL_DOCDIR:STRING=doc/${QT6_DIRECTORY_PREFIX}
+        -DINSTALL_INCLUDEDIR:STRING=include/${QT6_DIRECTORY_PREFIX}
+        -DINSTALL_DESCRIPTIONSDIR:STRING=share/qt6/modules
+        -DINSTALL_MKSPECSDIR:STRING=share/qt6/mkspecs
+        -DINSTALL_TRANSLATIONSDIR:STRING=translations/${QT6_DIRECTORY_PREFIX}
         
     OPTIONS_DEBUG
         -DINPUT_debug=ON
+        -DINSTALL_DOCDIR:STRING=../doc/${QT6_DIRECTORY_PREFIX}
+        -DINSTALL_INCLUDEDIR:STRING=../include/${QT6_DIRECTORY_PREFIX}
+        -DINSTALL_DESCRIPTIONSDIR:STRING=../share/Qt6/modules
+        -DINSTALL_MKSPECSDIR:STRING=../share/Qt6/mkspecs
+        -DINSTALL_TRANSLATIONSDIR:STRING=../translations/${QT6_DIRECTORY_PREFIX}
+        
 )
 vcpkg_install_cmake()
 vcpkg_copy_pdbs()
@@ -258,6 +263,16 @@ foreach(_debug_target IN LISTS DEBUG_CMAKE_TARGETS)
     vcpkg_replace_string("${_debug_target}" "{_IMPORT_PREFIX}/${qt_plugindir}" "{_IMPORT_PREFIX}/debug/${qt_plugindir}")
     vcpkg_replace_string("${_debug_target}" "{_IMPORT_PREFIX}/${qt_qmldir}" "{_IMPORT_PREFIX}/debug/${qt_qmldir}")
 endforeach()
+
+if(VCPKG_LIBRARY_LINKAGE STREQUAL "static")
+    file(GLOB_RECURSE STATIC_CMAKE_TARGETS "${CURRENT_PACKAGES_DIR}/share/Qt6Qml/QmlPlugins/*.cmake")
+    foreach(_plugin_target IN LISTS STATIC_CMAKE_TARGETS)
+        # restore a single get_filename_component which was remove by vcpkg_fixup_pkgconfig
+        vcpkg_replace_string("${_plugin_target}" 
+                                [[get_filename_component(_IMPORT_PREFIX "${CMAKE_CURRENT_LIST_FILE}" PATH)]]
+                                "get_filename_component(_IMPORT_PREFIX \"\${CMAKE_CURRENT_LIST_FILE}\" PATH)\nget_filename_component(_IMPORT_PREFIX \"\${_IMPORT_PREFIX}\" PATH)")
+    endforeach()
+endif()
 
 file(GLOB BIN_FILES ${CURRENT_PACKAGES_DIR}/bin/*)
 file(COPY ${BIN_FILES} DESTINATION ${CURRENT_PACKAGES_DIR}/tools/qt6)

@@ -126,6 +126,7 @@ def cmake_configure(
     generator=None,
     verbose=False,
     build_config="Release",
+    install_root=None,
 ):
     cmake_bin = find_cmake_binary()
     if not cmake_bin:
@@ -201,7 +202,10 @@ def cmake_configure(
 
     manifest_path = pathlib.Path(source_dir) / "vcpkg.json"
     if manifest_path.exists():
-        manifest_install_path = pathlib.Path(source_dir) / "vcpkg_installed"
+        if not install_root:
+            install_root = "vcpkg_installed"
+
+        manifest_install_path = pathlib.Path(source_dir) / install_root
         args.append(f"-DVCPKG_INSTALLED_DIR={manifest_install_path.as_posix()}")
         args.append("-DVCPKG_MANIFEST_MODE=OFF")
 
@@ -230,6 +234,8 @@ def vcpkg_install_ports(
     overlay_ports=None,
     overlay_triplets=None,
     build_root=None,
+    packages_root=None,
+    install_root=None,
 ):
     args = [
         "install",
@@ -249,6 +255,12 @@ def vcpkg_install_ports(
     if build_root:
         args.append(f"--x-buildtrees-root={build_root}")
 
+    if packages_root:
+        args.append(f"--x-packages-root={packages_root}")
+
+    if install_root:
+        args.append(f"--x-install-root={install_root}")
+
     if "vs2019" in triplet or "cluster" in triplet or "musl" in triplet:
         args.append(f"--host-triplet={triplet}")
 
@@ -262,6 +274,8 @@ def vcpkg_install_manifest(
     overlay_ports=None,
     overlay_triplets=None,
     build_root=None,
+    packages_root=None,
+    install_root=None,
 ):
     args = ["install"]
 
@@ -273,6 +287,12 @@ def vcpkg_install_manifest(
 
     if build_root:
         args.append(f"--x-buildtrees-root={build_root}")
+
+    if packages_root:
+        args.append(f"--x-packages-root={packages_root}")
+
+    if install_root:
+        args.append(f"--x-install-root={install_root}")
 
     if clean_after_build:
         args.append("--clean-after-build")
@@ -459,6 +479,8 @@ def bootstrap(
     overlay_ports=None,
     overlay_triplets=None,
     build_root=None,
+    packages_root=None,
+    install_root=None,
 ):
     if triplet is None:
         triplet = prompt_for_triplet()
@@ -473,6 +495,8 @@ def bootstrap(
                 overlay_ports,
                 overlay_triplets,
                 build_root,
+                packages_root,
+                install_root,
             )
         else:
             # deprecated bootstrap using the ports.txt file
@@ -491,6 +515,8 @@ def bootstrap(
                 overlay_ports,
                 overlay_triplets,
                 build_root,
+                packages_root,
+                install_root,
             )
     except subprocess.CalledProcessError as e:
         raise RuntimeError("Bootstrap failed: {}".format(e))
@@ -509,6 +535,7 @@ def build_project(
     run_tests_after_build=False,
     test_arguments=None,
     build_config="Release",
+    install_root=None,
 ):
     if triplet is None:
         triplet = prompt_for_triplet()
@@ -538,6 +565,7 @@ def build_project(
             generator=generator,
             verbose=verbose,
             build_config=build_config,
+            install_root=install_root,
         )
         cmake_build(build_dir, config=build_config, targets=targets)
     except subprocess.CalledProcessError as e:
@@ -567,6 +595,7 @@ def build_project_release(
     run_tests_after_build=False,
     test_arguments=None,
     build_config="Release",
+    install_root=None,
 ):
     if not git_status_is_clean():
         raise RuntimeError("Git status is not clean")
@@ -590,6 +619,7 @@ def build_project_release(
         build_dir,
         targets=targets,
         install_dir=install_dir,
+        install_root=install_root,
     )
 
     if run_tests_after_build:

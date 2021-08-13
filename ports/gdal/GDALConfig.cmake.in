@@ -52,6 +52,10 @@ if (@GDAL_FRMTS_NETCDF@)
     find_package(netCDF CONFIG REQUIRED)
 endif ()
 
+if (@GDAL_OGR_FRMTS_XLS@)
+    find_dependency(Freexl REQUIRED)
+endif ()
+
 if (@GDAL_OGR_FRMTS_XLSX@)
     find_dependency(EXPAT REQUIRED)
 endif ()

@@ -49,7 +49,7 @@ sqlpp11
 sqlpp11-connector-postgresql
 sqlpp11-connector-sqlite3
 tbb
-tiff[lzw]
+tiff
 tomlplusplus
 trompeloeil
 type-safe

@@ -147,7 +147,7 @@ if (GDAL_FRMTS_GTIFF)
 endif ()
 
 if (GDAL_OGR_FRMTS_XLS)
-    find_package(freexl REQUIRED)
+    find_package(Freexl REQUIRED)
     add_compile_definitions(HAVE_FREEXL)
 endif ()
 

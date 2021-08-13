@@ -41,7 +41,7 @@ spdlog
 sqlite3
 sqlpp11
 sqlpp11-connector-sqlite3
-tiff[lzw]
+tiff
 tomlplusplus
 trompeloeil
 type-safe

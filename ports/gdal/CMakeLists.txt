@@ -33,6 +33,7 @@ option(GDAL_OGR_FRMTS_GEOPKG "Geopackage driver support (sqlite required)" OFF)
 option(GDAL_OGR_FRMTS_MVT "Mapbox vector tiles driver support (sqlite required)" OFF)
 option(GDAL_OGR_FRMTS_SHAPE "Esri shapefile driver support" OFF)
 option(GDAL_OGR_FRMTS_SQLITE "Sqlite driver support (requires spatialite)" OFF)
+option(GDAL_OGR_FRMTS_XLS "Xls driver support (freexl required)" OFF)
 option(GDAL_OGR_FRMTS_XLSX "Xlsx driver support (expat required)" OFF)
 option(GDAL_OGR_FRMTS_CSV "Csv driver support" OFF)
 
@@ -143,6 +144,11 @@ endif ()
 if (GDAL_FRMTS_GTIFF)
     find_package(TIFF REQUIRED)
     add_compile_definitions(BIGTIFF_SUPPORT)
+endif ()
+
+if (GDAL_OGR_FRMTS_XLS)
+    find_package(freexl REQUIRED)
+    add_compile_definitions(HAVE_FREEXL)
 endif ()
 
 if (GDAL_OGR_FRMTS_XLSX)
@@ -1286,6 +1292,16 @@ if (GDAL_OGR_FRMTS_GEOPKG OR GDAL_OGR_FRMTS_SQLITE)
     target_link_libraries(ogr PRIVATE libspatialite::spatialite)
 endif ()
 
+if (GDAL_OGR_FRMTS_XLS)
+    target_sources(ogr PRIVATE
+        ogr/ogrsf_frmts/xls/ogrxlsdatasource.cpp
+        ogr/ogrsf_frmts/xls/ogrxlsdriver.cpp
+        ogr/ogrsf_frmts/xls/ogrxlslayer.cpp
+    )
+    target_compile_definitions(ogr PRIVATE XLS_ENABLED)
+    target_link_libraries(ogr PRIVATE freexl::freexl)
+endif ()
+
 if (GDAL_OGR_FRMTS_XLSX)
     target_sources(ogr PRIVATE
         ogr/ogrsf_frmts/xlsx/ogrxlsxdatasource.cpp
@@ -1335,6 +1351,7 @@ message(STATUS "Geo package driver support:       ${GDAL_OGR_FRMTS_GEOPKG}")
 message(STATUS "KML driver support:               ON")
 message(STATUS "Memory driver support:            ON")
 message(STATUS "Sqlite driver support:            ${GDAL_OGR_FRMTS_SQLITE}")
+message(STATUS "Xls driver support:               ${GDAL_OGR_FRMTS_XLS}")
 message(STATUS "Xlsx driver support:              ${GDAL_OGR_FRMTS_XLSX}")
 
 ############################################################################################

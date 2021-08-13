@@ -1,5 +1,5 @@
 Source: gdal
-Version: 2.4.4-8
+Version: 2.4.4-9
 Description: The Geographic Data Abstraction Library for reading and writing geospatial raster and vector data.
 Build-Depends: proj, tiff[lzma], liblzma, libpng (windows), libiconv
 
@@ -31,8 +31,12 @@ Description: Spatialite support
 Build-Depends: libspatialite, sqlite3
 
 Feature: expat
-Description: Expat support needed for excel driver
+Description: Expat support needed for excel xlsx driver
 Build-Depends: expat
+
+Feature: freexl
+Description: Freexl support needed for excel xls driver
+Build-Depends: freexl
 
 Feature: pcraster
 Description: Support reading and writing pcraster map files

@@ -35,9 +35,9 @@ if (VCPKG_TARGET_IS_WINDOWS)
             INSTALLED_ROOT="${CURRENT_INSTALLED_DIR}"
             INST_DIR="${CURRENT_PACKAGES_DIR}"
             "LINK_FLAGS="
-            "LIBS_ALL=${LIBS_ALL_REL}"
+            "LIBS_ALL=${LIBS_ALL_REL}"       
         
-    )
+            )
     file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/include)
     file(INSTALL ${SOURCE_PATH}/COPYING DESTINATION ${CURRENT_PACKAGES_DIR}/share/freexl RENAME copyright)
     
@@ -45,7 +45,7 @@ if (VCPKG_TARGET_IS_WINDOWS)
       file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/bin)
       file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/bin)
       file(REMOVE ${CURRENT_PACKAGES_DIR}/lib/freexl_i.lib)
-      file(REMOVE ${CURRENT_PACKAGES_DIR}/debug/lib/freexl_i.lib)      
+      file(REMOVE ${CURRENT_PACKAGES_DIR}/debug/lib/freexl_i.lib)
     else()
       file(REMOVE ${CURRENT_PACKAGES_DIR}/lib/freexl.lib)
       file(REMOVE ${CURRENT_PACKAGES_DIR}/debug/lib/freexl.lib)
@@ -63,8 +63,9 @@ elseif (CMAKE_HOST_UNIX OR CMAKE_HOST_APPLE) # Build in UNIX
         ARCHIVE ${ARCHIVE}
         OUT_SOURCE_PATH SOURCE_PATH
     )
-    
+    file(REMOVE_RECURSE "${SOURCE_PATH}/configure")
     vcpkg_configure_make(
+    AUTOCONFIG
     SOURCE_PATH ${SOURCE_PATH}
     OPTIONS_DEBUG
         INSTALLED_ROOT="${CURRENT_INSTALLED_DIR}"
@@ -79,29 +80,8 @@ elseif (CMAKE_HOST_UNIX OR CMAKE_HOST_APPLE) # Build in UNIX
     )
     
     vcpkg_install_make()
-    vcpkg_fixup_pkgconfig_mod()
-
-    if(VCPKG_LIBRARY_LINKAGE STREQUAL "static")
-      file(GLOB DYLIB_FILES ${CURRENT_PACKAGES_DIR}/lib/*.dylib)
-      if (DYLIB_FILES)
-        file(REMOVE ${DYLIB_FILES})
-      endif ()
-
-      file(GLOB DYLIB_FILES_DBG ${CURRENT_PACKAGES_DIR}/debug/lib/*.dylib)
-      if (DYLIB_FILES_DBG)
-        file(REMOVE ${DYLIB_FILES_DBG})
-      endif ()
-
-      file(GLOB SO_FILES ${CURRENT_PACKAGES_DIR}/lib/*.so*)
-      if (SO_FILES)
-        file(REMOVE ${SO_FILES})
-      endif ()
-
-      file(GLOB SO_FILES_DBG ${CURRENT_PACKAGES_DIR}/debug/lib/*.so*)
-      if (SO_FILES_DBG)
-        file(REMOVE ${SO_FILES_DBG})
-      endif ()
-    endif()
+    vcpkg_fixup_pkgconfig(SYSTEM_LIBRARIES m)
+    
     file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/include)
     file(INSTALL ${SOURCE_PATH}/COPYING DESTINATION ${CURRENT_PACKAGES_DIR}/share/freexl RENAME copyright)
 

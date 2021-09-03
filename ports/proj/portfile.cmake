@@ -1,19 +1,18 @@
 set(MAJOR 8)
 set(MINOR 1)
-set(REVISION 0)
+set(REVISION 1)
 set(VERSION ${MAJOR}.${MINOR}.${REVISION})
 set(PACKAGE proj-${VERSION}.tar.gz)
 
 vcpkg_download_distfile(ARCHIVE
     URLS "http://download.osgeo.org/proj/${PACKAGE}"
     FILENAME "${PACKAGE}"
-    SHA512 0c11d43bcdf97fbb3be9238c77cc111ae6df7948dc5076b1a31350c84a60299964ea1a320edfbee0568a2d9d3c7f80eafa6322adfdf99aea5f06172d7ee53a2f
+    SHA512 1f18ad83bae40c6c910900a062bd41c331838add6eebb7e83b4784e4e06fbf48706cee24aadbefe0f138f081ecc02e93a2b6fd45a84806e1372bf2997dafa852
 )
 
 vcpkg_extract_source_archive_ex(
     ARCHIVE ${ARCHIVE}
     OUT_SOURCE_PATH SOURCE_PATH
-    PATCHES json-external.patch
 )
 
 if (VCPKG_TARGET_IS_WINDOWS)

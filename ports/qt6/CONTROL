@@ -1,5 +1,5 @@
 Source: qt6
-Version: 6.1.3
+Version: 6.2.0
 Port-Version: 0
 Description: Complete software development framework
 Build-Depends: zlib, freetype, harfbuzz, libjpeg-turbo, libpng, pcre2

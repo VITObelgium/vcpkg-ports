@@ -1,13 +1,13 @@
 set(MAJOR 6)
-set(MINOR 1)
-set(REVISION 3)
+set(MINOR 2)
+set(REVISION 0)
 set(VERSION ${MAJOR}.${MINOR}.${REVISION})
 set(PACKAGE qt-everywhere-src-${VERSION}.tar.xz)
 
 vcpkg_download_distfile(ARCHIVE
     URLS "http://download.qt.io/archive/qt/${MAJOR}.${MINOR}/${VERSION}/single/${PACKAGE}"
     FILENAME "${PACKAGE}"
-    SHA512 40fdeaa057ae653cf98234026a9cbae7c8b08a7c9a26ae3c97b3177d9ffa4c3e2bb9568583330be6b22693d17f667b284761b83b34a1ea1690c449f454e0e1ac
+    SHA512 d4cd2457e08491d06892de0fd156eb77ff77a96d263faac3720e9db3ed720bbf15c0f0f0357131ce108e374037407bced4d6a68e8135d46ca746deac81c0c996
 )
 
 vcpkg_extract_source_archive_ex(
@@ -19,7 +19,6 @@ vcpkg_extract_source_archive_ex(
         harfbuzz.patch
         angle.patch
         allow_outside_prefix.patch
-        optional-printsupport.patch # included in next release
 )
 
 vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
@@ -194,7 +193,7 @@ vcpkg_configure_cmake(
         -DFEATURE_sql_oci=OFF
 
         -DCMAKE_FEATURE_TIFF=${FEATURE_tiff}
-        -DFEATURE_system_tiff=ON
+        -DFEATURE_system_tiff=${FEATURE_tiff}
 
         -DBUILD_qtdeclarative=${QT_DECLARATIVE}
         -DBUILD_qtactiveqt=${FEATURE_tools}

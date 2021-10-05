@@ -60,9 +60,9 @@ diff -Naur a/qtbase/src/gui/CMakeLists.txt b/qtbase/src/gui/CMakeLists.txt
          target_link_libraries(Gui PUBLIC WrapOpenGL::WrapOpenGL)
      endif()
 diff -Naur a/qtbase/src/gui/configure.cmake b/qtbase/src/gui/configure.cmake
---- a/qtbase/src/gui/configure.cmake	2021-07-19 20:01:09.332295900 +0200
-+++ b/qtbase/src/gui/configure.cmake	2021-07-19 21:38:49.660863400 +0200
-@@ -47,7 +47,14 @@
+--- a/qtbase/src/gui/configure.cmake	2021-10-01 13:17:53.938720700 +0200
++++ b/qtbase/src/gui/configure.cmake	2021-10-01 15:12:30.411175300 +0200
+@@ -48,7 +48,14 @@
  endif()
  qt_find_package(Mtdev PROVIDED_TARGETS PkgConfig::Mtdev MODULE_NAME gui QMAKE_LIB mtdev)
  qt_find_package(WrapOpenGL PROVIDED_TARGETS WrapOpenGL::WrapOpenGL MODULE_NAME gui QMAKE_LIB opengl)
@@ -76,9 +76,9 @@ diff -Naur a/qtbase/src/gui/configure.cmake b/qtbase/src/gui/configure.cmake
 +    qt_find_package(GLESv2 PROVIDED_TARGETS GLESv2::GLESv2 MODULE_NAME gui QMAKE_LIB opengl_es2)
 +endif()
  qt_find_package(Tslib PROVIDED_TARGETS PkgConfig::Tslib MODULE_NAME gui QMAKE_LIB tslib)
- qt_find_package(Vulkan PROVIDED_TARGETS Vulkan::Vulkan MODULE_NAME gui QMAKE_LIB vulkan MARK_OPTIONAL) # special case
+ qt_find_package(WrapVulkanHeaders PROVIDED_TARGETS WrapVulkanHeaders::WrapVulkanHeaders MODULE_NAME gui QMAKE_LIB vulkan MARK_OPTIONAL) # special case
  if((LINUX) OR QT_FIND_ALL_PACKAGES_ALWAYS)
-@@ -721,7 +728,7 @@
+@@ -705,7 +712,7 @@
  )
  qt_feature("opengles2" PUBLIC
      LABEL "OpenGL ES 2.0"

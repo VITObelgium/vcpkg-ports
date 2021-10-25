@@ -57,6 +57,7 @@ vcpkg_apply_patches(
         glyph-rasterizer.patch
         msvc.patch
         qt6-support.patch
+        networkslot.patch
 )
     
 vcpkg_configure_cmake(

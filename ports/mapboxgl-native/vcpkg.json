@@ -1,7 +1,7 @@
 {
     "name": "mapboxgl-native",
     "version-string": "1.6.0",
-    "port-version": 0,
+    "port-version": 1,
     "homepage": "https://github.com/mapbox/mapbox-gl-native",
     "description": "Interactive, thoroughly customizable maps for native c++",
     "dependencies": [

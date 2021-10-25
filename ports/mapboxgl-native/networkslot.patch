@@ -1,0 +1,28 @@
+From ff901251931d9037671b4e3ae092601783c79fdb Mon Sep 17 00:00:00 2001
+From: Dirk Vanden Boer <dirk.vdb@gmail.com>
+Date: Mon, 25 Oct 2021 14:35:20 +0200
+Subject: [PATCH] Fixed networkmanager slot name for recent Qt
+
+---
+ platform/qt/src/http_file_source.cpp | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/platform/qt/src/http_file_source.cpp b/platform/qt/src/http_file_source.cpp
+index 7effca3e890..a6ea4b5b76a 100644
+--- a/platform/qt/src/http_file_source.cpp
++++ b/platform/qt/src/http_file_source.cpp
+@@ -32,8 +32,12 @@ void HTTPFileSource::Impl::request(HTTPRequest* req)
+     networkRequest.setAttribute(QNetworkRequest::RedirectPolicyAttribute, true);
+ 
+     data.first = m_manager->get(networkRequest);
+-    connect(data.first, SIGNAL(finished()), this, SLOT(onReplyFinished()));
+-    connect(data.first, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(onReplyFinished()));
++    connect(data.first, &QNetworkReply::finished, this, &HTTPFileSource::Impl::onReplyFinished);
++#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
++    connect(data.first, &QNetworkReply::errorOccurred, this, &HTTPFileSource::Impl::onReplyFinished);
++#else
++    connect(data.first, &QNetworkReply::error, this, &HTTPFileSource::Impl::onReplyFinished);
++#endif
+ }
+ 
+ void HTTPFileSource::Impl::cancel(HTTPRequest* req)

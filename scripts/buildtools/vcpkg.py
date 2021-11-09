@@ -147,6 +147,14 @@ def cmake_configure(
         args.append("Visual Studio 16 2019")
         args.extend(["-A", "Win32"])
         args.extend(["-T", "v142,host=x64"])
+    elif triplet == "x64-windows-static-vs2022" or triplet == "x64-windows-vs2022":
+        args.append("Visual Studio 17 2022")
+        args.extend(["-A", "x64"])
+        args.extend(["-T", "v143,host=x64"])
+    elif triplet == "x86-windows-static-vs2022" or triplet == "x86-windows-vs2022":
+        args.append("Visual Studio 17 2022")
+        args.extend(["-A", "Win32"])
+        args.extend(["-T", "v143,host=x64"])
     elif triplet == "x64-windows-static" or triplet == "x64-windows":
         args.append("Visual Studio 15 2017 Win64")
         args.extend(["-T", "v141,host=x64"])

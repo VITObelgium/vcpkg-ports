@@ -39,7 +39,7 @@ def _vcpkg_executable_path():
 
 def _vcpkg_version_check(vcpkg_path):
     output = subprocess.check_output([vcpkg_path, "version"]).decode("utf-8")
-    return "2021-11-02-af04ebf6274fd6f7a941bff4662b3955c64f6f42" in output
+    return "2021-11-02" in output
 
 
 def _args_to_array(args):

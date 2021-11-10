@@ -9,7 +9,7 @@ index 187eaf6..938c68f 100644
 -        std::set<StringView, std::less<>> names_set(m.names.begin(), m.names.end());
 +        std::set<StringView, std::less<>> names_set;
 +        for (auto& name : m.names) {
-+            names_set.emplace(name);
++            names_set.insert(StringView(name.data(), name.size()));
 +        }
 +        
          if (names_set.size() < m.names.size())

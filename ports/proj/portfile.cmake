@@ -1,13 +1,13 @@
 set(MAJOR 8)
-set(MINOR 2)
-set(REVISION 0)
+set(MINOR 1)
+set(REVISION 1)
 set(VERSION ${MAJOR}.${MINOR}.${REVISION})
 set(PACKAGE proj-${VERSION}.tar.gz)
 
 vcpkg_download_distfile(ARCHIVE
     URLS "http://download.osgeo.org/proj/${PACKAGE}"
     FILENAME "${PACKAGE}"
-    SHA512 e7bcd959deeeb9130325a7bf63a8a0b8de2c55ba573065ca5ea32cf83c2c2643648760cfbe1c3bd1d2a2e74f65ceae4d9d525a537678386260fc2862b3927f5e
+    SHA512 1f18ad83bae40c6c910900a062bd41c331838add6eebb7e83b4784e4e06fbf48706cee24aadbefe0f138f081ecc02e93a2b6fd45a84806e1372bf2997dafa852
 )
 
 vcpkg_extract_source_archive_ex(
@@ -31,12 +31,18 @@ vcpkg_configure_cmake(
     OPTIONS ${CMAKE_OPTIONS}
         -DNLOHMANN_JSON_ORIGIN="internal"
         -DBUILD_TESTING=OFF
-        -DBUILD_APPS=OFF
+        -DBUILD_NAD2BIN=OFF
+        -DBUILD_PROJ=OFF
+        -DBUILD_GEOD=OFF
+        -DBUILD_CS2CS=OFF
+        -DBUILD_CCT=OFF
+        -DBUILD_GIE=OFF
+        -DBUILD_PROJINFO=OFF
+        -DBUILD_APPS=OFF # from version 8.2.0
         -DENABLE_CURL=OFF # required for the projsync utility
         -DENABLE_TIFF=OFF
         -DBUILD_PROJSYNC=OFF
         -DUSE_THREAD=${THREAD_SUPPORT}
-        -DVCPKG_INSTALL_PREFIX=${CURRENT_INSTALLED_DIR}
     OPTIONS_DEBUG
         -DCMAKECONFIGDIR=${CURRENT_PACKAGES_DIR}/debug/share
     OPTIONS_RELEASE
@@ -51,5 +57,6 @@ vcpkg_test_cmake(PACKAGE_NAME PROJ)
 file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/include)
 # Remove data installed from debug build
 file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/share)
+file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/include/vend)
 
 file(INSTALL ${SOURCE_PATH}/COPYING DESTINATION ${CURRENT_PACKAGES_DIR}/share/${PORT} RENAME copyright)

@@ -305,6 +305,9 @@ def vcpkg_install_manifest(
     if clean_after_build:
         args.append("--clean-after-build")
 
+    if "vs2019" in triplet or "vs2022" in triplet or "cluster" in triplet or "musl" in triplet:
+        args.append(f"--host-triplet={triplet}")
+
     run_vcpkg(triplet, args)
 
 

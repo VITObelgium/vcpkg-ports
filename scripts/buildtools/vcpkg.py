@@ -327,7 +327,7 @@ def get_all_triplets():
     triplets = []
     triplet_dir = os.path.join(os.path.dirname(__file__), "..", "..", "triplets")
     for filename in os.listdir(triplet_dir):
-        if filename.endswith(".cmake"):
+        if filename.endswith(".cmake") and not "toolchain-" in filename:
             triplet_name = os.path.splitext(filename)[0]
             triplet_useable_on_platform = False
             platform = sysconfig.get_platform()

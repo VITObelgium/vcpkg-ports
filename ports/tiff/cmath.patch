@@ -1,0 +1,12 @@
+diff -Naur a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt	2021-03-10 11:56:56.000000000 +0100
++++ b/CMakeLists.txt	2021-12-16 15:08:58.783724400 +0100
+@@ -128,7 +128,7 @@
+ include(PkgConfig)
+ 
+ # math.h/libm portability
+-find_package(CMath REQUIRED)
++#find_package(CMath REQUIRED)
+ 
+ # Release support
+ include(Release)

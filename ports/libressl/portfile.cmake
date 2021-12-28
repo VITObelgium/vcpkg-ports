@@ -9,10 +9,6 @@ endif()
 if(VCPKG_CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
     message(FATAL_ERROR "${PORT} does not currently support UWP")
 endif()
-if (VCPKG_TARGET_ARCHITECTURE STREQUAL "arm")
-  message(FATAL_ERROR "${PORT} does not support ARM")
-endif()
-
 
 set(LIBRESSL_VERSION 2.9.1)
 set(LIBRESSL_HASH 7051911e566bb093c48a70da72c9981b870e3bf49a167ba6c934eece873084cc41221fbe3cd0c8baba268d0484070df7164e4b937854e716337540a87c214354)

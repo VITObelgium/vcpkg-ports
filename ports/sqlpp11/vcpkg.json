@@ -1,0 +1,28 @@
+{
+  "name": "sqlpp11",
+  "version-semver": "0.61.0",
+  "port-version": 1,
+  "description": "A type safe SQL template library for C++.",
+  "homepage": "https://github.com/rbock/sqlpp11/",
+  "dependencies": [
+    "date"
+  ],
+  "default-features": [
+    "sqlite"
+  ],
+  "features": {
+    "sqlite": {
+      "description": "sqlite connector",
+      "dependencies": [
+        "sqlite3"
+      ]
+    },
+    "postgresql": {
+      "description": "Postgresql connector",
+      "dependencies": [
+        "libpq",
+        "boost"
+      ]
+    }
+  }
+}

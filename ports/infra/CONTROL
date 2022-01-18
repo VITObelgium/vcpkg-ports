@@ -37,7 +37,7 @@ Build-Depends: qt5[qml,location], gdal
 
 Feature: sqlite
 Description: Sqlite database utilities
-Build-Depends: sqlpp11-connector-sqlite3
+Build-Depends: sqlpp11[sqlite]
 
 Feature: zstd
 Description: Enable zstd compression support
@@ -45,7 +45,7 @@ Build-Depends: zstd
 
 Feature: postgres
 Description: Postgresql database utilities
-Build-Depends: sqlpp11-connector-postgresql
+Build-Depends: sqlpp11[postgresql]
 
 Feature: xlsx
 Description: xlsx export support for tableviews

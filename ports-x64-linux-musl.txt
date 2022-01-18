@@ -39,8 +39,7 @@ shapelib
 soci[sqlite3,postgresql]
 spdlog
 sqlite3
-sqlpp11
-sqlpp11-connector-sqlite3
+sqlpp11[sqlite]
 tiff
 tomlplusplus
 trompeloeil

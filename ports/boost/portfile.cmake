@@ -1,5 +1,5 @@
 set(MAJOR 1)
-set(MINOR 75)
+set(MINOR 78)
 set(REVISION 0)
 set(VERSION ${MAJOR}.${MINOR}.${REVISION})
 set(VERSION_UNDERSCORE ${MAJOR}_${MINOR}_${REVISION})
@@ -12,7 +12,7 @@ vcpkg_download_distfile(ARCHIVE
     URLS
         "https://boostorg.jfrog.io/artifactory/main/release/${VERSION}/source/${PACKAGE}"
     FILENAME "${PACKAGE}"
-    SHA512 b00946f87ee8b66ccac843729c6c2ffbc444c195cc8e11bd20baa73a7f7cb4a31f91bfc918e19ea850765cc6b0898b05d5ba605cad402330b094cbf9a45113fa
+    SHA512 fb9c50985f28972e0e083bb2c3be82270e3fdfb3bd9c6bf700d861406718363fedf1d514053af53bbb58aa12229dd601842f957f5f079aa23f2fef00d01806d8
 )
 
 file(REMOVE_RECURSE ${BUILD_PATH_DEBUG})
@@ -241,7 +241,7 @@ if (NOT WITH_COMPONENTS)
     file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/lib)
 endif ()
 
-vcpkg_test_cmake(PACKAGE_NAME Boost MODULE REQUIRED_HEADER boost/version.hpp TARGETS Boost::headers)
+#vcpkg_test_cmake(PACKAGE_NAME Boost MODULE REQUIRED_HEADER boost/version.hpp TARGETS Boost::headers)
 
 # Handle copyright
 file(INSTALL ${SOURCE_PATH}/LICENSE_1_0.txt DESTINATION ${CURRENT_PACKAGES_DIR}/share/${PORT} RENAME copyright)

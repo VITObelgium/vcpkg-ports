@@ -1,11 +1,11 @@
 Source: infra
-Version: 0.10.1
+Version: 0.11.0
 Description: c++ infrastructure classes (logging, string operations, ...)
-Build-Depends: fmt, date
+Build-Depends: fmt, date, gsl
 
 Feature: gdal
 Description: Gdal c++ wrapper
-Build-Depends: gdal, gsl
+Build-Depends: gdal
 
 Feature: charset
 Description: Chacacter encoding utilities

@@ -1,13 +1,13 @@
 set(MAJOR 2)
 set(MINOR 4)
-set(REVISION 1)
+set(REVISION 4)
 set(VERSION R_${MAJOR}_${MINOR}_${REVISION})
 
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO libexpat/libexpat
     REF ${VERSION}
-    SHA512 1f08861e9b766fdbbc40159404a3fe1a86451d635ef81874fa3492845eda83ac2dc6a0272525891d396b70c9a9254c2f6c907fe4abb2f8a533ccd3f52dae9d5a
+    SHA512 d9934695e21d7e80fcafaa1f099b0fe850ad770ac1bec23cc321edafbc1e186c7c610d110f1d1448e1d0f1ccc5127a7dfc03da10a116e0b00cc204652e0f8386
     HEAD_REF master
     PATCHES winpostfix.patch
 )

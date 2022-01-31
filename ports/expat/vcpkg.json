@@ -1,0 +1,7 @@
+{
+  "name": "expat",
+  "version-semver": "2.4.4",
+  "port-version": 0,
+  "description": "XML parser library written in C.",
+  "homepage": "https://github.com/libexpat/"
+}

@@ -1,12 +1,17 @@
 diff -Naur a/expat/CMakeLists.txt b/expat/CMakeLists.txt
---- a/expat/CMakeLists.txt	2021-03-25 01:29:53.000000000 +0100
-+++ b/expat/CMakeLists.txt	2021-04-16 14:02:14.611993100 +0200
-@@ -269,7 +269,7 @@
- if(MSVC)
-     add_definitions(-D_CRT_SECURE_NO_WARNINGS -wd4996)
- endif()
--if(WIN32)
+--- a/expat/CMakeLists.txt	2022-01-30 01:09:37.000000000 +0100
++++ b/expat/CMakeLists.txt	2022-01-31 09:21:28.970888800 +0100
+@@ -350,11 +350,11 @@
+ #
+ # Library filename postfix
+ #
+-if(_EXPAT_UNICODE)
 +if(FALSE)
-     if(_EXPAT_UNICODE_WCHAR_T)
-         set(_POSTFIX_WIDE "w")
-     endif()
+     set(_POSTFIX_WIDE "w")
+ endif()
+ 
+-if(MSVC AND NOT EXPAT_SHARED_LIBS)
++if(FALSE)
+     if(EXPAT_MSVC_STATIC_CRT)
+         set(_POSTFIX_CRT "MT")
+     else()

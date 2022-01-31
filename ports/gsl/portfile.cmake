@@ -2,8 +2,8 @@
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO Microsoft/GSL
-    REF v3.1.0
-    SHA512 2916df9ee165fc803ffae0a56518f2ba92870e279984913ff591559e1459943c3ffbc1f5a0d819ad8233f0c9034012de3616aa4e10557d87c7285d8425d10696
+    REF v4.0.0
+    SHA512 7fa7446796c6bf82fb3bff09f86a69c446a27be528bef3b17c8bc5ad2f24d5cf86bdb3d3813ecb44726e8f395020180e97e41027330d1fbf545cc0f0b44aac29
     HEAD_REF master
 )
 
@@ -12,9 +12,14 @@ vcpkg_configure_cmake(
     PREFER_NINJA
     OPTIONS
         -DGSL_TEST=OFF
+        -DGSL_INSTALL=ON
 )
 
 vcpkg_install_cmake()
+vcpkg_fixup_cmake_targets(
+    CONFIG_PATH share/cmake/Microsoft.GSL
+    TARGET_PATH share/Microsoft.GSL
+)
 
 file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug)
 

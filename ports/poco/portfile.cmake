@@ -23,7 +23,7 @@ string(COMPARE EQUAL "${VCPKG_LIBRARY_LINKAGE}" "static" POCO_STATIC)
 string(COMPARE EQUAL "${VCPKG_CRT_LINKAGE}" "static" POCO_MT)
 
 vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
-    pdf ENABLE_PDF
+    zip ENABLE_ZIP
 )
 
 # MySQL / MariaDDB feature
@@ -72,7 +72,7 @@ vcpkg_configure_cmake(
         -DENABLE_NET=ON
         -DENABLE_NETSSL=OFF
         -DENABLE_SEVENZIP=OFF
-        -DENABLE_ZIP=OFF
+        -DENABLE_ZIP=${ENABLE_ZIP}
         -DENABLE_CPPPARSER=OFF
         -DENABLE_POCODOC=OFF
         -DENABLE_PAGECOMPILER=OFF

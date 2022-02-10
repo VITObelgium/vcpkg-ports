@@ -19,3 +19,7 @@ Description: PostgreSQL support for POCO
 Feature: pdf
 Build-Depends: libharu
 Description: Haru support for POCO
+
+Feature: zip
+Build-Depends: zlib
+Description: Zip support

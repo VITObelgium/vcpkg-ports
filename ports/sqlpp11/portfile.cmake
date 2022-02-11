@@ -10,8 +10,7 @@ vcpkg_from_github(
     SHA512 d557c7e7e67f2caa48ccdf29834cd65eed852cec8ca7a55498266b720ae57cb7bf6fafc9eea6753417d7f5d2089ea268d894abe9e20c2464716e1c8060af54fb
     HEAD_REF master
     PATCHES
-        #float-precision.patch
-        #msvc-2019.patch
+        float-precision.patch
 )
 
 vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS

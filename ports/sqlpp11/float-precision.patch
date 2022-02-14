@@ -1,24 +1,43 @@
 diff -Naur a/include/sqlpp11/data_types/floating_point/operand.h b/include/sqlpp11/data_types/floating_point/operand.h
 --- a/include/sqlpp11/data_types/floating_point/operand.h	2022-02-11 07:47:04.000000000 +0100
-+++ b/include/sqlpp11/data_types/floating_point/operand.h	2022-02-11 21:02:21.986660200 +0100
-@@ -60,7 +60,7 @@
++++ b/include/sqlpp11/data_types/floating_point/operand.h	2022-02-14 14:24:31.449314600 +0100
+@@ -30,6 +30,9 @@
+ #include <sqlpp11/type_traits.h>
+ #include <sqlpp11/alias_operators.h>
+ 
++#include <iomanip>
++#include <limits>
++
+ namespace sqlpp
+ {
+   struct floating_point_operand : public alias_operators<floating_point_operand>
+@@ -60,7 +63,7 @@
    template <typename Context>
    Context& serialize(const floating_point_operand& t, Context& context)
    {
 -    context << t._t;
-+    context << std::defaultfloat << std::setprecision(std::numeric_limits<Operand::_value_t>::max_digits10) << t._t;
++    context << std::defaultfloat << std::setprecision(std::numeric_limits<floating_point_operand::_value_t>::max_digits10) << t._t;
      return context;
    }
  }  // namespace sqlpp
 diff -Naur a/include/sqlpp11/sqlite3/serializer.h b/include/sqlpp11/sqlite3/serializer.h
 --- a/include/sqlpp11/sqlite3/serializer.h	2022-02-11 07:47:04.000000000 +0100
-+++ b/include/sqlpp11/sqlite3/serializer.h	2022-02-11 21:14:15.464260800 +0100
-@@ -124,7 +124,7 @@
++++ b/include/sqlpp11/sqlite3/serializer.h	2022-02-14 15:48:42.493738900 +0100
+@@ -44,6 +44,8 @@
+ #include <sqlpp11/with.h>
+ 
+ #include <cmath>
++#include <iomanip>
++#include <limits>
+ 
+ namespace sqlpp
+ {
+@@ -124,7 +126,7 @@
          context << "'-Inf'";
      }
      else
 -      context << t._t;
-+      context << std::defaultfloat << std::setprecision(std::numeric_limits<Operand::_value_t>::max_digits10) << t._t;
++      context << std::defaultfloat << std::setprecision(std::numeric_limits<typename floating_point_operand::_value_t>::max_digits10) << t._t;
      return context;
    }
  

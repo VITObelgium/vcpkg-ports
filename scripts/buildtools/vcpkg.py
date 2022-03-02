@@ -52,7 +52,7 @@ def _args_to_array(args):
 def _create_vcpkg_command(triplet, vcpkg_args):
     vcpkg = _vcpkg_executable_path()
     if not vcpkg or not _vcpkg_version_check(vcpkg):
-        bootstrap_vcpkg()
+        bootstrap_vcpkg(triplet)
         vcpkg = _vcpkg_executable_path()
 
     vcpkg_root = os.path.join(os.path.dirname(__file__), "..", "..")
@@ -99,13 +99,15 @@ def find_ninja_binary():
     return shutil.which("ninja")
 
 
-def bootstrap_vcpkg():
+def bootstrap_vcpkg(triplet):
     cmake_bin = find_cmake_binary()
     if not cmake_bin:
         raise RuntimeError("cmake executable could not be found")
     print("Bootstrapping vcpkg")
     bootstrap_path = pathlib.Path(vcpkg_root_dir()) / "bootstrap.cmake"
-    subprocess.check_output([cmake_bin, "-P", bootstrap_path.as_posix()], shell=False)
+    vs2019 = "ON" if 'vs2019' in triplet else "OFF"
+    cmd = [cmake_bin, f"-DVS2019={vs2019}", "-P", bootstrap_path.as_posix()]
+    subprocess.check_output(cmd, shell=False)
 
 
 def run_vcpkg(triplet, vcpkg_args):

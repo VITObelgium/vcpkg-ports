@@ -1,9 +1,9 @@
 diff -Naur a/CMakeLists.txt b/CMakeLists.txt
---- a/CMakeLists.txt	2020-01-19 17:27:05.000000000 +0100
-+++ b/CMakeLists.txt	2020-03-04 13:41:54.895286100 +0100
-@@ -147,20 +147,6 @@
+--- a/CMakeLists.txt	2021-10-09 15:44:36.000000000 +0200
++++ b/CMakeLists.txt	2022-03-03 08:44:56.511843300 +0100
+@@ -173,32 +173,6 @@
+     list(APPEND LXW_PRIVATE_COMPILE_DEFINITIONS USE_DTOA_LIBRARY)
  endif()
- 
  
 -if(NOT BUILD_SHARED_LIBS)
 -    if(UNIX)
@@ -19,6 +19,18 @@ diff -Naur a/CMakeLists.txt b/CMakeLists.txt
 -    endif()
 -endif()
 -
- if(MSVC AND USE_STATIC_MSVC_RUNTIME)
-     foreach(flag_var CMAKE_C_FLAGS
-                      CMAKE_C_FLAGS_DEBUG
+-if(MSVC AND USE_STATIC_MSVC_RUNTIME)
+-    foreach(flag_var CMAKE_C_FLAGS
+-                     CMAKE_C_FLAGS_DEBUG
+-                     CMAKE_C_FLAGS_RELEASE
+-                     CMAKE_C_FLAGS_MINSIZEREL
+-                     CMAKE_C_FLAGS_RELWITHDEBINFO)
+-        if(${flag_var} MATCHES "/MD")
+-            string(REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
+-        endif()
+-    endforeach()
+-endif()
+-
+ # Configure pkg-config
+ file(READ "include/xlsxwriter.h" ver)
+ 

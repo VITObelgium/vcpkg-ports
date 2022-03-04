@@ -1,6 +1,6 @@
 {
   "name": "proj",
-  "version-semver": "8.2.1",
+  "version-semver": "9.0.0",
   "port-version": 0,
   "description": "PROJ library for cartographic projections",
   "homepage": "https://proj.org/",

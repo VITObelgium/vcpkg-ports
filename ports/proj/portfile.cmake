@@ -1,13 +1,13 @@
-set(MAJOR 8)
-set(MINOR 2)
-set(REVISION 1)
+set(MAJOR 9)
+set(MINOR 0)
+set(REVISION 0)
 set(VERSION ${MAJOR}.${MINOR}.${REVISION})
 set(PACKAGE proj-${VERSION}.tar.gz)
 
 vcpkg_download_distfile(ARCHIVE
     URLS "http://download.osgeo.org/proj/${PACKAGE}"
     FILENAME "${PACKAGE}"
-    SHA512 c6164771fd492be5aa91d8dd2f2794a19b47431078f148356aa70dee96a4589ec5decbab9d8dd756a7bcb322ad94935750c22e0e7fb16e21c8f59ca474e7137e
+    SHA512 ae1e65f03fba1e922a61f843b64cf4fde0ff015ef8c18bde0a10cb3e732c4d1b27d2c6b0179e8456338c552a760de22abf16e887fc92118288ffa394a9c6a000
 )
 
 vcpkg_extract_source_archive_ex(
@@ -31,13 +31,6 @@ vcpkg_configure_cmake(
     OPTIONS ${CMAKE_OPTIONS}
         -DNLOHMANN_JSON_ORIGIN="internal"
         -DBUILD_TESTING=OFF
-        -DBUILD_NAD2BIN=OFF
-        -DBUILD_PROJ=OFF
-        -DBUILD_GEOD=OFF
-        -DBUILD_CS2CS=OFF
-        -DBUILD_CCT=OFF
-        -DBUILD_GIE=OFF
-        -DBUILD_PROJINFO=OFF
         -DBUILD_APPS=OFF # from version 8.2.0
         -DENABLE_CURL=OFF # required for the projsync utility
         -DENABLE_TIFF=OFF

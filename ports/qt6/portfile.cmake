@@ -49,7 +49,7 @@ set(SECURETRANSPORT)
 
 set (FREETYPE_HARFBUZZ system)
 set (OPENGL desktop)
-if (FEATURE_angle)
+if (VCPKG_TARGET_IS_WINDOWS AND FEATURE_angle)
     set (OPENGL es2)
     list (APPEND EXTRA_ARGS
         -DFEATURE_opengl_dynamic=OFF

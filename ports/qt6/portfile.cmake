@@ -1,13 +1,13 @@
 set(MAJOR 6)
 set(MINOR 2)
-set(REVISION 3)
+set(REVISION 4)
 set(VERSION ${MAJOR}.${MINOR}.${REVISION})
 set(PACKAGE qt-everywhere-src-${VERSION}.tar.xz)
 
 vcpkg_download_distfile(ARCHIVE
     URLS "http://download.qt.io/archive/qt/${MAJOR}.${MINOR}/${VERSION}/single/${PACKAGE}"
     FILENAME "${PACKAGE}"
-    SHA512 7ff0a82dda09a6cae746752f575f0347b6612b9907de1c306b6e8c17514be4a4a76407ce7bba0cce4eb2c312481161ef8c6670e25af289404599e535144568fa
+    SHA512 9af5a45bc4144792852b2e9571c0a7b55157ab2fd155c4d619500d75099e214b720187e44c60ce27808c2826729518b0f9fdb01b339c426e1ba1ed2298af8dd2
 )
 
 vcpkg_extract_source_archive_ex(

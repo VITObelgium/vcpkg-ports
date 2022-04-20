@@ -1,13 +1,13 @@
 set(MAJOR 6)
-set(MINOR 2)
-set(REVISION 4)
+set(MINOR 3)
+set(REVISION 0)
 set(VERSION ${MAJOR}.${MINOR}.${REVISION})
 set(PACKAGE qt-everywhere-src-${VERSION}.tar.xz)
 
 vcpkg_download_distfile(ARCHIVE
     URLS "http://download.qt.io/archive/qt/${MAJOR}.${MINOR}/${VERSION}/single/${PACKAGE}"
     FILENAME "${PACKAGE}"
-    SHA512 9af5a45bc4144792852b2e9571c0a7b55157ab2fd155c4d619500d75099e214b720187e44c60ce27808c2826729518b0f9fdb01b339c426e1ba1ed2298af8dd2
+    SHA512 99e22d3f2004fa93d669ca0c8775d62952d827bfbc1e2a3cbe7ea965aea6da3d67b8ef975639b567dffe4772fdbbaa9064de975834e72ffa95db9a41b871fbc1
 )
 
 vcpkg_extract_source_archive_ex(
@@ -298,4 +298,4 @@ endif()
 #configure_file(${CMAKE_CURRENT_LIST_DIR}/qt_debug.conf ${CURRENT_PACKAGES_DIR}/tools/qt_debug.conf)
 #configure_file(${CMAKE_CURRENT_LIST_DIR}/qt_release.conf ${CURRENT_PACKAGES_DIR}/tools/qt_release.conf)
 
-file(INSTALL ${SOURCE_PATH}/LICENSE.LGPLv3 DESTINATION  ${CURRENT_PACKAGES_DIR}/share/${PORT} RENAME copyright)
+file(INSTALL ${SOURCE_PATH}/LICENSE.LGPL3 DESTINATION  ${CURRENT_PACKAGES_DIR}/share/${PORT} RENAME copyright)

@@ -1,7 +1,7 @@
 {
   "name": "tbb",
-  "version-semver": "2021.3.0",
-  "port-version": 2,
+  "version-semver": "2021.5.0",
+  "port-version": 1,
   "description": "oneAPI Threading Building Blocks",
   "homepage": "https://github.com/oneapi-src/oneTBB",
   "dependencies": [ "hwloc" ]

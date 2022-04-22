@@ -5,6 +5,7 @@ bzip2
 ceres
 clara
 csv-parser
+cryptopp
 date
 doctest
 eccodes[netcdf,png,jpeg]

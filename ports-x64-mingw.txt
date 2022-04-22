@@ -3,6 +3,7 @@ benchmark
 boost[iostreams,zlib,program-options,regex,filesystem,thread,system,date-time]
 ceres
 clara
+cryptopp
 csv-parser
 date
 doctest

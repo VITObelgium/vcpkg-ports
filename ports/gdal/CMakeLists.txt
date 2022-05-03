@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.15)
 include(CMakeDependentOption)
 
 project(gdal
-    VERSION 2.4.4
+    VERSION 3.4.2
     LANGUAGES C CXX
 )
 
@@ -138,7 +138,7 @@ endif ()
 
 if (GDAL_OGR_FRMTS_SQLITE)
     find_package(libspatialite REQUIRED)
-    add_compile_definitions(HAVE_SQLITE)
+    add_compile_definitions(HAVE_SQLITE SQLITE_ENABLED)
 endif ()
 
 if (GDAL_FRMTS_GTIFF)
@@ -157,7 +157,6 @@ if (GDAL_OGR_FRMTS_XLSX)
 endif ()
 
 find_package(PROJ CONFIG REQUIRED)
-add_compile_definitions(PROJ_STATIC PROJ_VERSION=${PROJ_VERSION_MAJOR})
 
 if (NOT MSVC)
     check_include_file(stdlib.h STDC_HEADERS)
@@ -438,76 +437,84 @@ endif ()
 ############################################################################################
 # port
 ############################################################################################
+
 add_library(port OBJECT
-    port/cpl_alibaba_oss.cpp
-    port/cpl_atomic_ops.cpp
-    port/cpl_aws.cpp
-    port/cpl_azure.cpp
-    port/cpl_base64.cpp
+    port/cpl_aws_win32.cpp
     port/cpl_conv.cpp
-    port/cpl_cpu_features.cpp
-    port/cpl_csv.cpp
+    port/cpl_compressor.cpp
     port/cpl_error.cpp
+    port/cpl_string.cpp
+    port/cplstring.cpp
+    port/cplstringlist.cpp
+    port/cpl_strtod.cpp
+    port/cpl_vsisimple.cpp
+    port/cplgetsymbol.cpp
+    port/cpl_path.cpp
+    port/cpl_csv.cpp
     port/cpl_findfile.cpp
-    port/cpl_getexecpath.cpp
-    port/cpl_google_cloud.cpp
-    port/cpl_google_oauth2.cpp
-    port/cpl_hash_set.cpp
-    port/cpl_http.cpp
-    port/cpl_json.cpp
-    port/cpl_json_streaming_parser.cpp
-    port/cpl_list.cpp
-    port/cpl_md5.cpp
+    port/cpl_vsil_win32.cpp
+    port/cpl_vsil_unix_stdio_64.cpp
     port/cpl_minixml.cpp
     port/cpl_multiproc.cpp
-    #port/cpl_odbc.cpp
-    port/cpl_path.cpp
-    port/cpl_progress.cpp
-    port/cpl_quad_tree.cpp
+    port/cpl_list.cpp
+    port/cpl_getexecpath.cpp
+    port/cpl_vsil.cpp
+    port/cpl_vsi_mem.cpp
+    port/cpl_http.cpp
+    port/cpl_hash_set.cpp
+    port/cplkeywordparser.cpp
     port/cpl_recode.cpp
     port/cpl_recode_iconv.cpp
     port/cpl_recode_stub.cpp
-    port/cpl_sha1.cpp
-    port/cpl_sha256.cpp
-    port/cpl_spawn.cpp
-    port/cpl_string.cpp
-    port/cpl_strtod.cpp
-    port/cpl_swift.cpp
+    port/cpl_quad_tree.cpp
+    port/cpl_vsil_gzip.cpp
+    port/cpl_minizip_ioapi.cpp
+    port/cpl_minizip_unzip.cpp
+    port/cpl_minizip_zip.cpp
+    port/cpl_vsil_subfile.cpp
+    port/cpl_atomic_ops.cpp
     port/cpl_time.cpp
-    port/cpl_userfaultfd.cpp
-    port/cpl_virtualmem.cpp
-    port/cpl_vsi_error.cpp
-    port/cpl_vsi_mem.cpp
-    port/cpl_vsil.cpp
+    port/cpl_vsil_stdout.cpp
+    port/cpl_vsil_sparsefile.cpp
     port/cpl_vsil_abstract_archive.cpp
+    port/cpl_vsil_tar.cpp
+    port/cpl_vsil_curl.cpp
+    port/cpl_vsil_s3.cpp
+    port/cpl_vsil_gs.cpp
     port/cpl_vsil_az.cpp
+    port/cpl_vsil_oss.cpp
+    port/cpl_vsil_plugin.cpp
+    port/cpl_vsil_swift.cpp
+    port/cpl_vsil_webhdfs.cpp
+    port/cpl_vsil_hdfs.cpp
+    port/cpl_vsil_curl_streaming.cpp
+    port/cpl_vsil_stdin.cpp
     port/cpl_vsil_buffered_reader.cpp
     port/cpl_vsil_cache.cpp
-    port/cpl_vsil_crypt.cpp
-    port/cpl_vsil_curl.cpp
-    port/cpl_vsil_curl_streaming.cpp
-    port/cpl_vsil_gs.cpp
-    port/cpl_vsil_hdfs.cpp
-    port/cpl_vsil_oss.cpp
-    port/cpl_vsil_s3.cpp
-    #port/cpl_vsil_simple.cpp only used in dgn ogr format
-    port/cpl_vsil_sparsefile.cpp
-    port/cpl_vsil_stdin.cpp
-    port/cpl_vsil_stdout.cpp
-    port/cpl_vsil_subfile.cpp
-    port/cpl_vsil_swift.cpp
-    port/cpl_vsil_tar.cpp
-    port/cpl_vsil_unix_stdio_64.cpp
-    port/cpl_vsil_webhdfs.cpp
-    port/cpl_vsil_win32.cpp
-    port/cpl_vsisimple.cpp
-    port/cpl_worker_thread_pool.cpp
+    port/cpl_vsil_adls.cpp
+    port/cpl_vsil_uploadonclose.cpp
+    port/cpl_base64.cpp
     port/cpl_xml_validate.cpp
-    port/cplgetsymbol.cpp
-    port/cplkeywordparser.cpp
-    port/cplstring.cpp
-    port/cplstringlist.cpp
-    #port/vsipreload.cpp
+    port/cpl_spawn.cpp
+    port/cpl_google_oauth2.cpp
+    port/cpl_progress.cpp
+    port/cpl_virtualmem.cpp
+    port/cpl_worker_thread_pool.cpp
+    port/cpl_vsil_crypt.cpp
+    port/cpl_sha1.cpp
+    port/cpl_sha256.cpp
+    port/cpl_aws.cpp
+    port/cpl_vsi_error.cpp
+    port/cpl_cpu_features.cpp
+    port/cpl_google_cloud.cpp
+    port/cpl_azure.cpp
+    port/cpl_alibaba_oss.cpp
+    port/cpl_json_streaming_parser.cpp
+    port/cpl_json_streaming_writer.cpp
+    port/cpl_json.cpp
+    port/cpl_md5.cpp
+    port/cpl_swift.cpp
+    port/cpl_vax.cpp
 )
 
 set (PORT_PUBLIC_HEADERS
@@ -578,36 +585,40 @@ set_target_properties(port PROPERTIES PUBLIC_HEADER "${PORT_PUBLIC_HEADERS}")
 ############################################################################################
 # gcore
 ############################################################################################
+
 add_library(gcore OBJECT
     gcore/gdalopeninfo.cpp
     gcore/gdaldrivermanager.cpp
     gcore/gdaldriver.cpp
     gcore/gdaldataset.cpp
     gcore/gdalrasterband.cpp
+    gcore/gdal_thread_pool.cpp
     gcore/gdal_misc.cpp
+    gcore/nasakeywordhandler.cpp
+    gcore/tilematrixset.cpp
+
     gcore/rasterio.cpp
     gcore/rasterio_ssse3.cpp
     gcore/gdalrasterblock.cpp
+    gcore/gdal_rat.cpp
     gcore/gdalcolortable.cpp
-    gcore/gdalmajorobject.cpp
     gcore/overview.cpp
     gcore/gdaldefaultoverviews.cpp
+    gcore/gdalmajorobject.cpp
     gcore/gdalpamdataset.cpp
     gcore/gdalpamrasterband.cpp
     gcore/gdaljp2metadata.cpp
     gcore/gdaljp2box.cpp
     gcore/gdalmultidomainmetadata.cpp
-    gcore/gdal_rat.cpp
     gcore/gdalpamproxydb.cpp
     gcore/gdalallvalidmaskband.cpp
     gcore/gdalnodatamaskband.cpp
     gcore/gdalproxydataset.cpp
     gcore/gdalproxypool.cpp
-    gcore/gdaldefaultasync.cpp
     gcore/gdalnodatavaluesmaskband.cpp
+    gcore/gdaldefaultasync.cpp
     gcore/gdaldllmain.cpp
     gcore/gdalexif.cpp
-    gcore/gdalclientserver.cpp
     gcore/gdalgeorefpamdataset.cpp
     gcore/gdaljp2abstractdataset.cpp
     gcore/gdalvirtualmem.cpp
@@ -617,8 +628,12 @@ add_library(gcore OBJECT
     gcore/gdal_mdreader.cpp
     gcore/gdaljp2metadatagenerator.cpp
     gcore/gdalabstractbandblockcache.cpp
+    gcore/rawdataset.cpp
     gcore/gdalarraybandblockcache.cpp
     gcore/gdalhashsetbandblockcache.cpp
+    gcore/gdalmultidim.cpp
+    gcore/gdalpython.cpp
+    gcore/gdalpythondriverloader.cpp
 
     gcore/mdreader/reader_digital_globe.cpp
     gcore/mdreader/reader_geo_eye.cpp
@@ -644,6 +659,7 @@ set(GCORE_PUBLIC_HEADERS
 	${CMAKE_SOURCE_DIR}/gcore/gdalgeorefpamdataset.h
     ${CMAKE_SOURCE_DIR}/gcore/gdaljp2abstractdataset.h
     ${CMAKE_SOURCE_DIR}/gcore/gdaljp2metadata.h
+    ${CMAKE_SOURCE_DIR}/gcore/rawdataset.h
     
     # gnm.h
     # gnm_api.h
@@ -665,6 +681,7 @@ PRIVATE
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/gnm/gnm_frmts/>
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/ogr/ogrsf_frmts/geojson>
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/alg>
+    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/apps>
 )
 
 target_link_libraries(gcore PUBLIC
@@ -704,16 +721,15 @@ add_library(frmts OBJECT
     frmts/vrt/vrtderivedrasterband.cpp
     frmts/vrt/vrtpansharpened.cpp
     frmts/vrt/pixelfunctions.cpp
+    frmts/vrt/vrtmultidim.cpp
 
     frmts/mem/memdataset.cpp
-    frmts/raw/rawdataset.cpp
 )
 
 set (FRMTS_PUBLIC_HEADERS
     ${CMAKE_SOURCE_DIR}/frmts/vrt/gdal_vrt.h
     ${CMAKE_SOURCE_DIR}/frmts/vrt/vrtdataset.h
     ${CMAKE_SOURCE_DIR}/frmts/mem/memdataset.h
-    ${CMAKE_SOURCE_DIR}/frmts/raw/rawdataset.h
 )
 
 target_compile_definitions(frmts PRIVATE FRMT_mem  FRMT_vrt FRMT_hfa)
@@ -822,12 +838,13 @@ endif ()
 if (GDAL_FRMTS_GTIFF)
     target_sources(frmts PRIVATE 
         frmts/gtiff/geotiff.cpp
-        frmts/gtiff/gt_citation.cpp
-        frmts/gtiff/gt_jpeg_copy.cpp
-        frmts/gtiff/gt_overview.cpp
         frmts/gtiff/gt_wkt_srs.cpp
+        frmts/gtiff/gt_overview.cpp
         frmts/gtiff/tifvsi.cpp
         frmts/gtiff/tif_float.c
+        frmts/gtiff/gt_citation.cpp
+        frmts/gtiff/gt_jpeg_copy.cpp
+        frmts/gtiff/cogdriver.cpp
 
         frmts/gtiff/libgeotiff/xtiff.c
         frmts/gtiff/libgeotiff/geo_free.c
@@ -855,11 +872,12 @@ endif ()
 if (GDAL_FRMTS_HDF5)
     find_package(HDF5 CONFIG REQUIRED)
     target_sources(frmts PRIVATE 
-        frmts/hdf5/bagdataset.cpp
-        frmts/hdf5/gh5_convenience.cpp
         frmts/hdf5/hdf5dataset.cpp
         frmts/hdf5/hdf5imagedataset.cpp
+        frmts/hdf5/bagdataset.cpp
+        frmts/hdf5/gh5_convenience.cpp
         frmts/hdf5/iso19115_srs.cpp
+        frmts/hdf5/hdf5multidim.cpp
     )
     target_link_libraries(frmts PRIVATE hdf5-static)
     target_compile_definitions(frmts PRIVATE FRMT_hdf5)
@@ -870,7 +888,6 @@ if (GDAL_FRMTS_MBTILES)
         frmts/mbtiles/mbtilesdataset.cpp
     )
     target_include_directories(frmts PRIVATE
-        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/frmts/raw>
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/ogr/ogrsf_frmts/geojson>
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/ogr/ogrsf_frmts/mvt>
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/ogr/ogrsf_frmts/gpkg>
@@ -884,10 +901,16 @@ endif ()
 if (GDAL_FRMTS_NETCDF)
     find_package(netCDF CONFIG REQUIRED)
     target_sources(frmts PRIVATE 
-        frmts/netcdf/gmtdataset.cpp
         frmts/netcdf/netcdfdataset.cpp
         frmts/netcdf/netcdflayer.cpp
         frmts/netcdf/netcdfwriterconfig.cpp
+        frmts/netcdf/gmtdataset.cpp
+        frmts/netcdf/netcdfsg.cpp
+        frmts/netcdf/netcdflayersg.cpp
+        frmts/netcdf/netcdfsgwriterutil.cpp
+        frmts/netcdf/netcdfmultidim.cpp
+        frmts/netcdf/netcdfvirtual.cpp
+        frmts/netcdf/netcdf_sentinel3_sral_mwr.cpp
     )
     target_link_libraries(frmts PRIVATE netCDF::netcdf)
     target_compile_definitions(frmts PRIVATE FRMT_netcdf NETCDF_HAS_NC4 $<$<TARGET_EXISTS:hdf5-static>:HAVE_HDF5>)
@@ -1022,9 +1045,10 @@ target_include_directories(frmts PRIVATE
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/ogr>
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/ogr/ogrsf_frmts>
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/frmts/raw>
+    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/apps>
 )
 
-target_link_libraries(frmts PRIVATE gcore)
+target_link_libraries(frmts PRIVATE gcore PROJ::proj)
 set_target_properties(frmts PROPERTIES PUBLIC_HEADER "${FRMTS_PUBLIC_HEADERS}")
 
 message(STATUS "Supported raster formats:")
@@ -1042,69 +1066,66 @@ message(STATUS "Raw driver support:               ${GDAL_FRMTS_RAW}")
 ############################################################################################
 # ogr
 ############################################################################################
+
 add_library(ogr OBJECT
     ogr/ogrgeometryfactory.cpp
     ogr/ogrpoint.cpp
     ogr/ogrcurve.cpp
+    ogr/ogrsurface.cpp
+    ogr/ogr_api.cpp
     ogr/ogrlinestring.cpp
-    ogr/ogrlinearring.cpp
-    ogr/ogrpolygon.cpp
     ogr/ogrtriangle.cpp
+    ogr/ogrpolygon.cpp
+    ogr/ogrlinearring.cpp
     ogr/ogrutils.cpp
     ogr/ogrgeometry.cpp
     ogr/ogrgeometrycollection.cpp
     ogr/ogrmultipolygon.cpp
-    ogr/ogrsurface.cpp
-    ogr/ogrpolyhedralsurface.cpp
-    ogr/ogrtriangulatedsurface.cpp
     ogr/ogrmultipoint.cpp
     ogr/ogrmultilinestring.cpp
     ogr/ogrcircularstring.cpp
     ogr/ogrcompoundcurve.cpp
     ogr/ogrcurvepolygon.cpp
+    ogr/ogrtriangulatedsurface.cpp
     ogr/ogrcurvecollection.cpp
-    ogr/ogrmulticurve.cpp
     ogr/ogrmultisurface.cpp
-    ogr/ogr_api.cpp
+    ogr/ogrmulticurve.cpp
+    ogr/ogrpolyhedralsurface.cpp
     ogr/ogrfeature.cpp
     ogr/ogrfeaturedefn.cpp
-    ogr/ogrfeaturequery.cpp
-    ogr/ogrfeaturestyle.cpp
     ogr/ogrfielddefn.cpp
-    ogr/ogrspatialreference.cpp
     ogr/ogr_srsnode.cpp
-    ogr/ogr_srs_proj4.cpp
+    ogr/ogrspatialreference.cpp
     ogr/ogr_fromepsg.cpp
     ogr/ogrct.cpp
-    ogr/ogr_opt.cpp
+    ogr/ogrfeaturestyle.cpp
     ogr/ogr_srs_esri.cpp
+    ogr/ogrfeaturequery.cpp
+    ogr/ogr_srs_xml.cpp
+    ogr/ograssemblepolygon.cpp
+    ogr/gml2ogrgeometry.cpp
+    ogr/ogr2gmlgeometry.cpp
     ogr/ogr_srs_pci.cpp
     ogr/ogr_srs_usgs.cpp
     ogr/ogr_srs_dict.cpp
     ogr/ogr_srs_panorama.cpp
     ogr/ogr_srs_ozi.cpp
     ogr/ogr_srs_erm.cpp
+    ogr/ogr_expat.cpp
     ogr/swq.cpp
-    ogr/swq_expr_node.cpp
     ogr/swq_parser.cpp
     ogr/swq_select.cpp
     ogr/swq_op_registrar.cpp
     ogr/swq_op_general.cpp
-    ogr/ogr_srs_validate.cpp
-    ogr/ogr_srs_xml.cpp
-    ogr/ograssemblepolygon.cpp
-    ogr/ogr2gmlgeometry.cpp
-    ogr/gml2ogrgeometry.cpp
-    ogr/ogr_expat.cpp
+    ogr/swq_expr_node.cpp
     ogr/ogrpgeogeometry.cpp
     ogr/ogrgeomediageometry.cpp
     ogr/ogr_geocoding.cpp
-    ogr/osr_cs_wkt.c
-    ogr/osr_cs_wkt_parser.c
     ogr/ogrgeomfielddefn.cpp
     ogr/ograpispy.cpp
     ogr/ogr_xerces.cpp
     ogr/ogr_geo_utils.cpp
+    ogr/ogr_proj_p.cpp
     
     ogr/ogrsf_frmts/generic/ogrsfdriverregistrar.cpp
     ogr/ogrsf_frmts/generic/ogrlayer.cpp
@@ -1358,9 +1379,9 @@ message(STATUS "Xlsx driver support:              ${GDAL_OGR_FRMTS_XLSX}")
 # alg
 ############################################################################################
 add_library(alg OBJECT
-    alg/gdalmediancut.cpp
     alg/gdaldither.cpp
-    alg/gdal_crs.c
+    alg/gdalmediancut.cpp
+    alg/gdal_crs.cpp
     alg/gdaltransformer.cpp
     alg/gdalsimplewarp.cpp
     alg/gdalwarper.cpp
@@ -1414,6 +1435,7 @@ PRIVATE
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/ogr>
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/apps>
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/frmts/vrt>
+    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/frmts/mem>
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/ogr/ogrsf_frmts>
 )
 

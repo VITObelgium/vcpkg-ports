@@ -1,6 +1,6 @@
-set(MAJOR 2)
+set(MAJOR 3)
 set(MINOR 4)
-set(REVISION 4)
+set(REVISION 2)
 set(VERSION ${MAJOR}.${MINOR}.${REVISION})
 set(PACKAGE_NAME ${PORT}-${VERSION})
 set(PACKAGE ${PACKAGE_NAME}.tar.xz)
@@ -8,18 +8,13 @@ set(PACKAGE ${PACKAGE_NAME}.tar.xz)
 vcpkg_download_distfile(ARCHIVE
     URLS "http://download.osgeo.org/${PORT}/${VERSION}/${PACKAGE}"
     FILENAME "${PACKAGE}"
-    SHA512 51e8b0fc78a5cd37a89f5fd2b07901313851d866ffb3dd428cb6a4bf9d750ac66cb1b99c6a8874353f14e5a002d295d6328576ec82ce617e757c519774e75616
+    SHA512 7b7e2800b2c23ffe6b7739fbf77748e3be2db9e34b061753da5e175f6ad6ed7f9f91856d3838f071a17a6afab96c258d37a15502e254d2008310d3061031af73
 )
 
 vcpkg_extract_source_archive_ex(
     OUT_SOURCE_PATH SOURCE_PATH
     ARCHIVE ${ARCHIVE}
-    PATCHES
-        copylayer-crash-1.patch # fixed upstream in next release
-        copylayer-crash-2.patch # fixed upstream in next release
-        netcdf-non-ascii.patch # fixed upstream in 3.x releases
-        vrtfilter.patch
-        proj-version.patch
+    PATCHES xlsx-error.patch
 )
 
 file(COPY ${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt
@@ -36,8 +31,8 @@ TEST_FEATURE("gif" WITH_GIF)
 TEST_FEATURE("grib" WITH_GRIB)
 TEST_FEATURE("sqlite" WITH_SQLITE)
 TEST_FEATURE("spatialite" WITH_SPATIALITE)
-TEST_FEATURE("freexl" WITH_FREEXL)
 TEST_FEATURE("expat" WITH_EXPAT)
+TEST_FEATURE("freexl" WITH_FREEXL)
 TEST_FEATURE("pcraster" WITH_PCRASTER)
 TEST_FEATURE("netcdf" WITH_NETCDF)
 TEST_FEATURE("opencl" WITH_OPENCL)

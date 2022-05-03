@@ -1,6 +1,6 @@
 set(VERSION_MAJOR 3)
-set(VERSION_MINOR 9)
-set(VERSION_REVISION 1)
+set(VERSION_MINOR 10)
+set(VERSION_REVISION 2)
 set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_REVISION})
 set(PACKAGE_NAME ${PORT}-${VERSION})
 set(PACKAGE ${PACKAGE_NAME}.tar.bz2)
@@ -9,7 +9,7 @@ set(PACKAGE ${PACKAGE_NAME}.tar.bz2)
 vcpkg_download_distfile(ARCHIVE
     URLS "http://download.osgeo.org/geos/${PACKAGE}"
     FILENAME "${PACKAGE}"
-    SHA512 7ea131685cd110ec5e0cb7c214b52b75397371e75f011e1410b6770b6a48ca492a02337d86a7be35c852ef94604fe9d6f49634c79d4946df611aaa4f5cbaee28
+    SHA512 390381711ccf56b862c2736cf6329200822f121de1c49df52b8b85cabea8c7787b199df2196acacc2e5c677ff3ebe042d93d70e89deadbc19d754499edb65126
 )
 vcpkg_extract_source_archive_ex(
     OUT_SOURCE_PATH SOURCE_PATH
@@ -19,15 +19,13 @@ vcpkg_extract_source_archive_ex(
         fix-exported-includes.patch
 )
 
-string(COMPARE EQUAL "${VCPKG_LIBRARY_LINKAGE}" "static" GEOS_STATIC)
-string(COMPARE EQUAL "${VCPKG_LIBRARY_LINKAGE}" "shared" GEOS_SHARED)
-
 vcpkg_configure_cmake(
     SOURCE_PATH ${SOURCE_PATH}
     PREFER_NINJA
     OPTIONS
         -DBUILD_TESTING=OFF
         -DBUILD_DOCUMENTATION=OFF
+        -DBUILD_GEOSOP=OFF
 )
 vcpkg_install_cmake()
 vcpkg_fixup_cmake_targets(CONFIG_PATH "lib/cmake/GEOS")

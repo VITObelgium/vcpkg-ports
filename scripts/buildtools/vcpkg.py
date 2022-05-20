@@ -43,6 +43,9 @@ def _vcpkg_version_check(vcpkg_path):
 
 
 def _args_to_array(args):
+    if type(args) == list:
+        return args
+
     if args:
         return args.split(" ")
     else:

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.15)
 include(CMakeDependentOption)
 
 project(gdal
-    VERSION 3.4.2
+    VERSION 3.4.3
     LANGUAGES C CXX
 )
 
@@ -1518,7 +1518,6 @@ if (GDAL_BUILD_TOOLS)
     add_gdal_app_bin(gdalbuildvrt)
     add_gdal_app_bin(ogr2ogr)
 
-    add_gdal_app(gdalserver)
     add_gdal_app(gdaladdo)
     add_gdal_app(gdalmanage)
     add_gdal_app(gdalenhance)

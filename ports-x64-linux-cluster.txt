@@ -39,7 +39,7 @@ onedpl
 pugixml
 pybind11
 reproc
-restinio[boost]
+restinio
 scnlib
 shapelib
 shapelib

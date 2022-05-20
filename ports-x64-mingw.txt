@@ -29,7 +29,7 @@ nlohmann-json
 onedpl
 pugixml
 reproc
-restinio[boost]
+restinio
 scnlib
 shapelib
 soci[sqlite3,postgresql]

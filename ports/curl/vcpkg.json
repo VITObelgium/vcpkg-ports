@@ -84,7 +84,7 @@
     "openssl": {
       "description": "SSL support (OpenSSL)",
       "dependencies": [
-        "openssl"
+        "libressl"
       ]
     },
     "schannel": {

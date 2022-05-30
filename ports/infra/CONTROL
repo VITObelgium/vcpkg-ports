@@ -1,5 +1,5 @@
 Source: infra
-Version: 0.11.1
+Version: 0.11.2
 Description: c++ infrastructure classes (logging, string operations, ...)
 Build-Depends: fmt, date, gsl
 

@@ -1,15 +1,14 @@
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO VITObelgium/cpp-infra
-    REF 0.11.1
+    REF 0.11.2
     HEAD_REF master
-    SHA512 fdee69d784a9d764a1f9f81b8101cc5baa52f39f1510988536ce34712ac605d900565e63212a8804ef01ecb179a2485fe2b0e8f67ee7c17ec5fbc866f07fd8ba
+    SHA512 1f96957762067d3de125cd55eb5bab7c94a58dff8ffdc53298beb06a33f4aba5f3deb668f854f9603f4f900097245a08bfcd7b45db639deecf5873e2c1a5a76b
 )
 
 vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
     FEATURES 
         gdal        INFRA_GDAL
-        gdal        INFRA_EMBED_GDAL_DATA
         zstd        INFRA_COMPRESSION_ZSTD
         xml         INFRA_XML
         log         INFRA_LOGGING

@@ -1,8 +1,8 @@
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO VcDevel/Vc
-    REF 1.4.1
-    SHA512 dd17e214099796c41d70416d365ea038c00c5fda285b05e48d7ee4fe03f4db2671d2be006ca7b98b0d4133bfcb57faf04cecfe35c29c3b006cd91c9a185cc04a
+    REF 1.4.3
+    SHA512 7c0c4ccf8c7c4585334482135f2daf1a5bc088114b880093893583bdcea1fbfcec02485da6059304c510c8b1bb1b768ef04fd7ac8ccb21b9ebbad5d0d5babaef
     HEAD_REF master
     PATCHES asm.patch
 )
@@ -27,8 +27,6 @@ vcpkg_replace_string(${CURRENT_PACKAGES_DIR}/share/${PORT}/VcConfig.cmake
     "include(\"\${PACKAGE_PREFIX_DIR}/lib/cmake/Vc/VcTargets.cmake\")"
     "include(\"\${PACKAGE_PREFIX_DIR}/share/vc/VcTargets.cmake\")"
 )
-
-file(INSTALL ${SOURCE_PATH}/cmake/msvc_version.c DESTINATION ${CURRENT_PACKAGES_DIR}/share/${PORT})
 
 file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/include)
 file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/share)

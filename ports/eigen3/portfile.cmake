@@ -1,17 +1,20 @@
-set(EIGEN_VERSION 3.3.9)
+set(EIGEN_VERSION 3.4.0)
 set(PACKAGE eigen-${EIGEN_VERSION}.tar.bz2)
 vcpkg_download_distfile(ARCHIVE
     URLS
         https://gitlab.com/libeigen/eigen/-/archive/${EIGEN_VERSION}/${PACKAGE}
         https://fossies.org/linux/privat/${PACKAGE}
     FILENAME ${PACKAGE}
-    SHA512 6f222e27480d02d90f258c94a4a4787771491fc30c73d5fb025a8089484fdeb2c65d464172f5c29d0c3096b69ff98027a18a40c04b006da670733a2c75f55b65
+    SHA512 cc488eb111e0e248744d2bc4475b345b5fb82361dff226a5b73a33bd0388de8c219cff8cffcf8f476b672fc0e223f339e8c6a1cfb6293840a4a6abf232438a89
 )
     
 vcpkg_extract_source_archive_ex(
     ARCHIVE ${ARCHIVE}
     OUT_SOURCE_PATH SOURCE_PATH
-    PATCHES disable_pkgconfig_absolute_path_check.patch
+    PATCHES
+        remove_configure_checks.patch # This removes unnecessary configure checks. Eigen3 just installs headers not anything more.
+        fix-vectorized-reductions-half.patch # Remove this patch in the next update
+        nofortran.patch # disables blas build, use -DEIGEN_BUILD_BLAS=OFF available in the next release
 )
 
 vcpkg_configure_cmake(
@@ -20,6 +23,7 @@ vcpkg_configure_cmake(
     OPTIONS
         -DBUILD_TESTING=OFF
         -DEIGEN_BUILD_PKGCONFIG=ON
+        -DEIGEN_BUILD_BLAS=OFF
     OPTIONS_RELEASE
         -DCMAKEPACKAGE_INSTALL_DIR=${CURRENT_PACKAGES_DIR}/share/eigen3
         -DPKGCONFIG_INSTALL_DIR=${CURRENT_PACKAGES_DIR}/lib/pkgconfig

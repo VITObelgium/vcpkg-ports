@@ -1,0 +1,24 @@
+diff -Naur a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt	2021-08-18 22:41:58.000000000 +0200
++++ b/CMakeLists.txt	2022-05-30 14:12:59.000000000 +0200
+@@ -495,13 +495,13 @@
+   add_subdirectory(failtest)
+ endif()
+ 
+-if(EIGEN_LEAVE_TEST_IN_ALL_TARGET)
+-  add_subdirectory(blas)
+-  add_subdirectory(lapack)
+-else()
+-  add_subdirectory(blas EXCLUDE_FROM_ALL)
+-  add_subdirectory(lapack EXCLUDE_FROM_ALL)
+-endif()
++# if(EIGEN_LEAVE_TEST_IN_ALL_TARGET)
++#   add_subdirectory(blas)
++#   add_subdirectory(lapack)
++# else()
++#   add_subdirectory(blas EXCLUDE_FROM_ALL)
++#   add_subdirectory(lapack EXCLUDE_FROM_ALL)
++# endif()
+ 
+ # add SYCL
+ option(EIGEN_TEST_SYCL "Add Sycl support." OFF)

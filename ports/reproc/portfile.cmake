@@ -1,8 +1,8 @@
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO DaanDeMeyer/reproc
-    REF v14.2.2
-    SHA512 8dda327cbecfaf8310d2e494d5b64324521c4b1eee34a4f58b16708ec5cfc1dd21e51547166ca26dbfe233bb680c7b1b885c52091bc69f1f4736ec60ba1c4aaf
+    REF v14.2.4
+    SHA512 c592521960f1950d626261738091d25efdf764ee1a0c72a58c28c66eaebf6073b2c978f1dc2c8dbe89b0be7ec1629a3a45cb1fafa0ebe21b5df8d4d27c992675
     HEAD_REF master
 )
 

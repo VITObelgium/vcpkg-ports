@@ -1497,18 +1497,18 @@ target_link_libraries(gdal PUBLIC
 
 macro(add_gdal_app_bin NAME)
     add_executable(${NAME} apps/${NAME}_bin.cpp)
-    target_link_libraries(${NAME} PRIVATE gdal)
+    target_link_libraries(${NAME} PRIVATE gdal $<$<PLATFORM_ID:Windows>:wbemuuid>)
     install(TARGETS ${NAME} RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endmacro()
 
 macro(add_gdal_app NAME)
     add_executable(${NAME} apps/${NAME}.cpp)
-    target_link_libraries(${NAME} PRIVATE gdal)
+    target_link_libraries(${NAME} PRIVATE gdal $<$<PLATFORM_ID:Windows>:wbemuuid>)
     install(TARGETS ${NAME} RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endmacro()
 
 if (GDAL_BUILD_TOOLS)
-    add_gdal_app_bin(gdalinfo BIN)
+    add_gdal_app_bin(gdalinfo)
     add_gdal_app_bin(gdalwarp)
     add_gdal_app_bin(nearblack)
     add_gdal_app_bin(gdal_translate)

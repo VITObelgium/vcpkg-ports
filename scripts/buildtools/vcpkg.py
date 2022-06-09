@@ -132,6 +132,7 @@ def cmake_configure(
     verbose=False,
     build_config="Release",
     install_root=None,
+    manifest_dir=None,
 ):
     cmake_bin = find_cmake_binary()
     if not cmake_bin:
@@ -209,11 +210,15 @@ def cmake_configure(
         args.append("-DVCPKG_TARGET_TRIPLET={}".format(triplet))
 
     args.append("-DVCPKG_APPLOCAL_DEPS=OFF")
-    args.append("-DVCPKG_VERBOSE=ON")
+    if verbose:
+        args.append("-DVCPKG_VERBOSE=ON")
     args.extend(cmake_args)
     args.extend(["-S", source_dir, "-B", build_dir])
 
-    manifest_path = pathlib.Path(source_dir) / "vcpkg.json"
+    if manifest_dir is not None:
+        manifest_path = pathlib.Path(manifest_dir) / "vcpkg.json"
+    else:
+        manifest_path = pathlib.Path(source_dir) / "vcpkg.json"
     if manifest_path.exists():
         if not install_root:
             install_root = "vcpkg_installed"
@@ -289,6 +294,7 @@ def vcpkg_install_manifest(
     build_root=None,
     packages_root=None,
     install_root=None,
+    manifest_dir=None
 ):
     args = ["install"]
 
@@ -306,6 +312,9 @@ def vcpkg_install_manifest(
 
     if install_root:
         args.append(f"--x-install-root={install_root}")
+
+    if manifest_dir:
+        args.append(f"--x-manifest-root={manifest_dir}")
 
     if clean_after_build:
         args.append("--clean-after-build")
@@ -497,12 +506,19 @@ def bootstrap(
     build_root=None,
     packages_root=None,
     install_root=None,
+    manifest_dir=None,
 ):
     if triplet is None:
         triplet = prompt_for_triplet()
 
     try:
-        manifest_path = pathlib.Path(ports_dir) / ".." / "vcpkg.json"
+        if manifest_dir:
+            manifest_dir = pathlib.Path(manifest_dir)
+
+        if manifest_dir is None:
+            manifest_dir = pathlib.Path(ports_dir) / ".." 
+
+        manifest_path = manifest_dir / "vcpkg.json"
         if manifest_path.exists():
             print(f"Bootstrap using manifest: {manifest_path.resolve()}")
             vcpkg_install_manifest(
@@ -513,6 +529,7 @@ def bootstrap(
                 build_root,
                 packages_root,
                 install_root,
+                manifest_dir=manifest_dir
             )
         else:
             # deprecated bootstrap using the ports.txt file
@@ -552,6 +569,7 @@ def build_project(
     test_arguments=None,
     build_config="Release",
     install_root=None,
+    manifest_dir=None,
 ):
     if triplet is None:
         triplet = prompt_for_triplet()
@@ -582,6 +600,7 @@ def build_project(
             verbose=verbose,
             build_config=build_config,
             install_root=install_root,
+            manifest_dir=manifest_dir,
         )
         cmake_build(build_dir, config=build_config, targets=targets)
     except subprocess.CalledProcessError as e:
@@ -612,6 +631,7 @@ def build_project_release(
     test_arguments=None,
     build_config="Release",
     install_root=None,
+    manifest_dir=None,
 ):
     if not git_status_is_clean():
         raise RuntimeError("Git status is not clean")
@@ -636,6 +656,7 @@ def build_project_release(
         targets=targets,
         install_dir=install_dir,
         install_root=install_root,
+        manifest_dir=manifest_dir,
     )
 
     if run_tests_after_build:

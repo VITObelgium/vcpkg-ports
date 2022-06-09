@@ -8,9 +8,9 @@ set(PATCHES
 
 vcpkg_download_distfile(ARCHIVE
     URLS "https://ftp.pcre.org/pub/pcre/pcre-${PCRE_VERSION}.zip"
+         "https://ftp.exim.org/pub/pcre/pcre-${PCRE_VERSION}.zip"
     FILENAME "pcre-${PCRE_VERSION}.zip"
     SHA512 ${EXPECTED_SHA}
-    SILENT_EXIT
 )
 
 if (EXISTS "${ARCHIVE}")

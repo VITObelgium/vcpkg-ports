@@ -68,6 +68,10 @@ if (@GDAL_CURL_SUPPORT@)
     find_dependency(CURL REQUIRED)
 endif ()
 
+if (@GDAL_OGR_FRMTS_POSTGIS@ OR @GDAL_FRMTS_POSTGIS@)
+    find_dependency(PostgreSQL REQUIRED)
+endif ()
+
 find_dependency(PROJ CONFIG REQUIRED)
 
 list(REMOVE_AT CMAKE_MODULE_PATH -1)

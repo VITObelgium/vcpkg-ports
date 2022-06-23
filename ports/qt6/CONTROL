@@ -20,7 +20,7 @@ Build-Depends: tiff[lzw]
 
 Feature: ssl
 Description: enable ssl
-Build-Depends: libressl (linux)
+Build-Depends: openssl (linux)
 
 Feature: charts
 Description: enable the qtcharts component

@@ -28,6 +28,7 @@ option(GDAL_FRMTS_MBTILES "Mbtiles driver support (sqlite required)" OFF)
 option(GDAL_FRMTS_NETCDF "Netcdf driver support" OFF)
 option(GDAL_FRMTS_PCRASTER "PCRaster driver support" OFF)
 option(GDAL_FRMTS_RAW "Raw driver support" OFF)
+option(GDAL_FRMTS_POSTGIS "Postgis raster driver support" OFF)
 
 option(GDAL_OGR_FRMTS_GEOPKG "Geopackage driver support (sqlite required)" OFF)
 option(GDAL_OGR_FRMTS_MVT "Mapbox vector tiles driver support (sqlite required)" OFF)
@@ -36,6 +37,7 @@ option(GDAL_OGR_FRMTS_SQLITE "Sqlite driver support (requires spatialite)" OFF)
 option(GDAL_OGR_FRMTS_XLS "Xls driver support (freexl required)" OFF)
 option(GDAL_OGR_FRMTS_XLSX "Xlsx driver support (expat required)" OFF)
 option(GDAL_OGR_FRMTS_CSV "Csv driver support" OFF)
+option(GDAL_OGR_FRMTS_POSTGIS "Postgis vector driver support" OFF)
 
 option(GDAL_INSTALL_DATA_FILES "Install the data files" ON)
 
@@ -154,6 +156,10 @@ endif ()
 if (GDAL_OGR_FRMTS_XLSX)
     find_package(EXPAT REQUIRED)
     add_compile_definitions(HAVE_EXPAT)
+endif ()
+
+if (GDAL_FRMTS_POSTGIS OR GDAL_OGR_FRMTS_POSTGIS)
+    find_package(PostgreSQL REQUIRED)
 endif ()
 
 find_package(PROJ CONFIG REQUIRED)
@@ -1001,6 +1007,22 @@ if (GDAL_FRMTS_PCRASTER)
     )
 endif ()
 
+if (GDAL_FRMTS_POSTGIS)
+    target_sources(frmts PRIVATE
+        frmts/postgisraster/postgisrasterdataset.cpp
+        frmts/postgisraster/postgisrasterrasterband.cpp
+        frmts/postgisraster/postgisrasterdriver.cpp
+        frmts/postgisraster/postgisrastertiledataset.cpp
+        frmts/postgisraster/postgisrastertilerasterband.cpp
+        frmts/postgisraster/postgisrastertools.cpp
+    )
+    target_include_directories(frmts PRIVATE
+        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/frmts/vrt>
+        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/frmts/mem>
+    )
+    target_link_libraries(frmts PRIVATE PostgreSQL::PostgreSQL)
+endif ()
+
 if (GDAL_FRMTS_RAW)
     target_sources(frmts PRIVATE
         frmts/raw/ehdrdataset.cpp
@@ -1061,6 +1083,7 @@ message(STATUS "Hdf5 driver support:              ${GDAL_FRMTS_HDF5}")
 message(STATUS "Mbtiles driver support:           ${GDAL_FRMTS_MBTILES}")
 message(STATUS "Netcdf driver support:            ${GDAL_FRMTS_NETCDF}")
 message(STATUS "PCRaster driver support:          ${GDAL_FRMTS_PCRASTER}")
+message(STATUS "Postgis raster driver support:    ${GDAL_FRMTS_POSTGIS}")
 message(STATUS "Raw driver support:               ${GDAL_FRMTS_RAW}")
 
 ############################################################################################
@@ -1313,6 +1336,21 @@ if (GDAL_OGR_FRMTS_GEOPKG OR GDAL_OGR_FRMTS_SQLITE)
     target_link_libraries(ogr PRIVATE libspatialite::spatialite)
 endif ()
 
+if (GDAL_OGR_FRMTS_POSTGIS)
+    target_sources(ogr PRIVATE
+        ogr/ogrsf_frmts/pg/ogrpgdriver.cpp
+        ogr/ogrsf_frmts/pg/ogrpgdatasource.cpp
+        ogr/ogrsf_frmts/pg/ogrpglayer.cpp
+        ogr/ogrsf_frmts/pg/ogrpgtablelayer.cpp
+        ogr/ogrsf_frmts/pg/ogrpgresultlayer.cpp
+        ogr/ogrsf_frmts/pg/ogrpgutility.cpp
+    )
+    target_include_directories(ogr PRIVATE
+        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/ogr/ogrsf_frmts/pgdump>
+    )
+    target_link_libraries(ogr PRIVATE PostgreSQL::PostgreSQL)
+endif ()
+
 if (GDAL_OGR_FRMTS_XLS)
     target_sources(ogr PRIVATE
         ogr/ogrsf_frmts/xls/ogrxlsdatasource.cpp
@@ -1374,6 +1412,7 @@ message(STATUS "Memory driver support:            ON")
 message(STATUS "Sqlite driver support:            ${GDAL_OGR_FRMTS_SQLITE}")
 message(STATUS "Xls driver support:               ${GDAL_OGR_FRMTS_XLS}")
 message(STATUS "Xlsx driver support:              ${GDAL_OGR_FRMTS_XLSX}")
+message(STATUS "Postgis vector driver support:    ${GDAL_OGR_FRMTS_POSTGIS}")
 
 ############################################################################################
 # alg

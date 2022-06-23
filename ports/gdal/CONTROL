@@ -46,6 +46,10 @@ Feature: netcdf
 Description: Support reading netcdf files
 Build-Depends: netcdf-c[hdf5]
 
+Feature: postgis
+Description: Support reading files from a postgis database
+Build-Depends: libpq[openssl]
+
 Feature: opencl
 Description: OpenCL support
 Build-Depends: opencl

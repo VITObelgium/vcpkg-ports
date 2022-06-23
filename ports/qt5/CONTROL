@@ -25,7 +25,7 @@ Description: build the tools (qtlinguist, ...)
 
 Feature: ssl
 Description: enable ssl
-Build-Depends: libressl (linux)
+Build-Depends: openssl (linux)
 
 Feature: commercial
 Description: make a commercial build

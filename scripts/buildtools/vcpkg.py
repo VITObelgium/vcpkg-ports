@@ -39,7 +39,7 @@ def _vcpkg_executable_path():
 
 def _vcpkg_version_check(vcpkg_path):
     output = subprocess.check_output([vcpkg_path, "version"]).decode("utf-8")
-    return "2021-11-02" in output
+    return "2022-06-17" in output
 
 
 def _args_to_array(args):
@@ -283,6 +283,10 @@ def vcpkg_install_ports(
         args.append(f"--host-triplet={triplet}")
 
     args += ports
+
+    my_env = os.environ
+    my_env["VCPKG_FORCE_DOWNLOADED_BINARIES"] = "ON"
+
     run_vcpkg(triplet, args)
 
 

@@ -76,6 +76,8 @@ vcpkgCheckRepoTool()
         echo "  sudo yum install curl zip unzip tar"
         echo "On SUSE Linux and derivatives:"
         echo "  sudo zypper install curl zip unzip tar"
+        echo "On Arch Linux and derivatives:"
+        echo "  sudo pacman -S curl zip unzip tar cmake ninja"
         echo "On Alpine:"
         echo "  apk add build-base cmake ninja zip unzip curl git"
         echo "  (and export VCPKG_FORCE_SYSTEM_BINARIES=1)"
@@ -124,23 +126,23 @@ fi
 
 # Choose the vcpkg binary to download
 vcpkgDownloadTool="ON"
-vcpkgToolReleaseTag="2021-11-02"
+vcpkgToolReleaseTag="2022-06-17"
 if [ "$UNAME" = "Darwin" ]; then
     echo "Downloading vcpkg-macos..."
-    vcpkgToolReleaseSha="f60e19bb3c457731b9321580b7b29bde18c103fe6b78bfbeceabdf35ca573f498cf72e09500d9a1805c9f5f8983bd06bc8a1f511d01ece8b38b0b2ae529c8365"
+    vcpkgToolReleaseSha="66ef24562d0a165d9462a3b3cc2e6ff728e26ab529aa4406dffb107492c1e91277fee4b187e776ae7a7730c5ff8cfb1063822852493b156e03151c730b509b2b"
     vcpkgToolName="vcpkg-macos"
 elif [ "$vcpkgUseMuslC" = "ON" ]; then
     echo "Downloading vcpkg-muslc..."
-    vcpkgToolReleaseSha="cbef5be0430d58179882d921d8647b374d377e66b73abe84e6ea6b4333d231e7ef6bd1b2619544548c53cf98af0465e0a5b0ede954305e4f0b17380b79f520b6"
+    vcpkgToolReleaseSha="28533a64c0d876fdf78f7ed301847063b3ff0c2593cac6df3b0d38a5e09174cd8770caf985476523dab6f740b54c7400c8542e8df63fd094b5956a35d8579989"
     vcpkgToolName="vcpkg-muslc"
 elif [ "$ARCH" = "x86_64" ]; then
     echo "Downloading vcpkg-glibc..."
-    vcpkgToolReleaseSha="9b6836d9d28a7f5e4ed33ea9c22458a6c9ce9cc253c7bb16c3f78ffd9b812b87a53f74f19e575a2005f4c163b0e242809f678f54c5c6871d9c55068391563b63"
+    vcpkgToolReleaseSha="c85ec50df0de9648e1c5bdb690aa38d6c2ad2d9e5f92cd77648966f44f9b45418374925aacf5bbff0c608145f58dc9cd3391368e441e8254145c39ab1ae1fd33"
     vcpkgToolName="vcpkg-glibc"
 else
     echo "Unable to determine a binary release of vcpkg; attempting to build from source."
     vcpkgDownloadTool="OFF"
-    vcpkgToolReleaseSha="2c50a5a360ca34eeaf00def29c9092c38225d9c70f1b3ad4b8f81e5a4bab027e215e8a65d28d38422229129959bb7d1c1d709e1f2d8b7c3efed024d67d8c3307"
+    vcpkgToolReleaseSha="e52a359617c283932b4e4a33f4fa288fbe06edd676e4248b5543b83573a378dbf30c021395045e0726e69d4b5d41b012fd61af5eb4d586a1fb793c16bd64b77c"
 fi
 
 # Do the download or build.
@@ -193,7 +195,9 @@ if [ "$vcpkgDownloadTool" = "ON" ]; then
     vcpkgDownloadFile "https://github.com/microsoft/vcpkg-tool/releases/download/$vcpkgToolReleaseTag/$vcpkgToolName" "$vcpkgRootDir/vcpkg" $vcpkgToolReleaseSha
 else
     if [ "x$CXX" = "x" ]; then
-        if which g++-11 >/dev/null 2>&1; then
+        if which g++-12 >/dev/null 2>&1; then
+            CXX=g++-12
+        elif which g++-11 >/dev/null 2>&1; then
             CXX=g++-11
         elif which g++-10 >/dev/null 2>&1; then
             CXX=g++-10

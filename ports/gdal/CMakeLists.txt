@@ -1016,6 +1016,7 @@ if (GDAL_FRMTS_POSTGIS)
         frmts/postgisraster/postgisrastertilerasterband.cpp
         frmts/postgisraster/postgisrastertools.cpp
     )
+    target_compile_definitions(frmts PRIVATE FRMT_postgisraster)
     target_include_directories(frmts PRIVATE
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/frmts/vrt>
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/frmts/mem>
@@ -1344,7 +1345,11 @@ if (GDAL_OGR_FRMTS_POSTGIS)
         ogr/ogrsf_frmts/pg/ogrpgtablelayer.cpp
         ogr/ogrsf_frmts/pg/ogrpgresultlayer.cpp
         ogr/ogrsf_frmts/pg/ogrpgutility.cpp
+        ogr/ogrsf_frmts/pgdump/ogrpgdumpdriver.cpp
+        ogr/ogrsf_frmts/pgdump/ogrpgdumpdatasource.cpp 
+        ogr/ogrsf_frmts/pgdump/ogrpgdumplayer.cpp
     )
+    target_compile_definitions(ogr PRIVATE PG_ENABLED)
     target_include_directories(ogr PRIVATE
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/ogr/ogrsf_frmts/pgdump>
     )

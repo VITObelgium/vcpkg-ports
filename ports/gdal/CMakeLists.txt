@@ -38,6 +38,7 @@ option(GDAL_OGR_FRMTS_XLS "Xls driver support (freexl required)" OFF)
 option(GDAL_OGR_FRMTS_XLSX "Xlsx driver support (expat required)" OFF)
 option(GDAL_OGR_FRMTS_CSV "Csv driver support" OFF)
 option(GDAL_OGR_FRMTS_POSTGIS "Postgis vector driver support" OFF)
+option(GDAL_OGR_FRMTS_WFS "WFS vector driver support" OFF)
 
 option(GDAL_INSTALL_DATA_FILES "Install the data files" ON)
 
@@ -53,6 +54,11 @@ endif ()
 
 if (GDAL_OGR_FRMTS_MVT OR GDAL_OGR_FRMTS_GEOPKG)
     set (GDAL_OGR_FRMTS_SQLITE ON CACHE BOOL "" FORCE)
+endif ()
+
+if (GDAL_OGR_FRMTS_WFS)
+    set(GDAL_CURL_SUPPORT ON CACHE BOOL "" FORCE)
+    set(GDAL_OGR_FRMTS_GML ON CACHE BOOL "" FORCE)
 endif ()
 
 include(GNUInstallDirs)
@@ -153,7 +159,7 @@ if (GDAL_OGR_FRMTS_XLS)
     add_compile_definitions(HAVE_FREEXL)
 endif ()
 
-if (GDAL_OGR_FRMTS_XLSX)
+if (GDAL_OGR_FRMTS_XLSX OR GDAL_OGR_FRMTS_WFS)
     find_package(EXPAT REQUIRED)
     add_compile_definitions(HAVE_EXPAT)
 endif ()
@@ -584,6 +590,7 @@ target_link_libraries(port PRIVATE
     $<TARGET_NAME_IF_EXISTS:Iconv::Iconv>
     $<TARGET_NAME_IF_EXISTS:CURL::libcurl>
     ${CMAKE_DL_LIBS}
+    Wbemuuid
 )
 
 set_target_properties(port PROPERTIES PUBLIC_HEADER "${PORT_PUBLIC_HEADERS}")
@@ -1356,6 +1363,44 @@ if (GDAL_OGR_FRMTS_POSTGIS)
     target_link_libraries(ogr PRIVATE PostgreSQL::PostgreSQL)
 endif ()
 
+if (GDAL_OGR_FRMTS_GML)
+    target_sources(ogr PRIVATE
+        ogr/ogrsf_frmts/gml/gmlpropertydefn.cpp
+        ogr/ogrsf_frmts/gml/gmlfeatureclass.cpp
+        ogr/ogrsf_frmts/gml/gmlfeature.cpp
+        ogr/ogrsf_frmts/gml/gmlreader.cpp
+        ogr/ogrsf_frmts/gml/parsexsd.cpp
+        ogr/ogrsf_frmts/gml/resolvexlinks.cpp
+        ogr/ogrsf_frmts/gml/hugefileresolver.cpp
+        ogr/ogrsf_frmts/gml/gmlutils.cpp
+        ogr/ogrsf_frmts/gml/gmlreadstate.cpp
+        ogr/ogrsf_frmts/gml/gmlhandler.cpp
+        ogr/ogrsf_frmts/gml/gfstemplate.cpp
+        ogr/ogrsf_frmts/gml/gmlregistry.cpp
+        ogr/ogrsf_frmts/gml/ogrgmldriver.cpp
+        ogr/ogrsf_frmts/gml/ogrgmldatasource.cpp
+        ogr/ogrsf_frmts/gml/ogrgmllayer.cpp
+    )
+
+    target_compile_definitions(ogr PRIVATE GML_ENABLED)
+    target_link_libraries(ogr PRIVATE EXPAT::EXPAT CURL::libcurl)
+endif ()
+
+if (GDAL_OGR_FRMTS_WFS)
+    target_sources(ogr PRIVATE
+        ogr/ogrsf_frmts/wfs/ogrwfsdriver.cpp
+        ogr/ogrsf_frmts/wfs/ogrwfsdatasource.cpp
+        ogr/ogrsf_frmts/wfs/ogrwfslayer.cpp
+        ogr/ogrsf_frmts/wfs/ogrwfsfilter.cpp
+        ogr/ogrsf_frmts/wfs/ogrwfsjoinlayer.cpp
+        ogr/ogrsf_frmts/wfs/ogroapifdriver.cpp
+    )
+    target_compile_definitions(ogr PRIVATE WFS_ENABLED)
+    target_include_directories(ogr PRIVATE
+        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/ogr/ogrsf_frmts/gml>
+    )
+endif ()
+
 if (GDAL_OGR_FRMTS_XLS)
     target_sources(ogr PRIVATE
         ogr/ogrsf_frmts/xls/ogrxlsdatasource.cpp
@@ -1418,6 +1463,7 @@ message(STATUS "Sqlite driver support:            ${GDAL_OGR_FRMTS_SQLITE}")
 message(STATUS "Xls driver support:               ${GDAL_OGR_FRMTS_XLS}")
 message(STATUS "Xlsx driver support:              ${GDAL_OGR_FRMTS_XLSX}")
 message(STATUS "Postgis vector driver support:    ${GDAL_OGR_FRMTS_POSTGIS}")
+message(STATUS "WFS vector driver support:        ${GDAL_OGR_FRMTS_WFS}")
 
 ############################################################################################
 # alg

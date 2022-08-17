@@ -231,9 +231,12 @@ function(vcpkg_configure_cmake)
         "-DZ_VCPKG_ROOT_DIR=${VCPKG_ROOT_DIR}"
         "-D_VCPKG_INSTALLED_DIR=${_VCPKG_INSTALLED_DIR}"
         "-DVCPKG_MANIFEST_INSTALL=OFF"
-        "-DCMAKE_DEBUG_POSTFIX=d"
         "-DCMAKE_POLICY_DEFAULT_CMP0063=NEW"
     )
+
+    if (NOT ${PORT} STREQUAL "zlib") 
+        vcpkg_list(APPEND arg_OPTIONS "-DCMAKE_DEBUG_POSTFIX=d")
+    endif()
 
     if(NOT "${generator_arch}" STREQUAL "")
         vcpkg_list(APPEND arg_OPTIONS "-A${generator_arch}")

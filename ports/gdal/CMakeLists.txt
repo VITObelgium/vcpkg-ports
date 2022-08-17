@@ -590,7 +590,7 @@ target_link_libraries(port PRIVATE
     $<TARGET_NAME_IF_EXISTS:Iconv::Iconv>
     $<TARGET_NAME_IF_EXISTS:CURL::libcurl>
     ${CMAKE_DL_LIBS}
-    Wbemuuid
+    $<$<PLATFORM_ID:Windows>:wbemuuid>
 )
 
 set_target_properties(port PROPERTIES PUBLIC_HEADER "${PORT_PUBLIC_HEADERS}")
@@ -1587,13 +1587,13 @@ target_link_libraries(gdal PUBLIC
 
 macro(add_gdal_app_bin NAME)
     add_executable(${NAME} apps/${NAME}_bin.cpp)
-    target_link_libraries(${NAME} PRIVATE gdal $<$<PLATFORM_ID:Windows>:wbemuuid>)
+    target_link_libraries(${NAME} PRIVATE gdal)
     install(TARGETS ${NAME} RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endmacro()
 
 macro(add_gdal_app NAME)
     add_executable(${NAME} apps/${NAME}.cpp)
-    target_link_libraries(${NAME} PRIVATE gdal $<$<PLATFORM_ID:Windows>:wbemuuid>)
+    target_link_libraries(${NAME} PRIVATE gdal)
     install(TARGETS ${NAME} RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endmacro()
 

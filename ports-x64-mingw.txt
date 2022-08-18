@@ -19,7 +19,7 @@ indicators
 libjpeg-turbo
 liblzma
 libpng
-libressl
+openssl
 libxlsxwriter
 lyra
 mio

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.15)
 include(CMakeDependentOption)
 
 project(gdal
-    VERSION 3.4.3
+    VERSION 3.5.2
     LANGUAGES C CXX
 )
 
@@ -455,6 +455,7 @@ add_library(port OBJECT
     port/cpl_conv.cpp
     port/cpl_compressor.cpp
     port/cpl_error.cpp
+    port/cpl_float.cpp
     port/cpl_string.cpp
     port/cplstring.cpp
     port/cplstringlist.cpp
@@ -537,6 +538,7 @@ set (PORT_PUBLIC_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/port/cpl_conv.h
     ${CMAKE_CURRENT_SOURCE_DIR}/port/cpl_csv.h
     ${CMAKE_CURRENT_SOURCE_DIR}/port/cpl_error.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/port/cpl_float.h
     ${CMAKE_CURRENT_SOURCE_DIR}/port/cpl_hash_set.h
     ${CMAKE_CURRENT_SOURCE_DIR}/port/cpl_http.h
     ${CMAKE_CURRENT_SOURCE_DIR}/port/cpl_json.h
@@ -697,11 +699,14 @@ PRIVATE
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/apps>
 )
 
-target_link_libraries(gcore PUBLIC
+target_link_libraries(gcore
+PUBLIC
     port
     $<TARGET_NAME_IF_EXISTS:GEOS::geos_c>
     $<$<PLATFORM_ID:Windows>:ws2_32>
     $<$<PLATFORM_ID:Windows>:psapi>
+PRIVATE
+    PROJ::proj
 )
 
 set_target_properties(gcore PROPERTIES PUBLIC_HEADER "${GCORE_PUBLIC_HEADERS}")
@@ -850,14 +855,14 @@ endif ()
 
 if (GDAL_FRMTS_GTIFF)
     target_sources(frmts PRIVATE 
+        frmts/gtiff/cogdriver.cpp
+        frmts/gtiff/generate_quant_table_md5sum.cpp
         frmts/gtiff/geotiff.cpp
-        frmts/gtiff/gt_wkt_srs.cpp
-        frmts/gtiff/gt_overview.cpp
-        frmts/gtiff/tifvsi.cpp
-        frmts/gtiff/tif_float.c
         frmts/gtiff/gt_citation.cpp
         frmts/gtiff/gt_jpeg_copy.cpp
-        frmts/gtiff/cogdriver.cpp
+        frmts/gtiff/gt_overview.cpp
+        frmts/gtiff/gt_wkt_srs.cpp
+        frmts/gtiff/tifvsi.cpp
 
         frmts/gtiff/libgeotiff/xtiff.c
         frmts/gtiff/libgeotiff/geo_free.c
@@ -1150,7 +1155,6 @@ add_library(ogr OBJECT
     ogr/swq_op_general.cpp
     ogr/swq_expr_node.cpp
     ogr/ogrpgeogeometry.cpp
-    ogr/ogrgeomediageometry.cpp
     ogr/ogr_geocoding.cpp
     ogr/ogrgeomfielddefn.cpp
     ogr/ograpispy.cpp
@@ -1198,6 +1202,8 @@ add_library(ogr OBJECT
     ogr/ogrsf_frmts/geojson/libjson/json_util.c
     ogr/ogrsf_frmts/geojson/libjson/linkhash.c
     ogr/ogrsf_frmts/geojson/libjson/printbuf.c
+    ogr/ogrsf_frmts/geojson/libjson/random_seed.c
+    ogr/ogrsf_frmts/geojson/libjson/strerror_override.c
     ogr/ogrsf_frmts/geojson/libjson/json_object_iterator.c
     ogr/ogrsf_frmts/geojson/libjson/json_c_version.c
     
@@ -1485,6 +1491,7 @@ add_library(alg OBJECT
     alg/llrasterize.cpp
     alg/gdalrasterize.cpp
     alg/gdalgeoloc.cpp
+    alg/gdalgeolocquadtree.cpp
     alg/gdalgrid.cpp
     alg/gdalgridsse.cpp
     alg/gdalgridavx.cpp

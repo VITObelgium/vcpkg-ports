@@ -1,6 +1,6 @@
 set(MAJOR 3)
-set(MINOR 4)
-set(REVISION 3)
+set(MINOR 5)
+set(REVISION 2)
 set(VERSION ${MAJOR}.${MINOR}.${REVISION})
 set(PACKAGE_NAME ${PORT}-${VERSION})
 set(PACKAGE ${PACKAGE_NAME}.tar.xz)
@@ -8,13 +8,15 @@ set(PACKAGE ${PACKAGE_NAME}.tar.xz)
 vcpkg_download_distfile(ARCHIVE
     URLS "http://download.osgeo.org/${PORT}/${VERSION}/${PACKAGE}"
     FILENAME "${PACKAGE}"
-    SHA512 2b97e44b9bd84eb43b4c4894b7b6e748522b2f5e8b6cbecc8247fe5ea862795dd44ba2b52934a83688a949805cee4eef9f1aa66360fb831fea3eae956ab0bef3
+    SHA512 9515b6709bf3a32f800b38ebba41f1a475946aa7249f072ebe37af0aea896e2b834c9156151f94261366afa400870944fc394637b02e2fd69136af5171715d70
 )
 
 vcpkg_extract_source_archive_ex(
     OUT_SOURCE_PATH SOURCE_PATH
     ARCHIVE ${ARCHIVE}
-    PATCHES xlsx-error.patch
+    PATCHES
+        xlsx-error.patch
+        gpkgoverviewsnodata.patch
 )
 
 file(COPY ${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt

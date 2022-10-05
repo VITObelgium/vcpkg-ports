@@ -1,9 +1,9 @@
-set(LIBTIFF_VERSION 4.3.0)
+set(LIBTIFF_VERSION 4.4.0)
 
 vcpkg_download_distfile(ARCHIVE
     URLS "https://download.osgeo.org/libtiff/tiff-${LIBTIFF_VERSION}.tar.gz"
     FILENAME "tiff-${LIBTIFF_VERSION}.tar.gz"
-    SHA512 e04a4a6c542e58a174c1e9516af3908acf1d3d3e1096648c5514f4963f73e7af27387a76b0fbabe43cf867a18874088f963796a7cd6e45deb998692e3e235493
+    SHA512 78ffab7667d0feb8d38571bc482390fc6dd20b93a798ab3a8b5cc7d5ab00b44a37f67eb8f19421e4ab33ad89ab40e382128f8a4bbdf097e0efb6d9fca5ac6f9e
 )
 
 vcpkg_extract_source_archive_ex(
@@ -12,20 +12,12 @@ vcpkg_extract_source_archive_ex(
     REF ${LIBTIFF_VERSION}
     PATCHES
         cmakelists.patch
-        fix-pkgconfig.patch
         cmath.patch
 )
 
 set(EXTRA_OPTIONS "")
 if(VCPKG_TARGET_IS_UWP)
     list(APPEND EXTRA_OPTIONS "-DUSE_WIN32_FILEIO=OFF")  # On UWP we use the unix I/O api.
-endif()
-
-if("cxx" IN_LIST FEATURES)
-    vcpkg_fail_port_install(
-        MESSAGE "Feature 'cxx' is not supported on ${VCPKG_TARGET_ARCHITECTURE}."
-        ON_ARCH arm arm64
-    )
 endif()
 
 vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
@@ -57,6 +49,7 @@ vcpkg_cmake_configure(
 )
 
 vcpkg_cmake_install()
+vcpkg_cmake_config_fixup(CONFIG_PATH "lib/cmake/${PORT}")
 
 set(_file "${CURRENT_PACKAGES_DIR}/debug/lib/pkgconfig/libtiff-4.pc")
 if(EXISTS "${_file}")

@@ -897,7 +897,7 @@ if (GDAL_FRMTS_HDF5)
         frmts/hdf5/iso19115_srs.cpp
         frmts/hdf5/hdf5multidim.cpp
     )
-    target_link_libraries(frmts PRIVATE hdf5-static)
+    target_link_libraries(frmts PRIVATE hdf5-static hdf5_hl-static)
     target_compile_definitions(frmts PRIVATE FRMT_hdf5)
 endif ()
 
@@ -918,17 +918,16 @@ endif ()
 
 if (GDAL_FRMTS_NETCDF)
     find_package(netCDF CONFIG REQUIRED)
-    target_sources(frmts PRIVATE 
+    target_sources(frmts PRIVATE
+        frmts/netcdf/netcdf_sentinel3_sral_mwr.cpp
         frmts/netcdf/netcdfdataset.cpp
         frmts/netcdf/netcdflayer.cpp
-        frmts/netcdf/netcdfwriterconfig.cpp
-        frmts/netcdf/gmtdataset.cpp
-        frmts/netcdf/netcdfsg.cpp
         frmts/netcdf/netcdflayersg.cpp
-        frmts/netcdf/netcdfsgwriterutil.cpp
         frmts/netcdf/netcdfmultidim.cpp
+        frmts/netcdf/netcdfsg.cpp
+        frmts/netcdf/netcdfsgwriterutil.cpp
         frmts/netcdf/netcdfvirtual.cpp
-        frmts/netcdf/netcdf_sentinel3_sral_mwr.cpp
+        frmts/netcdf/netcdfwriterconfig.cpp
     )
     target_link_libraries(frmts PRIVATE netCDF::netcdf)
     target_compile_definitions(frmts PRIVATE FRMT_netcdf NETCDF_HAS_NC4 $<$<TARGET_EXISTS:hdf5-static>:HAVE_HDF5>)
@@ -1626,7 +1625,6 @@ if (GDAL_BUILD_TOOLS)
     add_gdal_app(ogrinfo)
     add_gdal_app(ogrtindex)
     add_gdal_app(ogrlineref)
-    add_gdal_app(testepsg)
 endif ()
 
 message(STATUS "Opencl support:     ${GDAL_OPENCL_SUPPORT}")

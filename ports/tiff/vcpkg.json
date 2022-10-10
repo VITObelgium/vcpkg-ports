@@ -16,7 +16,6 @@
     }
   ],
   "default-features": [
-    "jpeg",
     "lzma",
     "zip"
   ],

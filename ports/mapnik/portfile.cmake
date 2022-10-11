@@ -1,6 +1,6 @@
 set(MAJOR 3)
-set(MINOR 0)
-set(REVISION 24)
+set(MINOR 1)
+set(REVISION 0)
 set(VERSION v${MAJOR}.${MINOR}.${REVISION})
 set(PACKAGE_NAME ${PORT}-${VERSION})
 set(PACKAGE ${PACKAGE_NAME}.tar.bz2)
@@ -11,7 +11,7 @@ vcpkg_find_acquire_program(PYTHON3)
 vcpkg_download_distfile(ARCHIVE
     URLS "https://github.com/${PORT}/${PORT}/releases/download/${VERSION}/${PACKAGE}"
     FILENAME "${PACKAGE}"
-    SHA512 5558af3f728462fba4ddd1b00085029d061c686e67c013a0d383ea9cd90c83775c39eb9f29340c2fb8602a4b8193544965d3c5b09f0749a4c00efd483b9be509
+    SHA512 089e619f4672e017b1aaf31836ade7e22d2a465f5a923f697935d8447d5dd0c2acb9ae6682d1c9035e58036c62685c2f38f75f0a106ee9b4ce6197e0357c47eb
 )
 
 foreach(BUILD_TYPE DEBUG RELEASE)
@@ -25,6 +25,7 @@ foreach(BUILD_TYPE DEBUG RELEASE)
             ${CMAKE_CURRENT_LIST_DIR}/icu-link.patch
             ${CMAKE_CURRENT_LIST_DIR}/config-path.patch
             ${CMAKE_CURRENT_LIST_DIR}/gdallib-detection.patch
+            ${CMAKE_CURRENT_LIST_DIR}/scons.patch
     )
 endforeach()
 

@@ -151,6 +151,7 @@ endif ()
 
 if (GDAL_FRMTS_GTIFF)
     find_package(TIFF REQUIRED)
+    find_package(GeoTIFF CONFIG REQUIRED)
     add_compile_definitions(BIGTIFF_SUPPORT)
 endif ()
 
@@ -863,28 +864,14 @@ if (GDAL_FRMTS_GTIFF)
         frmts/gtiff/gt_overview.cpp
         frmts/gtiff/gt_wkt_srs.cpp
         frmts/gtiff/tifvsi.cpp
-
-        frmts/gtiff/libgeotiff/xtiff.c
-        frmts/gtiff/libgeotiff/geo_free.c
-        frmts/gtiff/libgeotiff/geo_get.c
-        frmts/gtiff/libgeotiff/geo_names.c
-        frmts/gtiff/libgeotiff/geo_new.c
-        frmts/gtiff/libgeotiff/geo_print.c
-        frmts/gtiff/libgeotiff/geo_set.c
-        frmts/gtiff/libgeotiff/geo_tiffp.c
-        frmts/gtiff/libgeotiff/geo_write.c
-        frmts/gtiff/libgeotiff/geo_normalize.c
-        frmts/gtiff/libgeotiff/geotiff_proj4.c
-        frmts/gtiff/libgeotiff/geo_extra.c
-        frmts/gtiff/libgeotiff/geo_trans.c
-        frmts/gtiff/libgeotiff/geo_simpletags.c
     )
     target_include_directories(frmts PRIVATE
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/frmts/gtiff>
-        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/frmts/gtiff/libgeotiff>
+        ${GEOTIFF_INCLUDE_DIR}
     )
-    target_compile_definitions(frmts PRIVATE FRMT_gtiff DONT_DEPRECATE_SPRINTF INTERNAL_LIBGEOTIFF RENAME_INTERNAL_LIBGEOTIFF_SYMBOLS)
-    target_link_libraries(frmts PRIVATE TIFF::TIFF)
+    target_compile_definitions(frmts PRIVATE FRMT_gtiff DONT_DEPRECATE_SPRINTF)
+    target_link_directories(frmts PUBLIC ${GeoTIFF_LIBRARY_DIRS})
+    target_link_libraries(frmts PRIVATE ${GEOTIFF_LIBRARIES} TIFF::TIFF)
 endif ()
 
 if (GDAL_FRMTS_HDF5)

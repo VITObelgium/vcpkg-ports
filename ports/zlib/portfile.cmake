@@ -1,9 +1,9 @@
-set(VERSION 1.2.12)
+set(VERSION 1.2.13)
 
 vcpkg_download_distfile(ARCHIVE_FILE
     URLS "https://www.zlib.net/zlib-${VERSION}.tar.gz"
-    FILENAME "zlib1212.tar.gz"
-    SHA512 cc2366fa45d5dfee1f983c8c51515e0cff959b61471e2e8d24350dea22d3f6fcc50723615a911b046ffc95f51ba337d39ae402131a55e6d1541d3b095d6c0a14
+    FILENAME "zlib1213.tar.gz"
+    SHA512 99f0e843f52290e6950cc328820c0f322a4d934a504f66c7caa76bd0cc17ece4bf0546424fc95135de85a2656fed5115abb835fd8d8a390d60ffaf946c8887ad
 )
 
 vcpkg_extract_source_archive_ex(

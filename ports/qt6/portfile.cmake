@@ -129,6 +129,7 @@ vcpkg_configure_cmake(
         -DFEATURE_brotli=OFF
         -DFEATURE_clang=OFF
         -DFEATURE_clangcpp=OFF
+        -DFEATURE_gssapi=OFF
 
         -DINPUT_opengl=${OPENGL}
         -DINPUT_libjpeg=system

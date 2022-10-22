@@ -1,5 +1,5 @@
 set(MAJOR 6)
-set(MINOR 3)
+set(MINOR 4)
 set(REVISION 0)
 set(VERSION ${MAJOR}.${MINOR}.${REVISION})
 set(PACKAGE qt-everywhere-src-${VERSION}.tar.xz)
@@ -7,7 +7,7 @@ set(PACKAGE qt-everywhere-src-${VERSION}.tar.xz)
 vcpkg_download_distfile(ARCHIVE
     URLS "http://download.qt.io/archive/qt/${MAJOR}.${MINOR}/${VERSION}/single/${PACKAGE}"
     FILENAME "${PACKAGE}"
-    SHA512 99e22d3f2004fa93d669ca0c8775d62952d827bfbc1e2a3cbe7ea965aea6da3d67b8ef975639b567dffe4772fdbbaa9064de975834e72ffa95db9a41b871fbc1
+    SHA512 71e19c9463d80f9079fda1a504c6d928c6420c3c88646bdde5d84b3f3f396241538268dbd1ace2f184102f94a145cfe34dd1402971f40ea121c0f83f1cf068fa
 )
 
 vcpkg_extract_source_archive_ex(
@@ -102,6 +102,7 @@ if (FEATURE_tools OR FEATURE_qml)
     list (APPEND EXTRA_ARGS
         -DFEATURE_qml_profiler=OFF
         -DFEATURE_qml_debug=OFF
+        -DFEATURE_qml_itemmodel=OFF
     )
 endif ()
 
@@ -143,6 +144,7 @@ vcpkg_configure_cmake(
         -DBUILD_qtdoc=OFF
         -DBUILD_qt3d=OFF
         -DBUILD_qtquick3d=OFF
+        -DBUILD_qtquick3dphysics=OFF
         -DBUILD_qtshadertools=OFF
         -DBUILD_qt5compat=OFF
         -DBUILD_qtcanvas3d=OFF

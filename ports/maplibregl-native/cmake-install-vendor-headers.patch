@@ -1,0 +1,16 @@
+diff -Naur -x .DS_Store a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt	2022-10-22 23:25:07.000000000 +0200
++++ b/CMakeLists.txt	2022-10-22 23:40:39.000000000 +0200
+@@ -1110,3 +1110,12 @@
+ if(EXISTS ${PROJECT_SOURCE_DIR}/internal/internal.cmake)
+     include(${PROJECT_SOURCE_DIR}/internal/internal.cmake)
+ endif()
++
++install(DIRECTORY ${PROJECT_SOURCE_DIR}/platform/default/include/mbgl TYPE INCLUDE)
++install(DIRECTORY ${PROJECT_SOURCE_DIR}/vendor/mapbox-base/deps/geometry.hpp/include/mapbox TYPE INCLUDE)
++install(DIRECTORY ${PROJECT_SOURCE_DIR}/vendor/mapbox-base/deps/variant/include/mapbox TYPE INCLUDE)
++install(DIRECTORY ${PROJECT_SOURCE_DIR}/vendor/mapbox-base/deps/geojson.hpp/include/mapbox TYPE INCLUDE)
++install(DIRECTORY ${PROJECT_SOURCE_DIR}/vendor/mapbox-base/include/mapbox TYPE INCLUDE)
++install(DIRECTORY ${PROJECT_SOURCE_DIR}/vendor/mapbox-base/extras/expected-lite/include/nonstd TYPE INCLUDE)
++install(FILES ${PROJECT_SOURCE_DIR}/vendor/mapbox-base/deps/optional/optional.hpp TYPE INCLUDE)
++install(TARGETS mbgl-core mbgl-vendor-nunicode mbgl-vendor-parsedate mbgl-vendor-csscolorparser)

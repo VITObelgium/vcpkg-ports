@@ -41,9 +41,9 @@ diff -Naur a/qtbase/cmake/3rdparty/extra-cmake-modules/find-modules/FindEGL.cmak
  include(FeatureSummary)
  set_package_properties(EGL PROPERTIES
 diff -Naur a/qtbase/src/gui/CMakeLists.txt b/qtbase/src/gui/CMakeLists.txt
---- a/qtbase/src/gui/CMakeLists.txt	2022-09-19 12:23:04.000000000 +0200
-+++ b/qtbase/src/gui/CMakeLists.txt	2022-10-22 16:34:34.957282800 +0200
-@@ -329,8 +329,13 @@
+--- a/qtbase/src/gui/CMakeLists.txt	2021-07-19 20:01:09.312161000 +0200
++++ b/qtbase/src/gui/CMakeLists.txt	2021-07-19 20:17:13.084177100 +0200
+@@ -328,8 +328,13 @@
  # available until the qt_internal_add_module call.
  if(QT_FEATURE_opengl)
      if(QT_FEATURE_opengles2)
@@ -56,9 +56,9 @@ diff -Naur a/qtbase/src/gui/CMakeLists.txt b/qtbase/src/gui/CMakeLists.txt
 +            find_package(GLESv2)
 +            target_link_libraries(Gui PUBLIC GLESv2::GLESv2)
 +        endif()
- 
-         if(INTEGRITY AND _qt_igy_gui_libs)
-             find_package(IntegrityPlatformGraphics)
+     elseif(NOT QT_FEATURE_opengl_dynamic)
+         target_link_libraries(Gui PUBLIC WrapOpenGL::WrapOpenGL)
+     endif()
 diff -Naur a/qtbase/src/gui/configure.cmake b/qtbase/src/gui/configure.cmake
 --- a/qtbase/src/gui/configure.cmake	2021-10-01 13:17:53.938720700 +0200
 +++ b/qtbase/src/gui/configure.cmake	2021-10-01 15:12:30.411175300 +0200
@@ -1259,6 +1259,18 @@ diff -Naur a/qtbase/src/plugins/platforms/windows/qwindowseglcontext.h b/qtbase/
 +QT_END_NAMESPACE
 +
 +#endif // QWINDOWSEGLCONTEXT_H
+diff -Naur a/qtbase/src/plugins/platforms/windows/qwindowsgdiintegration.cpp b/qtbase/src/plugins/platforms/windows/qwindowsgdiintegration.cpp
+--- a/qtbase/src/plugins/platforms/windows/qwindowsgdiintegration.cpp	2021-07-19 20:01:10.463677700 +0200
++++ b/qtbase/src/plugins/platforms/windows/qwindowsgdiintegration.cpp	2021-07-19 22:07:46.271949700 +0200
+@@ -45,7 +45,7 @@
+ #include <QtCore/qdebug.h>
+ #include <QtGui/private/qpixmap_raster_p.h>
+ 
+-#if QT_CONFIG(opengl)
++#if QT_CONFIG(opengl) && !QT_CONFIG(opengles2)
+ #include <QtOpenGL/qpa/qplatformbackingstoreopenglsupport.h>
+ #endif
+ 
 diff -Naur a/qtbase/src/plugins/platforms/windows/qwindowsintegration.cpp b/qtbase/src/plugins/platforms/windows/qwindowsintegration.cpp
 --- a/qtbase/src/plugins/platforms/windows/qwindowsintegration.cpp	2021-07-19 20:01:10.466679200 +0200
 +++ b/qtbase/src/plugins/platforms/windows/qwindowsintegration.cpp	2021-07-20 15:27:22.169489300 +0200

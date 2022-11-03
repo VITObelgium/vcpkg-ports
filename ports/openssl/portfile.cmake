@@ -1,3 +1,4 @@
+vcpkg_minimum_required(VERSION 2022-10-12) # for ${VERSION}
 if(EXISTS "${CURRENT_INSTALLED_DIR}/share/libressl/copyright"
     OR EXISTS "${CURRENT_INSTALLED_DIR}/share/boringssl/copyright")
     message(FATAL_ERROR "Can't build openssl if libressl/boringssl is installed. Please remove libressl/boringssl, and try install openssl again if you need it.")
@@ -11,13 +12,16 @@ It can be installed on alpine systems via apk add linux-headers.]]
     )
 endif()
 
-set(OPENSSL_VERSION 3.0.3)
+if (VCPKG_TARGET_IS_WINDOWS AND NOT VCPKG_TARGET_IS_UWP)
+    set(OPENSSL_PATCHES "${CMAKE_CURRENT_LIST_DIR}/windows/flags.patch")
+endif()
 
-vcpkg_download_distfile(
-    ARCHIVE
-    URLS "https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz"
-    FILENAME "openssl-${OPENSSL_VERSION}.tar.gz"
-    SHA512 949472025211fabdaf2564122f0a9a3baef0facb6373e90cf6c4485164a50898050b179722d0b358c4d8cf1787384ea30d5fd03b98757634631d3e8978509b1a
+vcpkg_from_github(
+    OUT_SOURCE_PATH SOURCE_PATH
+    REPO openssl/openssl
+    REF openssl-${VERSION}
+    SHA512 27dd3ef0c1827a74ec880d20232acb818c7d05e004ad7389c355e200a01e899f1b1ba5c34dcce44ecf7c8767c5e1bfbb2c795e3fa5461346087e7e3b95c8a51f
+    PATCHES ${OPENSSL_PATCHES}
 )
 
 vcpkg_find_acquire_program(PERL)

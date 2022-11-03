@@ -20,4 +20,5 @@ jobs:
         name: build-logs
         path: |
           buildtrees/**/config*.log
+          buildtrees/**/build*.log
           buildtrees/**/install*.log

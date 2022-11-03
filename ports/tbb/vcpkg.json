@@ -1,6 +1,6 @@
 {
   "name": "tbb",
-  "version-semver": "2021.6.0",
+  "version-semver": "2021.7.0",
   "port-version": 0,
   "description": "oneAPI Threading Building Blocks",
   "homepage": "https://github.com/oneapi-src/oneTBB",

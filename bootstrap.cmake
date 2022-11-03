@@ -1,6 +1,6 @@
 find_package(Git)
 
-set(VCPKG_TAG "2022-06-17")
+set(VCPKG_TAG "2022-10-17")
 set(BUILD_DIR ${CMAKE_CURRENT_LIST_DIR}/buildtrees)
 set(BIN_DIR ${CMAKE_CURRENT_LIST_DIR})
 set(VCPKG_BUILD_DIR ${BUILD_DIR}/vcpkg-tool)

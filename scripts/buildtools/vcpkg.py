@@ -39,7 +39,7 @@ def _vcpkg_executable_path():
 
 def _vcpkg_version_check(vcpkg_path):
     output = subprocess.check_output([vcpkg_path, "version"]).decode("utf-8")
-    return "2022-06-17" in output
+    return "2022-10-17" in output
 
 
 def _args_to_array(args):
@@ -279,7 +279,7 @@ def vcpkg_install_ports(
     if install_root:
         args.append(f"--x-install-root={install_root}")
 
-    if "vs2019" in triplet or "cluster" in triplet or "musl" in triplet:
+    if "vs2019" in triplet or "vs2022" in triplet or "cluster" in triplet or "musl" in triplet:
         args.append(f"--host-triplet={triplet}")
 
     args += ports

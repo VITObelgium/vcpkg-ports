@@ -7,16 +7,13 @@ vcpkg_from_github(
     HEAD_REF master
 )
 
-vcpkg_find_acquire_program(PYTHON3)
-
 vcpkg_configure_cmake(
     SOURCE_PATH ${SOURCE_PATH}
     PREFER_NINJA
     OPTIONS
         -DPYBIND11_TEST=OFF
-        -DPython_EXECUTABLE=${PYTHON3}
         -DPYBIND11_FINDPYTHON=ON
-        -DVCPKG_ALLOW_SYSTEM_LIBS=${VCPKG_TARGET_IS_OSX}
+        -DVCPKG_ALLOW_SYSTEM_LIBS=ON
     OPTIONS_RELEASE
         -DPYTHON_IS_DEBUG=OFF
     OPTIONS_DEBUG
@@ -27,6 +24,10 @@ vcpkg_install_cmake()
 vcpkg_fixup_cmake_targets(CONFIG_PATH share/cmake/${PORT})
 
 file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/)
+
+vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/share/pybind11/pybind11Tools.cmake" 
+                    [=[find_package(PythonLibsNew ${PYBIND11_PYTHON_VERSION} MODULE REQUIRED ${_pybind11_quiet})]=]
+                    [=[find_package(PythonLibs ${PYBIND11_PYTHON_VERSION} MODULE REQUIRED ${_pybind11_quiet})]=]) # CMake's PythonLibs works better with vcpkg 
 
 # copy license
 file(INSTALL ${SOURCE_PATH}/LICENSE DESTINATION ${CURRENT_PACKAGES_DIR}/share/pybind11/copyright)

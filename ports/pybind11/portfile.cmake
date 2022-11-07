@@ -12,8 +12,7 @@ vcpkg_configure_cmake(
     PREFER_NINJA
     OPTIONS
         -DPYBIND11_TEST=OFF
-        -DPYBIND11_FINDPYTHON=ON
-        -DVCPKG_ALLOW_SYSTEM_LIBS=ON
+        -DPYBIND11_NOPYTHON=ON # This is a header only library, no need to search for a python interpreter at dependency build time. Only causes problems
     OPTIONS_RELEASE
         -DPYTHON_IS_DEBUG=OFF
     OPTIONS_DEBUG

@@ -24,6 +24,7 @@ libiconv
 libjpeg-turbo
 liblzma
 libpng
+libpqxx
 openssl
 libxlsxwriter
 lyra

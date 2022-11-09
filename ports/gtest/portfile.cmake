@@ -11,10 +11,6 @@ vcpkg_from_github(
     HEAD_REF master
 )
 
-vcpkg_apply_patches(
-    SOURCE_PATH ${SOURCE_PATH}
-)
-
 string(COMPARE EQUAL "${VCPKG_CRT_LINKAGE}" "dynamic" GTEST_FORCE_SHARED_CRT)
 
 vcpkg_configure_cmake(

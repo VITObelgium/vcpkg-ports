@@ -133,36 +133,40 @@ def cmake_configure(
     build_config="Release",
     install_root=None,
     manifest_dir=None,
+    build_targets=None
 ):
     cmake_bin = find_cmake_binary()
     if not cmake_bin:
         raise RuntimeError("cmake executable could not be found")
 
-    args = [cmake_bin]
-    # args.append("--trace-expand")
+    bool bit32 = False
+
+    args = [f'"{cmake_bin}"']
     args.append("-G")
     if generator is not None:
         args.append(generator)
         if generator == "Ninja" or generator == "Unix Makefiles":
             args.append(f"-DCMAKE_BUILD_TYPE={build_config}")
     elif triplet == "x64-windows-static-vs2019" or triplet == "x64-windows-vs2019":
-        args.append("Visual Studio 16 2019")
+        args.append('"Visual Studio 16 2019"')
         args.extend(["-A", "x64"])
         args.extend(["-T", "v142,host=x64"])
     elif triplet == "x86-windows-static-vs2019" or triplet == "x86-windows-vs2019":
-        args.append("Visual Studio 16 2019")
+        args.append('"Visual Studio 16 2019"')
         args.extend(["-A", "Win32"])
         args.extend(["-T", "v142,host=x64"])
+        bit32=True
     elif triplet == "x64-windows-static-vs2022" or triplet == "x64-windows-vs2022" or triplet == "x64-windows-static-ltcg-vs2022" or triplet == "x64-windows-ltcg-vs2022":
-        args.append("Visual Studio 17 2022")
+        args.append('"Visual Studio 17 2022"')
         args.extend(["-A", "x64"])
         args.extend(["-T", "v143,host=x64"])
     elif triplet == "x86-windows-static-vs2022" or triplet == "x86-windows-vs2022":
-        args.append("Visual Studio 17 2022")
+        args.append('"Visual Studio 17 2022"')
         args.extend(["-A", "Win32"])
         args.extend(["-T", "v143,host=x64"])
+        bit32=True
     elif triplet == "x64-windows-static" or triplet == "x64-windows":
-        args.append("Visual Studio 15 2017 Win64")
+        args.append('"Visual Studio 15 2017 Win64"')
         args.extend(["-T", "v141,host=x64"])
     else:
         generator = "Ninja"
@@ -174,7 +178,7 @@ def cmake_configure(
         ninja_bin = find_ninja_binary()
         if not ninja_bin:
             raise RuntimeError("ninja executable could not be found")
-        args.append(f"-DCMAKE_MAKE_PROGRAM={ninja_bin}")
+        args.append(f'-DCMAKE_MAKE_PROGRAM="{ninja_bin}"')
 
     vcpkg_root = vcpkg_root_dir()
     toolchain = os.path.abspath(
@@ -213,7 +217,7 @@ def cmake_configure(
     if verbose:
         args.append("-DVCPKG_VERBOSE=ON")
     args.extend(cmake_args)
-    args.extend(["-S", source_dir, "-B", build_dir])
+    args.extend(["-S", f'"{source_dir}"', "-B", f'"{build_dir}"'])
 
     if manifest_dir is not None:
         manifest_path = pathlib.Path(manifest_dir) / "vcpkg.json"
@@ -224,25 +228,47 @@ def cmake_configure(
             install_root = "vcpkg_installed"
 
         manifest_install_path = pathlib.Path(source_dir) / install_root
-        args.append(f"-DVCPKG_INSTALLED_DIR={manifest_install_path.as_posix()}")
+        args.append(f'-DVCPKG_INSTALLED_DIR="{manifest_install_path.as_posix()}"')
         args.append("-DVCPKG_MANIFEST_MODE=OFF")
 
+    my_env = None
+    if generator == "Ninja" and 'windows' in triplet:
+        vspath = subprocess.check_output([r"%programfiles(x86)%\Microsoft Visual Studio\Installer\vswhere", "-latest", "-property", "installationPath"], shell=True).decode('UTF-8').strip()
+        vcvarsall = os.path.join(vspath, "VC", "Auxiliary", "Build", "vcvarsall.bat")
+        # vcvarsall.bat changes the current directory to the one specified by the environment variable %VSCMD_START_DIR%
+        my_env = os.environ
+        my_env["VSCMD_START_DIR"] = build_dir
+
+        args.insert(0, "&&")
+        args.insert(0, "x86" if bit32 else "x64")
+        args.insert(0, f'"{vcvarsall}"')
+        args.insert(0, "call")
+
+
+    if build_targets is not None:
+        args.append("&&")
+        args.extend(create_build_command(build_dir, config=build_config, targets=build_targets))
+
     print(" ".join(args))
-    subprocess.check_call(args)
+    subprocess.check_call(" ".join(args), shell=True, env=my_env)
 
 
-def cmake_build(build_dir, config=None, targets=[]):
+def create_build_command(build_dir, config=None, targets=[]):
     cmake_bin = find_cmake_binary()
     if not cmake_bin:
         raise RuntimeError("cmake executable could not be found")
 
-    args = [cmake_bin, "--build", build_dir]
+    args = [f'"{cmake_bin}"', "--build", f'"{build_dir}"']
     if config is not None:
         args.extend(["--config", config])
 
     for target in targets:
         args.extend(["--target", target])
-    subprocess.check_call(args)
+    
+    return args
+
+def cmake_build(build_dir, config=None, targets=[]):
+    subprocess.check_call(create_build_command(build_dir, config, targets))
 
 
 def vcpkg_install_ports(
@@ -605,8 +631,8 @@ def build_project(
             build_config=build_config,
             install_root=install_root,
             manifest_dir=manifest_dir,
+            build_targets=targets,
         )
-        cmake_build(build_dir, config=build_config, targets=targets)
     except subprocess.CalledProcessError as e:
         raise RuntimeError("Build failed: {}".format(e))
 
@@ -657,6 +683,7 @@ def build_project_release(
         triplet,
         cmake_args,
         build_dir,
+        generator="Ninja",
         targets=targets,
         install_dir=install_dir,
         install_root=install_root,

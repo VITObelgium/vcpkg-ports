@@ -12,3 +12,19 @@ diff -Naur -x .DS_Store a/platform/default/src/mbgl/util/compression.cpp b/platf
  
  #include <cstdio>
  #include <cstring>
+
+diff --git a/platform/default/src/mbgl/storage/mbtiles_file_source.cpp b/platform/default/src/mbgl/storage/mbtiles_file_source.cpp
+--- a/platform/default/src/mbgl/storage/mbtiles_file_source.cpp
++++ b/platform/default/src/mbgl/storage/mbtiles_file_source.cpp
+@@ -20,11 +20,7 @@
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ 
+-#if defined(__QT__) && (defined(_WIN32) || defined(__EMSCRIPTEN__))
+-#include <QtZlib/zlib.h>
+-#else
+ #include <zlib.h>
+-#endif
+ 
+ namespace {
+ bool acceptsURL(const std::string& url) {

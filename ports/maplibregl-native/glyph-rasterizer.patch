@@ -1,7 +1,7 @@
-diff --git a/platform/qt/src/local_glyph_rasterizer.cpp b/platform/qt/src/local_glyph_rasterizer.cpp
+diff --git a/platform/qt/src/mbgl/local_glyph_rasterizer.cpp b/platform/qt/src/mbgl/local_glyph_rasterizer.cpp
 index 31abfd450..79141cd4b 100644
---- a/platform/qt/src/local_glyph_rasterizer.cpp
-+++ b/platform/qt/src/local_glyph_rasterizer.cpp
+--- a/platform/qt/src/mbgl/local_glyph_rasterizer.cpp
++++ b/platform/qt/src/mbgl/local_glyph_rasterizer.cpp
 @@ -40,7 +40,7 @@ LocalGlyphRasterizer::~LocalGlyphRasterizer() {
  }
  

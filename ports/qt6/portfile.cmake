@@ -102,6 +102,7 @@ if (FEATURE_tools OR FEATURE_qml)
     list (APPEND EXTRA_ARGS
         -DFEATURE_qml_profiler=OFF
         -DFEATURE_qml_debug=OFF
+        -DFEATURE_qml_itemmodel=OFF
     )
 endif ()
 

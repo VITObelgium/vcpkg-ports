@@ -139,7 +139,7 @@ def cmake_configure(
     if not cmake_bin:
         raise RuntimeError("cmake executable could not be found")
 
-    bool bit32 = False
+    bit32 = False
 
     args = [f'"{cmake_bin}"']
     args.append("-G")

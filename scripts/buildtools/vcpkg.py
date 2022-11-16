@@ -8,6 +8,7 @@ import re
 import shutil
 import sysconfig
 
+vcpkg_tool_version = "2022-11-10"
 
 def git_status_is_clean():
     return subprocess.call(["git", "diff", "--quiet"], shell=False) == 0
@@ -39,7 +40,7 @@ def _vcpkg_executable_path():
 
 def _vcpkg_version_check(vcpkg_path):
     output = subprocess.check_output([vcpkg_path, "version"]).decode("utf-8")
-    return "2022-10-17" in output
+    return vcpkg_tool_version in output
 
 
 def _args_to_array(args):

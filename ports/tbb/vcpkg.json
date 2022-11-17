@@ -4,5 +4,7 @@
   "port-version": 0,
   "description": "oneAPI Threading Building Blocks",
   "homepage": "https://github.com/oneapi-src/oneTBB",
-  "dependencies": [ "hwloc" ]
+  "dependencies": [ {
+    "name": "hwloc",
+    "platform": "!windows & !osx"} ]
 }

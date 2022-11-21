@@ -25,6 +25,30 @@ vcpkg_extract_source_archive_ex(
         check-autoconf-archive.patch
 )
 
+vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
+    FEATURES
+        prunedata       ICU_PRUNEDATA
+)
+
+if (ICU_PRUNEDATA)
+    vcpkg_download_distfile(
+        DATA_ARCHIVE
+        URLS "https://github.com/unicode-org/icu/releases/download/release-${VERSION3}/icu4c-${VERSION2}-data.zip"
+        FILENAME "icu4c-${VERSION2}-data.zip"
+        SHA512 05eb134a963a541a280e49e4d0aca07e480fef14daa0108c8fb9add18c150c9d34c8cbc46386c07909d511f7777eb3ea9f494001f191b84a7de0be8047da8b56
+    )
+
+    file(REMOVE_RECURSE ${SOURCE_PATH}/source/data)
+    vcpkg_extract_source_archive_ex(
+        OUT_SOURCE_PATH DATA_SOURCE_PATH
+        ARCHIVE ${DATA_ARCHIVE}
+    )
+    
+    file(GLOB DATA_FILES "${DATA_SOURCE_PATH}/*")
+    file(COPY ${DATA_FILES} DESTINATION ${SOURCE_PATH}/source/data)
+    set(ENV{ICU_DATA_FILTER_FILE} "${CMAKE_CURRENT_LIST_DIR}/filters.json")
+endif ()
+
 vcpkg_find_acquire_program(PYTHON3)
 set(ENV{PYTHON} "${PYTHON3}")
 

@@ -1,4 +1,4 @@
 Source: pcraster
-Version: 4.2.0
+Version: 4.4.0
 Description: Environmental modeling software
-Build-Depends: gdal,boost[python],boost[date-time],boost[filesystem],boost[program-options],boost[timer],boost[math],qt5[sql],xercesc
+Build-Depends: gdal[tools],boost[date-time],boost[timer],boost[math],xerces-c,pybind11,qt5[sql]

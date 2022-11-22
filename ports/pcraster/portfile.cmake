@@ -1,23 +1,14 @@
-set(MAJOR 4)
-set(MINOR 2)
-set(REVISION 0)
-set(VERSION ${MAJOR}.${MINOR}.${REVISION})
-set(PACKAGE_NAME ${PORT}-${VERSION})
-set(PACKAGE ${PORT}-${VERSION}.tar.bz2)
-
 set(VCPKG_POLICY_EMPTY_INCLUDE_FOLDER enabled)
 set(VCPKG_BUILD_TYPE release)
-set(SOURCE_PATH ${CURRENT_BUILDTREES_DIR}/src/${PACKAGE_NAME})
 
-vcpkg_download_distfile(ARCHIVE
-    URLS "http://pcraster.geo.uu.nl/${PORT}/${VERSION}/${PACKAGE}"
-    FILENAME "${PACKAGE}"
-    SHA512 c3c836ff2e0cf837f41964d8670301b7b75975326b51aee76f9efed529de877e4e23ac4b77b2f0b09936aff6e8d6dd6e65a86565921b2609b598e0ab7ed8075e
-)
-vcpkg_extract_source_archive(${ARCHIVE})
-vcpkg_apply_patches(
-    SOURCE_PATH ${SOURCE_PATH}
-    PATCHES minimize-build.patch
+vcpkg_from_github(
+    OUT_SOURCE_PATH SOURCE_PATH
+    REPO pcraster/pcraster
+    REF v${VERSION}
+    SHA512 e9676b164735336b445cb9b4ba09db61efa99c30d60caed96965854ea4c208385dc75328635284084b6b2330bb8b286f220c70742e88c5714fb95f90d1de1ac2
+    HEAD_REF master
+    PATCHES
+        minimize-build.patch
 )
 
 vcpkg_configure_cmake(
@@ -26,12 +17,16 @@ vcpkg_configure_cmake(
     OPTIONS
         -DPCRASTER_BUILD_DOCUMENTATION=OFF
         -DPCRASTER_BUILD_TEST=OFF
-        -DPCRASTER_WITH_AGUILA=OFF
-        -DPCRASTER_WITH_MODFLOW=ON
+        -DPCRASTER_BUILD_AGUILA=OFF
+        -DPCRASTER_BUILD_MODFLOW=ON
+        -DPCRASTER_BUILD_MULTICORE=OFF
+        -DPCRASTER_BUILD_BLOCKPYTHON=OFF
+        -DPCRASTER_BUILD_MLDD=OFF
+        -DPCRASTER_BUILD_MOC=OFF
         -DFERN_BUILD_ALGORITHM=TRUE
-        -DPYTHON_EXECUTABLE=/projects/urbflood/.miniconda3/bin/python
-        -DPYTHON_INCLUDE_DIRS=/projects/urbflood/.miniconda3/include
-        -DPYTHON_LIBRARY=/projects/urbflood/.miniconda3/lib/libpython3.7m.so
+        -DHAVE_PYBIND11=ON
+        -DBoost_USE_STATIC_LIBS=ON
+        -DBoost_USE_STATIC_RUNTIME=ON
 )
 
 vcpkg_install_cmake()

@@ -867,11 +867,9 @@ if (GDAL_FRMTS_GTIFF)
     )
     target_include_directories(frmts PRIVATE
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/frmts/gtiff>
-        ${GEOTIFF_INCLUDE_DIR}
     )
     target_compile_definitions(frmts PRIVATE FRMT_gtiff DONT_DEPRECATE_SPRINTF)
-    target_link_directories(frmts PUBLIC ${GeoTIFF_LIBRARY_DIRS})
-    target_link_libraries(frmts PRIVATE ${GEOTIFF_LIBRARIES} TIFF::TIFF)
+    target_link_libraries(frmts PRIVATE geotiff_library TIFF::TIFF)
 endif ()
 
 if (GDAL_FRMTS_HDF5)

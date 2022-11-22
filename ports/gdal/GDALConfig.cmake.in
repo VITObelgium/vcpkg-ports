@@ -38,6 +38,7 @@ endif ()
 
 if (@GDAL_FRMTS_GTIFF@)
     find_dependency(TIFF REQUIRED)
+    find_dependency(GeoTIFF CONFIG REQUIRED)
 endif ()
 
 if (@GDAL_FRMTS_GIF@)

@@ -98,6 +98,12 @@ def find_ninja_binary():
         ninja = shutil.which("ninja", path=ninja_dir.as_posix())
         if ninja:
             return ninja
+        
+        # find ninja in a version subdir
+        for child_dir in ninja_dir.glob('**/'):
+            ninja = shutil.which("ninja", path=child_dir.as_posix())
+            if ninja:
+                return ninja
 
     # find ninja on the system
     return shutil.which("ninja")

@@ -14,7 +14,7 @@ jobs:
         run: python3 scripts/buildtools/vcpkg.py --triplet x64-linux --ports-dir . --clean-after-build
       - name: Archive build logs
         if: ${{ always() }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: build-logs
           path: |

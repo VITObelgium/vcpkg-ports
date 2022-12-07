@@ -28,3 +28,4 @@ jobs:
             buildtrees/**/config*.log
             buildtrees/**/build*.log
             buildtrees/**/install*.log
+            buildtrees/**/package*.log

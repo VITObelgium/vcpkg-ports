@@ -4,21 +4,21 @@ on: [push]
 
 jobs:
   build:
-
     runs-on: macos-11
 
     steps:
-    - uses: actions/checkout@v1
-    - name: Bootstrap the ports on OSX
-      run: |
-        brew install nasm ninja automake autoconf autoconf-archive
-        python3 scripts/buildtools/vcpkg.py --triplet x64-osx-10_15 --ports-dir . --clean-after-build
-    - name: Archive build logs
-      if: ${{ always() }}
-      uses: actions/upload-artifact@v2
-      with:
-        name: build-logs
-        path: |
-          buildtrees/**/config*.log
-          buildtrees/**/build*.log
-          buildtrees/**/install*.log
+      - uses: actions/checkout@v1
+      - name: Bootstrap the ports on OSX
+        run: |
+          brew install nasm ninja automake autoconf autoconf-archive
+          python3 scripts/buildtools/vcpkg.py --triplet x64-osx-10_15 --ports-dir . --clean-after-build
+      - name: Archive build logs
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-logs
+          path: |
+            buildtrees/**/config*.log
+            buildtrees/**/build*.log
+            buildtrees/**/install*.log
+            buildtrees/**/package*.log

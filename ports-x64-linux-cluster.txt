@@ -1,6 +1,6 @@
 asio
 benchmark
-boost[iostreams,zlib,program-options,regex,thread,system,date-time]
+boost[iostreams,zlib,program-options,regex,thread,system,date-time,filesystem]
 bzip2
 ceres
 clara

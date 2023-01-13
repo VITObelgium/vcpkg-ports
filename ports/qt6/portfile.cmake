@@ -1,13 +1,13 @@
 set(MAJOR 6)
 set(MINOR 3)
-set(REVISION 0)
+set(REVISION 2)
 set(VERSION ${MAJOR}.${MINOR}.${REVISION})
 set(PACKAGE qt-everywhere-src-${VERSION}.tar.xz)
 
 vcpkg_download_distfile(ARCHIVE
     URLS "http://download.qt.io/archive/qt/${MAJOR}.${MINOR}/${VERSION}/single/${PACKAGE}"
     FILENAME "${PACKAGE}"
-    SHA512 99e22d3f2004fa93d669ca0c8775d62952d827bfbc1e2a3cbe7ea965aea6da3d67b8ef975639b567dffe4772fdbbaa9064de975834e72ffa95db9a41b871fbc1
+    SHA512 cc05f9d23027ceac6bd0f4fe056f950350f3a63d9159b3135f281e74ee572e1dde2f56573e5480682983faf69c108116c2b9655c6d327c0edc0c8ccbecea052b
 )
 
 vcpkg_extract_source_archive_ex(
@@ -144,6 +144,7 @@ vcpkg_configure_cmake(
         -DBUILD_qtdoc=OFF
         -DBUILD_qt3d=OFF
         -DBUILD_qtquick3d=OFF
+        -DBUILD_qtquick3dphysics=OFF
         -DBUILD_qtshadertools=OFF
         -DBUILD_qt5compat=OFF
         -DBUILD_qtcanvas3d=OFF

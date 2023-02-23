@@ -186,6 +186,7 @@ function(vcpkg_cmake_configure)
         "-D_VCPKG_INSTALLED_DIR=${_VCPKG_INSTALLED_DIR}"
         "-DVCPKG_MANIFEST_INSTALL=OFF"
         "-DFETCHCONTENT_FULLY_DISCONNECTED=ON"
+        "-DCMAKE_DEBUG_POSTFIX=d"
     )
 
     # Sets configuration variables for macOS builds

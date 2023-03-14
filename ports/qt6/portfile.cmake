@@ -151,8 +151,10 @@ vcpkg_configure_cmake(
         -DBUILD_qtconnectivity=OFF
         -DBUILD_qtdatavis3d=OFF
         -DBUILD_qtcharts=${FEATURE_charts}
+        -DBUILD_qtlanguageserver=OFF
         -DBUILD_qtmultimedia=OFF
         -DBUILD_qtpurchasing=OFF
+        -DBUILD_qtpositioning=OFF
         -DBUILD_qtremoteobjects=OFF
         -DBUILD_qtscript=OFF
         -DBUILD_qtsensors=OFF
@@ -298,7 +300,7 @@ if(VCPKG_LIBRARY_LINKAGE STREQUAL "static")
     file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/bin" "${CURRENT_PACKAGES_DIR}/debug/bin")
 endif()
 
-#configure_file(${CMAKE_CURRENT_LIST_DIR}/qt_debug.conf ${CURRENT_PACKAGES_DIR}/tools/qt_debug.conf)
-#configure_file(${CMAKE_CURRENT_LIST_DIR}/qt_release.conf ${CURRENT_PACKAGES_DIR}/tools/qt_release.conf)
+configure_file(${CMAKE_CURRENT_LIST_DIR}/qt_debug.conf ${CURRENT_PACKAGES_DIR}/tools/qt6/qt_debug.conf)
+configure_file(${CMAKE_CURRENT_LIST_DIR}/qt_release.conf ${CURRENT_PACKAGES_DIR}/tools/qt6/qt_release.conf)
 
 file(INSTALL ${SOURCE_PATH}/LICENSE.LGPL3 DESTINATION  ${CURRENT_PACKAGES_DIR}/share/${PORT} RENAME copyright)

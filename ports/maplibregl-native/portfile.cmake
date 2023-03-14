@@ -1,5 +1,6 @@
 if (WIN32)
     vcpkg_add_to_path($ENV{ProgramFiles}/git/bin)
+    vcpkg_add_to_path($ENV{ProgramW6432}/git/bin)
 endif ()
 find_package(Git)
 if (NOT Git_FOUND)

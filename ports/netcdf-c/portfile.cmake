@@ -8,6 +8,7 @@ vcpkg_from_github(
         no-install-deps.patch
         fix-dependency-zlib.patch
         use_targets.patch
+        cmakeconfig.patch
         fix-dependency-libmath.patch
         fix-linkage-error.patch
         fix-pkgconfig.patch

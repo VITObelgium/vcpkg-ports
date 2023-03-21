@@ -1,92 +1,94 @@
-set(VERSION_MAJOR 4)
-set(VERSION_MINOR 7)
-set(VERSION_REVISION 4)
-set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_REVISION})
-
-TEST_FEATURE("hdf5" WITH_HDF5)
-TEST_FEATURE("tools" WITH_UTILITIES)
-TEST_FEATURE("parallel" WITH_PARALLEL)
-
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO Unidata/netcdf-c
-    REF v${VERSION}
-    SHA512 15922818fdd71be285eb7dd2fc9be2594fe9af979de3ed316465636c7bbdaec65eb151ca57ef8b703e6a360cdba036b8f9bc193ddff01ff7ce4214c0a66efa79
+    REF cd6173f472b778fa0e558982c59f7183aa5b8e47 # v4.8.1
+    SHA512 e965b9c865f31abcd0ae045cb709a41710e72bcf5bd237972cd62688f0f099f1b12be316a448d22315b1c73eb99fae3ea38072e9a3646a4f70ba42507d82f537
     HEAD_REF master
     PATCHES
-        libm.patch
-        hdf5-targets.patch
-        transitive-hdf5.patch
-        nc-config.patch
         no-install-deps.patch
-        backtrace.patch # only support backtrace when using glibc
-        hdf5-path-encoding.patch
-        #config-pkg-location.patch
-        #mingw.patch
+        fix-dependency-zlib.patch
+        use_targets.patch
+        fix-dependency-libmath.patch
+        fix-linkage-error.patch
+        fix-pkgconfig.patch
+        fix-manpage-msys.patch
+        fix-dependency-mpi.patch
 )
 
-file(REMOVE ${SOURCE_PATH}/cmake/modules/FindZLIB.cmake)
-file(REMOVE ${SOURCE_PATH}/cmake/modules/windows/FindHDF5.cmake)
-foreach (TOOL ncgen ncgen3 ncdump)
-    vcpkg_replace_string(${SOURCE_PATH}/${TOOL}/CMakeLists.txt "DESTINATION bin" "DESTINATION tools")
-endforeach()
+#Remove outdated find modules
+file(REMOVE "${SOURCE_PATH}/cmake/modules/FindSZIP.cmake")
+file(REMOVE "${SOURCE_PATH}/cmake/modules/FindZLIB.cmake")
+file(REMOVE "${SOURCE_PATH}/cmake/modules/windows/FindHDF5.cmake")
 
-if (VCPKG_CMAKE_SYSTEM_NAME STREQUAL Windows AND NOT CMAKE_HOST_WIN32)
-    set (INIT_CACHE_ARG ${CMAKE_CURRENT_LIST_DIR}/TryRunResults-mingw.cmake)
-else ()
-    # make sure check_library_exist calls work without linker errors
-    if (WITH_PARALLEL AND VCPKG_TARGET_IS_LINUX)
-        set (INIT_CACHE_ARG ${CMAKE_CURRENT_LIST_DIR}/cacheinitpar.cmake)
-    else ()
-        set (INIT_CACHE_ARG ${CMAKE_CURRENT_LIST_DIR}/cacheinit.cmake)
-    endif ()
-endif ()
+if(NOT VCPKG_TARGET_IS_WINDOWS OR VCPKG_TARGET_IS_MINGW)
+    set(CRT_OPTION "")
+elseif(VCPKG_CRT_LINKAGE STREQUAL "static")
+    set(CRT_OPTION -DNC_USE_STATIC_CRT=ON)
+else()
+    set(CRT_OPTION -DNC_USE_STATIC_CRT=OFF)
+endif()
 
-if (NOT VCPKG_TARGET_IS_WINDOWS)
-    set(LIBM_CONFIG -DHAVE_LIBM=-lm)
-endif ()
+vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
+    FEATURES
+        dap       ENABLE_DAP
+        netcdf-4  ENABLE_NETCDF_4
+        hdf5      ENABLE_HDF5
+        nczarr    ENABLE_NCZARR
+        nczarr-zip    ENABLE_NCZARR_ZIP
+        tools     BUILD_UTILITIES
+    )
 
-vcpkg_configure_cmake(
-    SOURCE_PATH ${SOURCE_PATH}
-    PREFER_NINJA
-    DISABLE_PARALLEL_CONFIGURE
+if(NOT ENABLE_DAP AND NOT ENABLE_NCZARR)
+    list(APPEND FEATURE_OPTIONS "-DCMAKE_DISABLE_FIND_PACKAGE_CURL=ON")
+endif()
+
+if(ENABLE_HDF5)
+    # Fix hdf5 szip support detection for static linkage.
+    x_vcpkg_pkgconfig_get_modules(
+        PREFIX HDF5
+        MODULES hdf5
+        LIBRARIES
+    )
+    if(HDF5_LIBRARIES_RELEASE MATCHES "szip")
+        list(APPEND FEATURE_OPTIONS "-DUSE_SZIP=ON")
+    endif()
+endif()
+
+if(VCPKG_TARGET_IS_UWP)
+    string(APPEND VCPKG_C_FLAGS " /wd4996 /wd4703")
+    string(APPEND VCPKG_CXX_FLAGS " /wd4996 /wd4703")
+endif()
+
+vcpkg_cmake_configure(
+    SOURCE_PATH "${SOURCE_PATH}"
+    DISABLE_PARALLEL_CONFIGURE # netcdf-c configures in the source!
     OPTIONS
-        -C${INIT_CACHE_ARG}
-        ${LIBM_CONFIG}
-        -DBUILD_UTILITIES=${WITH_UTILITIES}
         -DBUILD_TESTING=OFF
         -DENABLE_EXAMPLES=OFF
         -DENABLE_TESTS=OFF
-        -DENABLE_DYNAMIC_LOADING=OFF
-        -DUSE_HDF5=${WITH_HDF5}
-        -DENABLE_NETCDF_4=${WITH_HDF5}
-        -DENABLE_DAP=OFF
+        -DENABLE_FILTER_TESTING=OFF
         -DENABLE_DAP_REMOTE_TESTS=OFF
-        -DENABLE_PARALLEL4=${WITH_PARALLEL}
         -DDISABLE_INSTALL_DEPENDENCIES=ON
-        -DCMAKE_REQUIRED_LINK_OPTIONS=-L${CURRENT_INSTALLED_DIR}/lib
+        ${CRT_OPTION}
+        ${FEATURE_OPTIONS}
 )
 
-vcpkg_install_cmake()
-vcpkg_fixup_cmake_targets(CONFIG_PATH lib/cmake/netCDF)
+vcpkg_cmake_install()
+vcpkg_cmake_config_fixup(PACKAGE_NAME "netcdf" CONFIG_PATH "lib/cmake/netCDF")
+vcpkg_fixup_pkgconfig()
 
-file(MAKE_DIRECTORY ${CURRENT_PACKAGES_DIR}/tools)
-file(RENAME ${CURRENT_PACKAGES_DIR}/bin/nc-config ${CURRENT_PACKAGES_DIR}/tools/nc-config)
-vcpkg_replace_string(${CURRENT_PACKAGES_DIR}/tools/nc-config "${CURRENT_PACKAGES_DIR}" "${CURRENT_INSTALLED_DIR}")
-if(VCPKG_LIBRARY_LINKAGE STREQUAL "static" AND WITH_HDF5)
-    vcpkg_replace_string(${CURRENT_PACKAGES_DIR}/tools/nc-config "-lnetcdf" "-lnetcdf -lhdf5_hl -lhdf5 -lz")
+file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/bin/nc-config" "${CURRENT_PACKAGES_DIR}/bin/nc-config") # invalid
+if("tools" IN_LIST FEATURES)
+    vcpkg_copy_tools(
+        TOOL_NAMES  nccopy ncdump ncgen ncgen3
+        AUTO_CLEAN
+    )
+elseif(VCPKG_LIBRARY_LINKAGE STREQUAL "static" OR NOT VCPKG_TARGET_IS_WINDOWS)
+    # delete bin under non-windows because the dynamic libraries get put in lib
+    file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/bin" "${CURRENT_PACKAGES_DIR}/bin")
 endif()
 
-if(VCPKG_LIBRARY_LINKAGE STREQUAL "static")
-    file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/bin ${CURRENT_PACKAGES_DIR}/bin)
-endif()
+file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/include")
+file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/share")
 
-file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/include)
-file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/share)
-
-vcpkg_fixup_pkgconfig_mod(NAMES netcdf)
-
-# Handle copyright
-file(INSTALL ${SOURCE_PATH}/COPYRIGHT DESTINATION ${CURRENT_PACKAGES_DIR}/share/netcdf-c RENAME copyright)
-
-vcpkg_test_cmake(PACKAGE_NAME netCDF)
+file(INSTALL "${SOURCE_PATH}/COPYRIGHT" DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}" RENAME copyright)

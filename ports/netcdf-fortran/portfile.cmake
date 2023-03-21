@@ -1,8 +1,8 @@
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO Unidata/netcdf-fortran
-    REF v4.5.3
-    SHA512 fe4b2f6f8c44bf4fdeebe3cbd57ee44ccee15a70075428bb68f0d33b70f9291b68b542965634a27fb4be5a59c756d672a3d264f2628391861edb98a244e072b4
+    REF v4.6.0
+    SHA512 2488c0d9d9df49c56253dda1a411c50bb32a52651bd5d43e303190ca7de06db3f48621da0c7faf48aaee01f7d74031b199fcfbecb2ba523a994c00470680f014
     HEAD_REF master
 )
 
@@ -31,7 +31,7 @@ vcpkg_configure_cmake(
 )
 
 vcpkg_install_cmake()
-vcpkg_fixup_cmake_targets(CONFIG_PATH lib/cmake)
+vcpkg_fixup_cmake_targets(CONFIG_PATH lib/cmake/netCDF TARGET_PATH share/netcdf-fortran)
 
 if(VCPKG_LIBRARY_LINKAGE STREQUAL "static")
     file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/bin ${CURRENT_PACKAGES_DIR}/bin)
@@ -43,4 +43,4 @@ file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/include/CMakeFiles)
 
 # Handle copyright
 file(INSTALL ${SOURCE_PATH}/COPYRIGHT DESTINATION ${CURRENT_PACKAGES_DIR}/share/${PORT} RENAME copyright)
-file(INSTALL ${CMAKE_CURRENT_LIST_DIR}/FindnetCDFFortran.cmake DESTINATION ${CURRENT_PACKAGES_DIR}/share/cmake)
+#file(INSTALL ${CMAKE_CURRENT_LIST_DIR}/FindnetCDFFortran.cmake DESTINATION ${CURRENT_PACKAGES_DIR}/share/cmake)

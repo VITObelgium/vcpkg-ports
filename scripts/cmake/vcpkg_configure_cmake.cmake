@@ -65,6 +65,10 @@ function(z_vcpkg_select_default_vcpkg_chainload_toolchain)
         set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "${Z_VCPKG_CHAINLOAD_TOOLCHAIN_FILE}")
     elseif(VCPKG_TARGET_IS_MINGW)
         set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "${SCRIPTS}/toolchains/mingw.cmake")
+    #MOD START
+    elseif(VCPKG_TARGET_IS_INTEL_ONEAPI)
+        set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "${SCRIPTS}/toolchains/inteloneapi.cmake")
+    #MOD END
     elseif(VCPKG_TARGET_IS_WINDOWS)
         set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "${SCRIPTS}/toolchains/windows.cmake")
     elseif(VCPKG_TARGET_IS_LINUX)

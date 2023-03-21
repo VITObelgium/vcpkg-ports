@@ -87,6 +87,8 @@ function(vcpkg_test_cmake)
             set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "${SCRIPTS}/toolchains/openbsd.cmake")
         elseif(VCPKG_CMAKE_SYSTEM_NAME STREQUAL "MinGW")
             set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "${SCRIPTS}/toolchains/mingw.cmake")
+        elseif(INTEL_ONEAPI)
+            set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "${SCRIPTS}/toolchains/inteloneapi.cmake")
         endif()
     endif()
 

@@ -11,7 +11,9 @@ vcpkg_from_github(
     REF RELEASE_${VERSION}
     SHA512 ${SHA_SUM}
     HEAD_REF master
-    PATCHES cxxflags.patch
+    PATCHES
+        cxxflags.patch
+        zlib.patch
 )
 
 vcpkg_configure_cmake(

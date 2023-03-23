@@ -8,7 +8,6 @@ csv-parser
 cryptopp
 date
 doctest
-eccodes[netcdf,png,jpeg]
 eigen3
 expat
 fmt

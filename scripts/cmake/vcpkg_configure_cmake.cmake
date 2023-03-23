@@ -131,7 +131,7 @@ function(vcpkg_configure_cmake)
     set(ninja_can_be_used ON) # Ninja as generator
     set(ninja_host ON) # Ninja as parallel configurator
 
-    if(NOT arg_PREFER_NINJA AND VCPKG_TARGET_IS_WINDOWS AND NOT VCPKG_TARGET_IS_MINGW)
+    if(NOT arg_PREFER_NINJA AND VCPKG_TARGET_IS_WINDOWS AND NOT VCPKG_TARGET_IS_MINGW AND NOT VCPKG_TARGET_IS_INTEL_ONEAPI)
         set(ninja_can_be_used OFF)
     endif()
 

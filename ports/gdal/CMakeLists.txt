@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.15)
 include(CMakeDependentOption)
 
 project(gdal
-    VERSION 3.5.3
+    VERSION 3.6.3
     LANGUAGES C CXX
 )
 
@@ -882,7 +882,7 @@ if (GDAL_FRMTS_HDF5)
         frmts/hdf5/iso19115_srs.cpp
         frmts/hdf5/hdf5multidim.cpp
     )
-    target_link_libraries(frmts PRIVATE hdf5-static hdf5_hl-static)
+    target_link_libraries(frmts PRIVATE hdf5::hdf5-static hdf5::hdf5_hl-static)
     target_compile_definitions(frmts PRIVATE FRMT_hdf5)
 endif ()
 
@@ -1146,6 +1146,7 @@ add_library(ogr OBJECT
     ogr/ogr_geo_utils.cpp
     ogr/ogr_proj_p.cpp
     
+    ogr/ogrsf_frmts/generic/ograrrowarrayhelper.cpp
     ogr/ogrsf_frmts/generic/ogrsfdriverregistrar.cpp
     ogr/ogrsf_frmts/generic/ogrlayer.cpp
     ogr/ogrsf_frmts/generic/ogrdatasource.cpp
@@ -1550,6 +1551,7 @@ add_library(gdal
 
 set(GDAL_PUBLIC_HEADERS
     ${CMAKE_BINARY_DIR}/gdal_version.h
+    ${CMAKE_BINARY_DIR}/gdal_version_full/gdal_version.h
     ${CMAKE_SOURCE_DIR}/apps/gdal_utils.h
 )
 set_target_properties(gdal PROPERTIES
@@ -1662,6 +1664,7 @@ if (GDAL_INSTALL_DATA_FILES)
 endif ()
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/gcore/gdal_version.h.in ${CMAKE_CURRENT_BINARY_DIR}/gdal_version.h @ONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/gcore/gdal_version.h.in ${CMAKE_CURRENT_BINARY_DIR}/gdal_version_full/gdal_version.h @ONLY)
 if (MSVC)
     configure_file(cpl_config.h.vc.cmake.in ${CMAKE_BINARY_DIR}/cpl_config.h)
 else ()

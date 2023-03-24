@@ -1145,6 +1145,7 @@ add_library(ogr OBJECT
     ogr/ogr_xerces.cpp
     ogr/ogr_geo_utils.cpp
     ogr/ogr_proj_p.cpp
+    ogr/ogr_wkb.cpp
     
     ogr/ogrsf_frmts/generic/ograrrowarrayhelper.cpp
     ogr/ogrsf_frmts/generic/ogrsfdriverregistrar.cpp

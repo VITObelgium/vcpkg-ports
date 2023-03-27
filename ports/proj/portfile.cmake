@@ -1,5 +1,5 @@
 set(MAJOR 9)
-set(MINOR 0)
+set(MINOR 2)
 set(REVISION 0)
 set(VERSION ${MAJOR}.${MINOR}.${REVISION})
 set(PACKAGE proj-${VERSION}.tar.gz)
@@ -7,12 +7,13 @@ set(PACKAGE proj-${VERSION}.tar.gz)
 vcpkg_download_distfile(ARCHIVE
     URLS "http://download.osgeo.org/proj/${PACKAGE}"
     FILENAME "${PACKAGE}"
-    SHA512 ae1e65f03fba1e922a61f843b64cf4fde0ff015ef8c18bde0a10cb3e732c4d1b27d2c6b0179e8456338c552a760de22abf16e887fc92118288ffa394a9c6a000
+    SHA512 b9c5c72ba2ff1ab4b3c34ab43da411613d27e5206d38c734909fd7a8ab84a113f25a85633c1da1d35af5de22534e3d82f5a66edae52547d3016b51c3bf53f771
 )
 
 vcpkg_extract_source_archive_ex(
     ARCHIVE ${ARCHIVE}
     OUT_SOURCE_PATH SOURCE_PATH
+    PATCHES inteloneapi.patch
 )
 
 if (VCPKG_TARGET_IS_WINDOWS)
@@ -36,14 +37,10 @@ vcpkg_configure_cmake(
         -DENABLE_TIFF=OFF
         -DBUILD_PROJSYNC=OFF
         -DUSE_THREAD=${THREAD_SUPPORT}
-    OPTIONS_DEBUG
-        -DCMAKECONFIGDIR=${CURRENT_PACKAGES_DIR}/debug/share
-    OPTIONS_RELEASE
-        -DCMAKECONFIGDIR=${CURRENT_PACKAGES_DIR}/share
 )
 
 vcpkg_install_cmake()
-vcpkg_fixup_cmake_targets()
+vcpkg_fixup_cmake_targets(CONFIG_PATH lib/cmake/proj)
 vcpkg_test_cmake(PACKAGE_NAME PROJ)
 
 # Remove duplicate headers installed from debug build

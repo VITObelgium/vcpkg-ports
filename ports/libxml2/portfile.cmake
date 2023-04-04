@@ -15,6 +15,12 @@ else()
     set(ENABLE_NETWORK 1)
 endif()
 
+set(EXTRA_ARGS)
+if (VCPKG_TARGET_IS_OSX)
+    # find the system iconv on osx
+    list(APPEND EXTRA_ARGS -DVCPKG_ALLOW_SYSTEM_LIBS=ON)
+endif ()
+
 vcpkg_configure_cmake(
     SOURCE_PATH ${SOURCE_PATH}
     PREFER_NINJA
@@ -22,6 +28,7 @@ vcpkg_configure_cmake(
         -DPORT_DIR=${CMAKE_CURRENT_LIST_DIR}
         -DWITH_HTTP=${ENABLE_NETWORK}
         -DWITH_FTP=${ENABLE_NETWORK}
+        ${EXTRA_ARGS}
     OPTIONS_DEBUG
         -DINSTALL_HEADERS=OFF
 )

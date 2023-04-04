@@ -12,7 +12,7 @@ eigen3
 expat
 fmt
 freetype
-gdal[tools,geos,expat,gif,png,netcdf,spatialite]
+gdal[tools,geos,expat,gif,png,netcdf,sqlite]
 gsl
 gtest
 harfbuzz

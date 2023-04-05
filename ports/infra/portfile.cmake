@@ -27,7 +27,7 @@ vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
 )
 
 set (OPTIONAL_OPTIONS "")
-if ("ui" IN_LIST FEATURES AND APPLE)
+if (APPLE)
     # make sure we can find gl headers on OSX
     set (OPTIONAL_OPTIONS -DVCPKG_ALLOW_SYSTEM_LIBS=ON)
 endif ()

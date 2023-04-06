@@ -60,6 +60,10 @@ if(VCPKG_TARGET_IS_UWP)
     string(APPEND VCPKG_CXX_FLAGS " /wd4996 /wd4703")
 endif()
 
+if(VCPKG_TARGET_IS_OSX)
+    list(APPEND FEATURE_OPTIONS "-DHAVE_LIBM=m")
+endif()
+
 vcpkg_cmake_configure(
     SOURCE_PATH "${SOURCE_PATH}"
     DISABLE_PARALLEL_CONFIGURE # netcdf-c configures in the source!

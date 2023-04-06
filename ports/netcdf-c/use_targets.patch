@@ -1,8 +1,7 @@
-diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 507eb4c..c36908b 100644
---- a/CMakeLists.txt
-+++ b/CMakeLists.txt
-@@ -433,7 +433,6 @@ IF(NC_EXTRA_DEPS)
+diff -Naur a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt	2023-03-14 21:34:25.000000000 +0100
++++ b/CMakeLists.txt	2023-04-06 15:29:51.837601000 +0200
+@@ -485,7 +485,6 @@
      SET(EXTRA_DEPS ${EXTRA_DEPS} "${${_LIB}_DEP}")
    ENDFOREACH()
    MESSAGE("Extra deps: ${EXTRA_DEPS}")
@@ -10,7 +9,7 @@ index 507eb4c..c36908b 100644
    SET(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${EXTRA_DEPS})
  ENDIF()
  ###
-@@ -628,15 +627,6 @@ IF(USE_HDF5)
+@@ -721,15 +720,6 @@
      # we will use a static library.  This can be toggled
      # by explicitly modifying NC_FIND_SHARED_LIBS.
      ##
@@ -26,7 +25,7 @@ index 507eb4c..c36908b 100644
  
      #####
      # First, find the C and HL libraries.
-@@ -649,7 +639,7 @@ IF(USE_HDF5)
+@@ -742,7 +732,7 @@
        SET(SEARCH_PACKAGE_NAME ${HDF5_PACKAGE_NAME})
        FIND_PACKAGE(HDF5 NAMES ${SEARCH_PACKAGE_NAME} COMPONENTS C HL CONFIG REQUIRED ${NC_HDF5_LINK_TYPE})
      ELSE(MSVC)
@@ -35,9 +34,9 @@ index 507eb4c..c36908b 100644
      ENDIF(MSVC)
  
      ##
-@@ -726,6 +716,19 @@ IF(USE_HDF5)
-       SET(HDF5_C_LIBRARY hdf5)
+@@ -856,6 +846,19 @@
      ENDIF()
+ 
    ENDIF(HDF5_C_LIBRARY AND HDF5_HL_LIBRARY AND HDF5_INCLUDE_DIR)
 +  
 +  if(TARGET hdf5::hdf5-shared)
@@ -55,16 +54,7 @@ index 507eb4c..c36908b 100644
  
    FIND_PACKAGE(Threads)
  
-@@ -745,6 +748,8 @@ IF(USE_HDF5)
-   IF(USE_SZIP)
-     # If user has specified the `SZIP_LIBRARY`, use it; otherwise try to find...
-     IF(NOT SZIP_LIBRARY)
-+      set(SZIP_LIBRARY "")
-+    ELSEIF(0)
-       FIND_LIBRARY(SZIP PATH NAMES szip sz)
-       SET(SZIP_LIBRARY ${SZIP})
-       IF(NOT SZIP)
-@@ -847,8 +852,7 @@ IF(USE_HDF5)
+@@ -984,8 +987,7 @@
  ENDIF(USE_HDF5)
  
  # See if we have libcurl
@@ -74,7 +64,7 @@ index 507eb4c..c36908b 100644
  INCLUDE_DIRECTORIES(${CURL_INCLUDE_DIRS})
  
  # Define a test flag for have curl library
-@@ -2089,10 +2093,9 @@ IF(NC_LIBS)
+@@ -2464,10 +2466,9 @@
    STRING(REPLACE "-lhdf5::hdf5_hl-static" "-lhdf5_hl" NC_LIBS ${NC_LIBS})
  ENDIF()
  
@@ -87,11 +77,10 @@ index 507eb4c..c36908b 100644
  
  SET(LIBS ${NC_LIBS})
  SET(NC_LIBS "-lnetcdf")
-diff --git a/liblib/CMakeLists.txt b/liblib/CMakeLists.txt
-index 5e1692f..9e126ec 100644
---- a/liblib/CMakeLists.txt
-+++ b/liblib/CMakeLists.txt
-@@ -77,6 +77,12 @@ IF(HAVE_LIBDL)
+diff -Naur a/liblib/CMakeLists.txt b/liblib/CMakeLists.txt
+--- a/liblib/CMakeLists.txt	2023-03-14 21:34:25.000000000 +0100
++++ b/liblib/CMakeLists.txt	2023-04-06 15:30:47.072696500 +0200
+@@ -103,6 +103,12 @@
  ENDIF()
  
  IF(USE_HDF5)
@@ -104,16 +93,16 @@ index 5e1692f..9e126ec 100644
    IF(NOT MSVC)
      # Some version of cmake define HDF5_hdf5_LIBRARY instead of
      # HDF5_LIBRARY. Same with HDF5_HL_LIBRARIES
-@@ -97,7 +103,7 @@ IF(USE_HDF5)
+@@ -123,7 +129,7 @@
  ENDIF()
  
  IF(FOUND_CURL)
--  SET(TLL_LIBS ${TLL_LIBS} ${CURL_LIBRARY})
+-  SET(TLL_LIBS ${TLL_LIBS} ${CURL_LIBRARIES})
 +  SET(TLL_LIBS ${TLL_LIBS} CURL::libcurl)
  ENDIF()
  
  IF(USE_HDF4)
-@@ -118,7 +124,6 @@ IF(ENABLE_S3_SDK)
+@@ -152,7 +158,6 @@
  ENDIF()
  
  IF(TLL_LIBS)

@@ -1,15 +1,14 @@
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO Unidata/netcdf-c
-    REF cd6173f472b778fa0e558982c59f7183aa5b8e47 # v4.8.1
-    SHA512 e965b9c865f31abcd0ae045cb709a41710e72bcf5bd237972cd62688f0f099f1b12be316a448d22315b1c73eb99fae3ea38072e9a3646a4f70ba42507d82f537
+    REF v4.9.2
+    SHA512 e0c299843083cde54bfaccebd4f831513c2c531f3a98e37a1bc14d12a5e63af0b994cab9292bcb17e1b162ffe26b49ed3f9c6de7f2f48cdfcfd3f3c4a377bb04
     HEAD_REF master
     PATCHES
         no-install-deps.patch
         fix-dependency-zlib.patch
         use_targets.patch
         cmakeconfig.patch
-        fix-dependency-libmath.patch
         fix-linkage-error.patch
         fix-pkgconfig.patch
         fix-manpage-msys.patch
@@ -40,7 +39,7 @@ vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
     )
 
 if(NOT ENABLE_DAP AND NOT ENABLE_NCZARR)
-    list(APPEND FEATURE_OPTIONS "-DCMAKE_DISABLE_FIND_PACKAGE_CURL=ON")
+    list(APPEND FEATURE_OPTIONS "-DCMAKE_DISABLE_FIND_PACKAGE_CURL=ON;-DENABLE_BYTERANGE=OFF")
 endif()
 
 if(ENABLE_HDF5)
@@ -71,7 +70,9 @@ vcpkg_cmake_configure(
         -DBUILD_TESTING=OFF
         -DENABLE_EXAMPLES=OFF
         -DENABLE_TESTS=OFF
+        -DENABLE_PLUGINS=OFF
         -DENABLE_FILTER_TESTING=OFF
+        -DENABLE_HDF4_FILE_TESTS=OFF
         -DENABLE_DAP_REMOTE_TESTS=OFF
         -DDISABLE_INSTALL_DEPENDENCIES=ON
         ${CRT_OPTION}

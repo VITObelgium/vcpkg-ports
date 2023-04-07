@@ -22,8 +22,8 @@ endif ()
 vcpkg_from_git_mod(
     URL https://github.com/maplibre/maplibre-gl-native.git
     OUT_SOURCE_PATH SOURCE_PATH
-    REF qt-v2.0.1
-    HEAD_REF master
+    REF  android-v10.0.2
+    HEAD_REF main
 )
 
 if (CMAKE_HOST_WIN32)

@@ -82,7 +82,7 @@ if(NOT _VCPKG_WINDOWS_TOOLCHAIN)
 
             set(CMAKE_CXX_FLAGS "/nologo /DWIN32 /D_WINDOWS /W3 /fp:precise ${CHARSET_FLAG} /GR /EHsc ${MP_FLAG} ${VCPKG_CXX_FLAGS}" CACHE STRING "")
             set(CMAKE_C_FLAGS "/nologo /DWIN32 /D_WINDOWS /W3 /fp:precise ${CHARSET_FLAG} ${MP_FLAG} ${VCPKG_C_FLAGS}" CACHE STRING "")
-            set(CMAKE_Fortran_FLAGS "/fp:precise ${VCPKG_Fortran_FLAGS}" CACHE STRING "")
+            set(CMAKE_Fortran_FLAGS "/nologo /fp:precise ${VCPKG_Fortran_FLAGS}" CACHE STRING "")
             set(CMAKE_RC_FLAGS "-c65001 /DWIN32" CACHE STRING "")
 
             unset(CHARSET_FLAG)

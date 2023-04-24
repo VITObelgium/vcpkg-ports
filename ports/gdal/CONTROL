@@ -1,5 +1,5 @@
 Source: gdal
-Version: 3.6.3
+Version: 3.6.4
 Port-Version: 0
 Description: The Geographic Data Abstraction Library for reading and writing geospatial raster and vector data.
 Build-Depends: proj, tiff, libgeotiff, liblzma, libpng (windows), libiconv

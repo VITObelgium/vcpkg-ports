@@ -8,7 +8,7 @@ import re
 import shutil
 import sysconfig
 
-vcpkg_tool_version = "2022-11-10"
+vcpkg_tool_version = "2023-04-07"
 
 def git_status_is_clean():
     return subprocess.call(["git", "diff", "--quiet"], shell=False) == 0

@@ -671,8 +671,9 @@ def build_project_release(
     build_config="Release",
     install_root=None,
     manifest_dir=None,
+    dry_run=False,
 ):
-    if not git_status_is_clean():
+    if not dry_run and not git_status_is_clean():
         raise RuntimeError("Git status is not clean")
 
     if build_name:

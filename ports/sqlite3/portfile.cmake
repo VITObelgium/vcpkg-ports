@@ -1,11 +1,11 @@
 
-set(VERSION 3.39.4)
-set(SQLITE_VERSION 3390400)
-set(SQLITE_HASH c61109c6dc15ecb101e86e61de022562b8c5288737a1ecdf5611ed8a5ecf92dcab14000570dae7af98b56831af06aaca30a137f88e3ac1c9ee9fb834db671651)
+set(VERSION 3.42.0)
+set(SQLITE_VERSION 3420000)
+set(SQLITE_HASH 76416dc40dd15611f59d7209087a08c6cf1b7584dee34da4ce11b75acd7f608d794747a7ed87c3ffe16b237699279c2da8f85b009a379e108d39f33bd727e1e1)
 set(SOURCE_PATH ${CURRENT_BUILDTREES_DIR}/src/sqlite-amalgamation-${SQLITE_VERSION})
 
 vcpkg_download_distfile(ARCHIVE
-    URLS "https://sqlite.org/2022/sqlite-amalgamation-${SQLITE_VERSION}.zip"
+    URLS "https://sqlite.org/2023/sqlite-amalgamation-${SQLITE_VERSION}.zip"
     FILENAME "sqlite-amalgamation-${SQLITE_VERSION}.zip"
     SHA512 ${SQLITE_HASH})
 vcpkg_extract_source_archive(${ARCHIVE})

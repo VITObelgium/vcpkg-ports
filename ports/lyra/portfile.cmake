@@ -1,10 +1,9 @@
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO bfgroup/Lyra
-    REF 1.5.1
-    SHA512 e349c57614fe18cfee49b6a3977f133de3e567aa6b1c148abf9510432f7db34b75488739850e48c7943a15151fe2eedb129179d8d73eb61fb4f9a11c54b61086
+    REF 1.6.1
+    SHA512 643c25fbe996af2e888eacb99a715e3d420dbfc21d48756703cf301ab6ba0d1f8eea1cd0764bd5c173d2ddcef7c799448d8c3a77676024205163305e1363d461
     HEAD_REF master
-    PATCHES warnings.patch
 )
 
 vcpkg_configure_cmake(

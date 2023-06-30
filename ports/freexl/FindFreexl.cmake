@@ -7,7 +7,7 @@ find_path(Freexl_INCLUDE_DIR
 
 find_library(Freexl_LIBRARY NAMES freexl HINTS ${Freexl_ROOT_DIR}/lib)
 find_library(Freexl_LIBRARY_DEBUG NAMES freexld freexl HINTS ${Freexl_ROOT_DIR}/lib)
-find_package(unofficial-iconv CONFIG QUIET REQUIRED)
+find_package(iconv QUIET REQUIRED)
 
 find_package_handle_standard_args(Freexl
     FOUND_VAR Freexl_FOUND
@@ -25,7 +25,7 @@ if(Freexl_FOUND AND NOT TARGET freexl::freexl)
     add_library(freexl::freexl STATIC IMPORTED)
     set_target_properties(freexl::freexl PROPERTIES
         INTERFACE_INCLUDE_DIRECTORIES "${Freexl_INCLUDE_DIR}"
-        INTERFACE_LINK_LIBRARIES "unofficial::iconv::libcharset"
+        INTERFACE_LINK_LIBRARIES "Iconv::Iconv"
         IMPORTED_LOCATION ${Freexl_LIBRARY}
     )
 

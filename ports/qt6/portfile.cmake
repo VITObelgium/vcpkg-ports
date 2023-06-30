@@ -197,7 +197,7 @@ vcpkg_configure_cmake(
         -DFEATURE_sql_mysql=OFF
         -DFEATURE_sql_oci=OFF
 
-        -DCMAKE_FEATURE_TIFF=${FEATURE_tiff}
+        -DFEATURE_tiff=${FEATURE_tiff}
         -DFEATURE_system_tiff=${FEATURE_tiff}
 
         -DBUILD_qtdeclarative=${QT_DECLARATIVE}

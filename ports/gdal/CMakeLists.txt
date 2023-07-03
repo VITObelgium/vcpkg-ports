@@ -648,6 +648,7 @@ add_library(gcore OBJECT
     gcore/gdalarraybandblockcache.cpp
     gcore/gdalhashsetbandblockcache.cpp
     gcore/gdalmultidim.cpp
+    gcore/gdalmultidim_gridded.cpp
     gcore/gdalpython.cpp
     gcore/gdalpythondriverloader.cpp
 
@@ -881,6 +882,7 @@ if (GDAL_FRMTS_HDF5)
         frmts/hdf5/gh5_convenience.cpp
         frmts/hdf5/iso19115_srs.cpp
         frmts/hdf5/hdf5multidim.cpp
+        frmts/hdf5/hdf5eosparser.cpp
     )
     target_link_libraries(frmts PRIVATE hdf5::hdf5-static hdf5::hdf5_hl-static)
     target_compile_definitions(frmts PRIVATE FRMT_hdf5)
@@ -1332,6 +1334,7 @@ if (GDAL_OGR_FRMTS_GEOPKG OR GDAL_OGR_FRMTS_SQLITE)
         SQLITE_HAS_COLUMN_METADATA
         HAVE_SPATIALITE
         SPATIALITE_412_OR_LATER
+        HAVE_SQLITE3EXT_H
     )
     target_link_libraries(ogr PRIVATE libspatialite::spatialite)
 endif ()
@@ -1487,6 +1490,7 @@ add_library(alg OBJECT
     alg/gdalrasterpolygonenumerator.cpp
     alg/gdalsievefilter.cpp
     alg/polygonize.cpp
+    alg/polygonize_polygonizer_impl.cpp
     alg/contour.cpp
     alg/gdaltransformgeolocs.cpp
     alg/gdallinearsystem.cpp
@@ -1538,6 +1542,7 @@ add_library(gdal
     apps/gdal_translate_lib.cpp
     apps/gdalwarp_lib.cpp
     apps/ogr2ogr_lib.cpp
+    apps/ogrinfo_lib.cpp
     apps/gdaldem_lib.cpp
     apps/nearblack_lib.cpp
     apps/gdal_grid_lib.cpp
@@ -1601,6 +1606,7 @@ if (GDAL_BUILD_TOOLS)
     add_gdal_app_bin(gdaldem)
     add_gdal_app_bin(gdalbuildvrt)
     add_gdal_app_bin(ogr2ogr)
+    add_gdal_app_bin(ogrinfo)
 
     add_gdal_app(gdaladdo)
     add_gdal_app(gdalmanage)
@@ -1610,7 +1616,6 @@ if (GDAL_BUILD_TOOLS)
 
     add_gdal_app(gdal_contour)
     add_gdal_app(gdaltindex)
-    add_gdal_app(ogrinfo)
     add_gdal_app(ogrtindex)
     add_gdal_app(ogrlineref)
 endif ()

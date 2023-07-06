@@ -13,6 +13,13 @@ set(OPTIONS "")
 if(IS_DYNAMIC)
     set(OPTIONS "QWT_CONFIG+=QwtDll")
 endif()
+
+if (VCPKG_TARGET_IS_WINDOWS)
+    # qwt builds expect the moc.exe to be in this location
+    file(MAKE_DIRECTORY ${CURRENT_INSTALLED_DIR}/bin)
+    file(CREATE_LINK ${CURRENT_INSTALLED_DIR}/tools/qt6/moc.exe ${CURRENT_INSTALLED_DIR}/bin/moc.exe)
+endif()
+
 vcpkg_qmake_configure(
     SOURCE_PATH "${SOURCE_PATH}"
     QMAKE_OPTIONS

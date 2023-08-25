@@ -589,9 +589,9 @@ target_link_libraries(port PRIVATE
     $<TARGET_NAME_IF_EXISTS:JPEG::JPEG>
     $<TARGET_NAME_IF_EXISTS:PNG::PNG>
     $<TARGET_NAME_IF_EXISTS:Threads::Threads>
-    $<TARGET_NAME_IF_EXISTS:LibXml2::LibXml2>
     $<TARGET_NAME_IF_EXISTS:Iconv::Iconv>
     $<TARGET_NAME_IF_EXISTS:CURL::libcurl>
+    $<$<BOOL:${GDAL_LIBXML2_SUPPORT}>:LibXml2::LibXml2>
     ${CMAKE_DL_LIBS}
     $<$<PLATFORM_ID:Windows>:wbemuuid>
 )

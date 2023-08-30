@@ -1261,26 +1261,23 @@ endif ()
 
 if (GDAL_OGR_FRMTS_SHAPE)
     target_sources(ogr PRIVATE
-        ogr/ogrsf_frmts/shape/dbfopen.c
         ogr/ogrsf_frmts/shape/dbfopen_wrapper.c
         ogr/ogrsf_frmts/shape/ogrshapedatasource.cpp
         ogr/ogrsf_frmts/shape/ogrshapedriver.cpp
         ogr/ogrsf_frmts/shape/ogrshapelayer.cpp
-        ogr/ogrsf_frmts/shape/sbnsearch.c
         ogr/ogrsf_frmts/shape/sbnsearch_wrapper.c
         ogr/ogrsf_frmts/shape/shape2ogr.cpp
         ogr/ogrsf_frmts/shape/shp_vsi.c
-        ogr/ogrsf_frmts/shape/shpopen.c
         ogr/ogrsf_frmts/shape/shpopen_wrapper.c
-        ogr/ogrsf_frmts/shape/shptree.c
         ogr/ogrsf_frmts/shape/shptree_wrapper.c
     )
-    target_compile_definitions(ogr PRIVATE
+    target_compile_definitions(ogr
+    PRIVATE
         SHAPE_ENABLED
+        USE_CPL
         RENAME_INTERNAL_SHAPELIB_SYMBOLS
         SHPAPI_CALL=
         SAOffset=vsi_l_offset
-        USE_CPL
     )
 endif ()
 

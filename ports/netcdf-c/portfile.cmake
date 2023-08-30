@@ -36,6 +36,7 @@ vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
         nczarr    ENABLE_NCZARR
         nczarr-zip    ENABLE_NCZARR_ZIP
         tools     BUILD_UTILITIES
+        parallel  ENABLE_PARALLEL4
     )
 
 if(NOT ENABLE_DAP AND NOT ENABLE_NCZARR)

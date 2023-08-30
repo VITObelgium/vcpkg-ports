@@ -98,6 +98,18 @@
     },
     "tools": {
       "description": "Build utilities"
+    },
+    "parallel": {
+      "description": "Build with netCDF-4 parallel io support",
+      "dependencies": [
+        {
+          "name": "hdf5",
+          "default-features": false,
+          "features": [
+            "parallel"
+          ]
+        }
+      ]
     }
   }
 }

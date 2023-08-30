@@ -13,7 +13,6 @@ hdf5[cpp]
 http-parser
 icu
 indicators
-infra[gdal,log,charset,xml,sqlite,postgres,xlsx,process,testutils]
 lyra
 mapnik[gdal](osx|linux)
 mio

@@ -20,7 +20,6 @@ vcpkg_configure_cmake(
     SOURCE_PATH ${SOURCE_PATH}
     PREFER_NINJA
     OPTIONS
-        -DVCPKG_ALLOW_SYSTEM_LIBS=ON # to find cmath
         -DENABLE_EXAMPLES=OFF
         -DENABLE_NETCDF=${NETCDF_OPT}
         -DENABLE_PYTHON=OFF

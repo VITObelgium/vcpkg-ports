@@ -30,10 +30,10 @@ if (UNIX)
     vcpkg_configure_autoconf(
         SOURCE_PATH ${SOURCE_PATH}
         OPTIONS
-            MPICC=${CURRENT_INSTALLED_DIR}/tools/mpicc
-            MPICXX=${CURRENT_INSTALLED_DIR}/tools/mpicxx
-            MPIF77=${CURRENT_INSTALLED_DIR}/tools/mpif77
-            MPIF90=${CURRENT_INSTALLED_DIR}/tools/mpif90
+            MPICC=${CURRENT_INSTALLED_DIR}/tools/openmpi/bin/mpicc
+            MPICXX=${CURRENT_INSTALLED_DIR}/tools/openmpi/bin/mpicxx
+            MPIF77=${CURRENT_INSTALLED_DIR}/tools/openmpi/bin/mpif77
+            MPIF90=${CURRENT_INSTALLED_DIR}/tools/openmpi/bin/mpif90
             --with-mpi=${CURRENT_INSTALLED_DIR}
             --enable-netcdf4
             --bindir=${CURRENT_PACKAGES_DIR}/tools

@@ -20,12 +20,13 @@ foreach(BUILD_TYPE DEBUG RELEASE)
         ARCHIVE ${ARCHIVE}
         REF ${PORT}-${BUILD_TYPE}
         PATCHES
-            ${CMAKE_CURRENT_LIST_DIR}/mapnik-render-link.patch
-            ${CMAKE_CURRENT_LIST_DIR}/tiff-link.patch
-            ${CMAKE_CURRENT_LIST_DIR}/icu-link.patch
-            ${CMAKE_CURRENT_LIST_DIR}/config-path.patch
-            ${CMAKE_CURRENT_LIST_DIR}/gdallib-detection.patch
-            ${CMAKE_CURRENT_LIST_DIR}/scons.patch
+            mapnik-render-link.patch
+            tiff-link.patch
+            icu-link.patch
+            config-path.patch
+            gdallib-detection.patch
+            scons.patch
+			gcc13.patch
     )
 endforeach()
 

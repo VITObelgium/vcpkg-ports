@@ -1,0 +1,24 @@
+diff -Naur a/include/mapnik/util/geometry_to_wkt.hpp b/include/mapnik/util/geometry_to_wkt.hpp
+--- a/include/mapnik/util/geometry_to_wkt.hpp	2021-01-08 12:23:24.000000000 +0100
++++ b/include/mapnik/util/geometry_to_wkt.hpp	2023-09-06 14:33:12.076961900 +0200
+@@ -23,6 +23,8 @@
+ #ifndef MAPNIK_GEOMETRY_TO_WKT_HPP
+ #define MAPNIK_GEOMETRY_TO_WKT_HPP
+ 
++#include <cstdint>
++
+ // mapnik
+ #include <mapnik/wkt/wkt_factory.hpp>
+ #include <mapnik/wkt/wkt_generator_grammar.hpp>
+diff -Naur a/include/mapnik/wkb.hpp b/include/mapnik/wkb.hpp
+--- a/include/mapnik/wkb.hpp	2021-01-08 12:23:24.000000000 +0100
++++ b/include/mapnik/wkb.hpp	2023-09-06 14:34:05.534920500 +0200
+@@ -23,6 +23,8 @@
+ #ifndef MAPNIK_WKB_HPP
+ #define MAPNIK_WKB_HPP
+ 
++#include <cstdint>
++
+ // mapnik
+ #include <mapnik/config.hpp>
+ #include <mapnik/geometry.hpp>

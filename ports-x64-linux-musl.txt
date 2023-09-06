@@ -42,6 +42,7 @@ soci[sqlite3,postgresql]
 spdlog
 sqlite3
 sqlpp11[sqlite]
+tbb
 tiff
 tomlplusplus
 trompeloeil

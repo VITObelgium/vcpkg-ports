@@ -6,7 +6,7 @@ diff -Naur a/src/build.py b/src/build.py
  
  if '-DHAVE_TIFF' in env['CPPDEFINES']:
 -   lib_env['LIBS'].append('tiff')
-+   lib_env['LIBS'].append(['tiff', 'lzma'])
++   lib_env['LIBS'].append(['tiff', 'lzma', 'jpeg'])
     enabled_imaging_libraries.append('tiff_reader.cpp')
  
  if '-DHAVE_WEBP' in env['CPPDEFINES']:

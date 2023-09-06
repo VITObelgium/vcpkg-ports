@@ -4,6 +4,7 @@ vcpkg_from_github(
     REF v14.2.4
     SHA512 c592521960f1950d626261738091d25efdf764ee1a0c72a58c28c66eaebf6073b2c978f1dc2c8dbe89b0be7ec1629a3a45cb1fafa0ebe21b5df8d4d27c992675
     HEAD_REF master
+    PATCHES gcc13.patch
 )
 
 vcpkg_configure_cmake(

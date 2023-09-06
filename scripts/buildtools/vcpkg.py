@@ -331,7 +331,8 @@ def vcpkg_install_manifest(
     build_root=None,
     packages_root=None,
     install_root=None,
-    manifest_dir=None
+    manifest_dir=None,
+    features=[],
 ):
     args = ["install"]
 
@@ -360,6 +361,9 @@ def vcpkg_install_manifest(
 
     if "vs2019" in triplet or "vs2022" in triplet or "cluster" in triplet or "musl" in triplet:
         args.append(f"--host-triplet={triplet}")
+
+    for feature in features:
+        args.append(f"--x-feature={feature}")
 
     run_vcpkg(triplet, args)
 
@@ -539,6 +543,7 @@ def bootstrap(
     ports_dir,
     triplet=None,
     additional_ports=[],
+    additional_features=[],
     clean_after_build=False,
     overlay_ports=None,
     overlay_triplets=None,
@@ -568,7 +573,8 @@ def bootstrap(
                 build_root,
                 packages_root,
                 install_root,
-                manifest_dir=manifest_dir
+                manifest_dir=manifest_dir,
+                features=additional_features,
             )
         else:
             # deprecated bootstrap using the ports.txt file

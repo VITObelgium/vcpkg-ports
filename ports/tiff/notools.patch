@@ -1,0 +1,12 @@
+diff -Naur a/libtiff/CMakeLists.txt b/libtiff/CMakeLists.txt
+--- a/libtiff/CMakeLists.txt	2023-06-10 22:36:49.000000000 +0200
++++ b/libtiff/CMakeLists.txt	2023-09-06 09:16:07.578652700 +0200
+@@ -253,7 +253,7 @@
+       
+ endif()
+ 
+-if(NOT CMAKE_CROSSCOMPILING)
++if(tiff-tools AND NOT CMAKE_CROSSCOMPILING)
+   add_executable(tiff_mkg3states ../placeholder.h)
+   target_sources(tiff_mkg3states PRIVATE mkg3states.c tif_fax3.h)
+   target_link_libraries(tiff_mkg3states tiff tiff_port)

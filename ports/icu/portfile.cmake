@@ -31,7 +31,7 @@ if (ICU_PRUNEDATA)
         DATA_ARCHIVE
         URLS "https://github.com/unicode-org/icu/releases/download/release-${VERSION3}/icu4c-${VERSION2}-data.zip"
         FILENAME "icu4c-${VERSION2}-data.zip"
-        SHA512 05eb134a963a541a280e49e4d0aca07e480fef14daa0108c8fb9add18c150c9d34c8cbc46386c07909d511f7777eb3ea9f494001f191b84a7de0be8047da8b56
+        SHA512 9772b9d9ea5e3def2309044d41ea9b18f34a3448c1e5ed6ad985f517dd41ee697e08bccfa702b706a18d9c91100a80a958b846bd181b8d1ca78fdebf7447ba78
     )
 
     file(REMOVE_RECURSE ${SOURCE_PATH}/source/data)

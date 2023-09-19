@@ -10,6 +10,7 @@ import sysconfig
 
 vcpkg_tool_version = "2023-04-07"
 
+
 def git_status_is_clean():
     return subprocess.call(["git", "diff", "--quiet"], shell=False) == 0
 
@@ -98,9 +99,9 @@ def find_ninja_binary():
         ninja = shutil.which("ninja", path=ninja_dir.as_posix())
         if ninja:
             return ninja
-        
+
         # find ninja in a version subdir
-        for child_dir in ninja_dir.glob('**/'):
+        for child_dir in ninja_dir.glob("**/"):
             ninja = shutil.which("ninja", path=child_dir.as_posix())
             if ninja:
                 return ninja
@@ -115,7 +116,7 @@ def bootstrap_vcpkg(triplet):
         raise RuntimeError("cmake executable could not be found")
     print("Bootstrapping vcpkg")
     bootstrap_path = pathlib.Path(vcpkg_root_dir()) / "bootstrap.cmake"
-    vs2019 = "ON" if 'vs2019' in triplet else "OFF"
+    vs2019 = "ON" if "vs2019" in triplet else "OFF"
     cmd = [cmake_bin, f"-DVS2019={vs2019}", "-P", bootstrap_path.as_posix()]
     subprocess.check_output(cmd, shell=False)
 
@@ -140,7 +141,7 @@ def cmake_configure(
     build_config="Release",
     install_root=None,
     manifest_dir=None,
-    build_targets=None
+    build_targets=None,
 ):
     cmake_bin = find_cmake_binary()
     if not cmake_bin:
@@ -162,8 +163,14 @@ def cmake_configure(
         args.append('"Visual Studio 16 2019"')
         args.extend(["-A", "Win32"])
         args.extend(["-T", "v142,host=x64"])
-        bit32=True
-    elif triplet == "x64-windows-static-vs2022" or triplet == "x64-windows-vs2022" or triplet == "x64-windows-static-ltcg-vs2022" or triplet == "x64-windows-ltcg-vs2022":
+        bit32 = True
+    elif (
+        triplet == "x64-windows-static-vs2022"
+        or triplet == "x64-windows-vs2022"
+        or triplet == "x64-windows-static-ltcg-vs2022"
+        or triplet == "x64-windows-ltcg-vs2022"
+        or triplet == "x64-windows-static-asan-vs2022"
+    ):
         args.append('"Visual Studio 17 2022"')
         args.extend(["-A", "x64"])
         args.extend(["-T", "v143,host=x64"])
@@ -171,7 +178,7 @@ def cmake_configure(
         args.append('"Visual Studio 17 2022"')
         args.extend(["-A", "Win32"])
         args.extend(["-T", "v143,host=x64"])
-        bit32=True
+        bit32 = True
     elif triplet == "x64-windows-static" or triplet == "x64-windows":
         args.append('"Visual Studio 15 2017 Win64"')
         args.extend(["-T", "v141,host=x64"])
@@ -239,8 +246,20 @@ def cmake_configure(
         args.append("-DVCPKG_MANIFEST_MODE=OFF")
 
     my_env = None
-    if generator == "Ninja" and 'windows' in triplet:
-        vspath = subprocess.check_output([r"%programfiles(x86)%\Microsoft Visual Studio\Installer\vswhere", "-latest", "-property", "installationPath"], shell=True).decode('UTF-8').strip()
+    if generator == "Ninja" and "windows" in triplet:
+        vspath = (
+            subprocess.check_output(
+                [
+                    r"%programfiles(x86)%\Microsoft Visual Studio\Installer\vswhere",
+                    "-latest",
+                    "-property",
+                    "installationPath",
+                ],
+                shell=True,
+            )
+            .decode("UTF-8")
+            .strip()
+        )
         vcvarsall = os.path.join(vspath, "VC", "Auxiliary", "Build", "vcvarsall.bat")
         # vcvarsall.bat changes the current directory to the one specified by the environment variable %VSCMD_START_DIR%
         my_env = os.environ
@@ -251,10 +270,11 @@ def cmake_configure(
         args.insert(0, f'"{vcvarsall}"')
         args.insert(0, "call")
 
-
     if build_targets is not None:
         args.append("&&")
-        args.extend(create_build_command(build_dir, config=build_config, targets=build_targets))
+        args.extend(
+            create_build_command(build_dir, config=build_config, targets=build_targets)
+        )
 
     print(" ".join(args))
     subprocess.check_call(" ".join(args), shell=True, env=my_env)
@@ -271,8 +291,9 @@ def create_build_command(build_dir, config=None, targets=[]):
 
     for target in targets:
         args.extend(["--target", target])
-    
+
     return args
+
 
 def cmake_build(build_dir, config=None, targets=[]):
     subprocess.check_call(create_build_command(build_dir, config, targets))
@@ -312,7 +333,12 @@ def vcpkg_install_ports(
     if install_root:
         args.append(f"--x-install-root={install_root}")
 
-    if "vs2019" in triplet or "vs2022" in triplet or "cluster" in triplet or "musl" in triplet:
+    if (
+        "vs2019" in triplet
+        or "vs2022" in triplet
+        or "cluster" in triplet
+        or "musl" in triplet
+    ):
         args.append(f"--host-triplet={triplet}")
 
     args += ports
@@ -359,7 +385,12 @@ def vcpkg_install_manifest(
     else:
         args.append("--clean-packages-after-build")
 
-    if "vs2019" in triplet or "vs2022" in triplet or "cluster" in triplet or "musl" in triplet:
+    if (
+        "vs2019" in triplet
+        or "vs2022" in triplet
+        or "cluster" in triplet
+        or "musl" in triplet
+    ):
         args.append(f"--host-triplet={triplet}")
 
     for feature in features:
@@ -560,7 +591,7 @@ def bootstrap(
             manifest_dir = pathlib.Path(manifest_dir)
 
         if manifest_dir is None:
-            manifest_dir = pathlib.Path(ports_dir) / ".." 
+            manifest_dir = pathlib.Path(ports_dir) / ".."
 
         manifest_path = manifest_dir / "vcpkg.json"
         if manifest_path.exists():

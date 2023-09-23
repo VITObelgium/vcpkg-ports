@@ -1,52 +1,74 @@
-set(MAJOR 9)
-set(MINOR 3)
-set(REVISION 0)
-set(VERSION ${MAJOR}.${MINOR}.${REVISION})
-set(PACKAGE proj-${VERSION}.tar.gz)
-
-vcpkg_download_distfile(ARCHIVE
-    URLS "http://download.osgeo.org/proj/${PACKAGE}"
-    FILENAME "${PACKAGE}"
-    SHA512 1a79a7eaab0859cf615141723b68d6dd7b88390c3e590df12ec0d4c58ba69574863e5892d8108818dbc7e8abbf0b6372496228c02411d506b7169f732ff5cd57
-)
-
-vcpkg_extract_source_archive_ex(
-    ARCHIVE ${ARCHIVE}
+vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
-    PATCHES inteloneapi.patch
+    REPO OSGeo/PROJ
+    REF "${VERSION}"
+    SHA512 ee8170780c70e09efa4bc3fcf6ee9a2c15554a05a8562617fc5e9698fb33c6c0af380dd0de836db91955eb35623ded1fec67c6afe5fd3b692fcf4f4b3e4f0658
+    HEAD_REF master
+    PATCHES
+        fix-win-output-name.patch
+        fix-proj4-targets-cmake.patch
+        remove_toolset_restriction.patch
+        fix-uwp.patch
+        inteloneapi.patch
 )
 
-if (VCPKG_TARGET_IS_WINDOWS)
-    vcpkg_replace_string(${SOURCE_PATH}/src/lib_proj.cmake "if(WIN32)" "if(MSVC)")
-endif ()
+vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
+    FEATURES
+        net   ENABLE_CURL
+        tiff  ENABLE_TIFF
+        tools BUILD_APPS
+)
 
-if (VCPKG_CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
-    set (THREAD_SUPPORT OFF)
-else ()
-    set (THREAD_SUPPORT ON)
-endif ()
+vcpkg_list(SET TOOL_NAMES cct cs2cs geod gie invgeod invproj proj projinfo projsync)
+if("tools" IN_LIST FEATURES AND NOT "net" IN_LIST FEATURES)
+    set(BUILD_PROJSYNC OFF)
+    vcpkg_list(APPEND FEATURE_OPTIONS -DBUILD_PROJSYNC=${BUILD_PROJSYNC})
+    vcpkg_list(REMOVE_ITEM TOOL_NAMES projsync)
+endif()
 
-vcpkg_configure_cmake(
-    SOURCE_PATH ${SOURCE_PATH}
-    PREFER_NINJA
-    OPTIONS ${CMAKE_OPTIONS}
-        -DNLOHMANN_JSON_ORIGIN="internal"
+find_program(EXE_SQLITE3 NAMES "sqlite3" PATHS "${CURRENT_HOST_INSTALLED_DIR}/tools" NO_DEFAULT_PATH REQUIRED)
+
+vcpkg_cmake_configure(
+    SOURCE_PATH "${SOURCE_PATH}"
+    OPTIONS
+        ${FEATURE_OPTIONS}
+        -DNLOHMANN_JSON=external
         -DBUILD_TESTING=OFF
-        -DBUILD_APPS=OFF # from version 8.2.0
-        -DENABLE_CURL=OFF # required for the projsync utility
-        -DENABLE_TIFF=OFF
-        -DBUILD_PROJSYNC=OFF
-        -DUSE_THREAD=${THREAD_SUPPORT}
+        "-DEXE_SQLITE3=${EXE_SQLITE3}"
+    OPTIONS_DEBUG
+        -DBUILD_APPS=OFF
 )
 
-vcpkg_install_cmake()
-vcpkg_fixup_cmake_targets(CONFIG_PATH lib/cmake/proj)
-vcpkg_test_cmake(PACKAGE_NAME PROJ)
+vcpkg_cmake_install()
 
-# Remove duplicate headers installed from debug build
-file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/include)
-# Remove data installed from debug build
-file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/share)
-file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/include/vend)
+if(VCPKG_LIBRARY_LINKAGE STREQUAL "static")
+    # Enforce consistency with src/lib_proj.cmake build time configuration.
+    vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/include/proj.h"
+        "#ifndef PROJ_DLL"
+        "#ifndef PROJ_DLL\n#  define PROJ_DLL\n#elif 0"
+    )
+endif()
 
-file(INSTALL ${SOURCE_PATH}/COPYING DESTINATION ${CURRENT_PACKAGES_DIR}/share/${PORT} RENAME copyright)
+vcpkg_cmake_config_fixup(PACKAGE_NAME proj4 CONFIG_PATH lib/cmake/proj4 DO_NOT_DELETE_PARENT_CONFIG_PATH)
+vcpkg_cmake_config_fixup(CONFIG_PATH lib/cmake/proj)
+
+if ("tools" IN_LIST FEATURES)
+    vcpkg_copy_tools(TOOL_NAMES ${TOOL_NAMES} AUTO_CLEAN)
+endif ()
+
+file(REMOVE_RECURSE
+    "${CURRENT_PACKAGES_DIR}/debug/include"
+    "${CURRENT_PACKAGES_DIR}/debug/share"
+    "${CURRENT_PACKAGES_DIR}/share/doc"
+    "${CURRENT_PACKAGES_DIR}/share/man"
+)
+
+vcpkg_copy_pdbs()
+
+vcpkg_fixup_pkgconfig()
+if(NOT DEFINED VCPKG_BUILD_TYPE AND VCPKG_TARGET_IS_WINDOWS AND NOT VCPKG_TARGET_IS_MINGW)
+    vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/debug/lib/pkgconfig/proj.pc" " -lproj" " -lproj_d")
+endif()
+
+file(INSTALL "${CMAKE_CURRENT_LIST_DIR}/usage" DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}")
+file(INSTALL "${SOURCE_PATH}/COPYING" DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}" RENAME copyright)

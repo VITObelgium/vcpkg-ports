@@ -10,5 +10,3 @@ index 7d736d129..2be8f8be9 100644
    else()
      message(SEND_ERROR
        "libtiff dependency not found! Use ENABLE_TIFF=OFF to force it off")
-diff --git a/cmake/project-config.cmake.in b/cmake/project-config.cmake.in
-index 7d5579ae..0cf96252 100644

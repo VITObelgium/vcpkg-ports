@@ -8,11 +8,11 @@ jobs:
 
     steps:
       - name: Install python
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v4
         with:
           python-version: "3.x"
       - name: Install ninja
-        uses: crazy-max/ghaction-chocolatey@v1
+        uses: crazy-max/ghaction-chocolatey@v3
         with:
           args: install ninja --no-progress
       - name: Checkout the code

@@ -8,7 +8,7 @@ import re
 import shutil
 import sysconfig
 
-vcpkg_tool_version = "2023-04-07"
+vcpkg_tool_version = "2023-09-15"
 
 
 def git_status_is_clean():

@@ -26,7 +26,6 @@
     }
   ],
   "default-features": [
-    "openssl",
     "zlib"
   ],
   "features": {

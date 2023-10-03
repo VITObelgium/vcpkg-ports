@@ -106,5 +106,25 @@
         "VCPKG_CXX_FLAGS": "/fsanitize=address"
       }
     }
+  ],
+  "buildPresets": [
+    {
+      "name": "build-win-only",
+      "hidden": true,
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "build-mac-only",
+      "hidden": true,
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      }
+    }
   ]
 }

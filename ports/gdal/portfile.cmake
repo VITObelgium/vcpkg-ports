@@ -93,6 +93,8 @@ vcpkg_configure_cmake(
     OPTIONS_DEBUG
         -DGDAL_INSTALL_DATA_FILES=OFF
         -DGDAL_BUILD_TOOLS=OFF
+    MAYBE_UNUSED_VARIABLES
+        VCPKG_ALLOW_SYSTEM_LIBS
 )
 
 #vcpkg_fixup_pkgconfig_mod()

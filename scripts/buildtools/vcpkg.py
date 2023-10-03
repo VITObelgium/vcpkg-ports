@@ -537,7 +537,6 @@ def bootstrap_argparser():
         "-t", "--triplet", dest="triplet", metavar="TRIPLET", help="the triplet to use"
     )
     parser.add_argument(
-        "-p",
         "--ports-dir",
         dest="ports_dir",
         metavar="PORTS_DIR",
@@ -839,12 +838,6 @@ def build_argparser():
         metavar="SOURCE_DIR",
         default=".",
         help="directory containing the sources to build",
-    )
-    parser.add_argument(
-        "--parent",
-        action="store_true",
-        dest="parent",
-        help="use bootstrapped dependencies from the parent directory",
     )
     parser.add_argument(
         "--dist",

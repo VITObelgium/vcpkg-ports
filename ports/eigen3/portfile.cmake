@@ -10,6 +10,7 @@ vcpkg_from_gitlab(
     PATCHES
         remove_configure_checks.patch # This removes unnecessary configure checks. Eigen3 just installs headers not anything more.
         fix-vectorized-reductions-half.patch # Remove this patch in the next update
+        nofortran.patch # disables blas build, use -DEIGEN_BUILD_BLAS=OFF available in the next release
 )
 
 vcpkg_cmake_configure(
@@ -17,6 +18,7 @@ vcpkg_cmake_configure(
     OPTIONS
         -DBUILD_TESTING=OFF
         -DEIGEN_BUILD_PKGCONFIG=ON
+        -DEIGEN_BUILD_BLAS=OFF
     OPTIONS_RELEASE
         -DCMAKEPACKAGE_INSTALL_DIR=${CURRENT_PACKAGES_DIR}/share/eigen3
         -DPKGCONFIG_INSTALL_DIR=${CURRENT_PACKAGES_DIR}/lib/pkgconfig

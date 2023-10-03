@@ -54,6 +54,19 @@
       }
     },
     {
+      "name": "toolchain-linux",
+      "hidden": true,
+      "cacheVariables": {
+        "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/deps/vcpkg/scripts/toolchains/linux.cmake",
+        "VCPKG_CMAKE_SYSTEM_NAME": "Linux"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
       "name": "triplet-x64-osx",
       "inherits": "toolchain-osx-appleclang",
       "hidden": true,
@@ -105,6 +118,28 @@
         "VCPKG_C_FLAGS": "/fsanitize=address",
         "VCPKG_CXX_FLAGS": "/fsanitize=address"
       }
+    },
+    {
+      "name": "triplet-arm64-linux",
+      "inherits": "toolchain-linux",
+      "hidden": true,
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "arm64-linux",
+        "VCPKG_TARGET_ARCHITECTURE": "arm64",
+        "VCPKG_CRT_LINKAGE": "dynamic",
+        "VCPKG_LIBRARY_LINKAGE": "static"
+      }
+    },
+    {
+      "name": "triplet-x64-linux",
+      "inherits": "toolchain-linux",
+      "hidden": true,
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-linux",
+        "VCPKG_TARGET_ARCHITECTURE": "x64",
+        "VCPKG_CRT_LINKAGE": "static",
+        "VCPKG_LIBRARY_LINKAGE": "static"
+      }
     }
   ],
   "buildPresets": [
@@ -124,6 +159,15 @@
         "type": "equals",
         "lhs": "${hostSystemName}",
         "rhs": "Darwin"
+      }
+    },
+    {
+      "name": "build-linux-only",
+      "hidden": true,
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
       }
     }
   ]

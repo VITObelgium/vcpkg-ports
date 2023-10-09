@@ -1,73 +1,56 @@
-vcpkg_from_github(
+set(PCRE2_VERSION 10.36)
+vcpkg_download_distfile(ARCHIVE
+    URLS "https://ftp.pcre.org/pub/pcre/pcre2-${PCRE2_VERSION}.zip" "https://sourceforge.net/projects/pcre/files/pcre2/${PCRE2_VERSION}/pcre2-${PCRE2_VERSION}.zip/download"
+    FILENAME "pcre2-${PCRE2_VERSION}.zip"
+    SHA512 68f5984a786f77e298d33a55260ff23709cc959b6085fe6f4c4e70c1db8531f177e8e26b03fab114cfc200cf919c340aaba463bb2d0e978e635184098ed45b9f)
+
+vcpkg_extract_source_archive_ex(
+    ARCHIVE ${ARCHIVE}
     OUT_SOURCE_PATH SOURCE_PATH
-    REPO PCRE2Project/pcre2
-    REF "pcre2-${VERSION}"
-    SHA512 3d0ee66e23809d3da2fe2bf4ed6e20b0fb96c293a91668935f6319e8d02e480eeef33da01e08a7436a18a1a85a116d83186b953520f394c866aad3cea73c7f5c
-    HEAD_REF master
-    PATCHES
-        pcre2-10.35_fix-uwp.patch
-        no-static-suffix.patch
-        fix-cmake.patch
 )
 
-string(COMPARE EQUAL "${VCPKG_LIBRARY_LINKAGE}" "static" BUILD_STATIC)
-string(COMPARE EQUAL "${VCPKG_LIBRARY_LINKAGE}" "dynamic" INSTALL_PDB)
-string(COMPARE EQUAL "${VCPKG_CRT_LINKAGE}" "static" BUILD_STATIC_CRT)
+set(SUPPORT_JIT ON)
+if (${TARGET_TRIPLET} STREQUAL "arm64-osx")
+    set(SUPPORT_JIT OFF)
+endif ()
 
-vcpkg_check_features(
-    OUT_FEATURE_OPTIONS FEATURE_OPTIONS
-    FEATURES
-        jit   PCRE2_SUPPORT_JIT
-)
-
-vcpkg_cmake_configure(
-    SOURCE_PATH "${SOURCE_PATH}"
+vcpkg_configure_cmake(
+    SOURCE_PATH ${SOURCE_PATH}
+    PREFER_NINJA
     OPTIONS
-        ${FEATURE_OPTIONS}
-        -DBUILD_STATIC_LIBS=${BUILD_STATIC}
-        -DPCRE2_STATIC_RUNTIME=${BUILD_STATIC_CRT}
         -DPCRE2_BUILD_PCRE2_8=ON
         -DPCRE2_BUILD_PCRE2_16=ON
         -DPCRE2_BUILD_PCRE2_32=ON
+        -DPCRE2_SUPPORT_JIT=${SUPPORT_JIT}
         -DPCRE2_SUPPORT_UNICODE=ON
         -DPCRE2_BUILD_TESTS=OFF
-        -DPCRE2_BUILD_PCRE2GREP=OFF
-        -DCMAKE_DISABLE_FIND_PACKAGE_BZip2=ON
-        -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB=ON
-        -DCMAKE_DISABLE_FIND_PACKAGE_Readline=ON
-        -DCMAKE_DISABLE_FIND_PACKAGE_Editline=ON
-        -DINSTALL_MSVC_PDB=${INSTALL_PDB}
-    )
+        -DPCRE2_BUILD_PCRE2GREP=OFF)
 
-vcpkg_cmake_install()
-vcpkg_copy_pdbs()
+vcpkg_install_cmake()
 
-file(READ "${CURRENT_PACKAGES_DIR}/include/pcre2.h" PCRE2_H)
-if(BUILD_STATIC)
+file(READ ${CURRENT_PACKAGES_DIR}/include/pcre2.h PCRE2_H)
+if(VCPKG_LIBRARY_LINKAGE STREQUAL "static")
     string(REPLACE "defined(PCRE2_STATIC)" "1" PCRE2_H "${PCRE2_H}")
 else()
     string(REPLACE "defined(PCRE2_STATIC)" "0" PCRE2_H "${PCRE2_H}")
 endif()
-file(WRITE "${CURRENT_PACKAGES_DIR}/include/pcre2.h" "${PCRE2_H}")
+file(WRITE ${CURRENT_PACKAGES_DIR}/include/pcre2.h "${PCRE2_H}")
 
-vcpkg_fixup_pkgconfig()
-vcpkg_cmake_config_fixup(CONFIG_PATH lib/cmake/${PORT})
+# don't install POSIX wrapper
+file(REMOVE ${CURRENT_PACKAGES_DIR}/include/pcre2posix.h)
+file(REMOVE ${CURRENT_PACKAGES_DIR}/lib/pcre2-posix.lib ${CURRENT_PACKAGES_DIR}/debug/lib/pcre2-posixd.lib)
+file(REMOVE ${CURRENT_PACKAGES_DIR}/bin/pcre2-posix.dll ${CURRENT_PACKAGES_DIR}/debug/bin/pcre2-posixd.dll)
 
-file(REMOVE_RECURSE
-    "${CURRENT_PACKAGES_DIR}/man"
-    "${CURRENT_PACKAGES_DIR}/share/doc"
-    "${CURRENT_PACKAGES_DIR}/debug/include"
-    "${CURRENT_PACKAGES_DIR}/debug/man"
-    "${CURRENT_PACKAGES_DIR}/debug/share")
+vcpkg_copy_pdbs()
 
-if(BUILD_STATIC)
+if(VCPKG_LIBRARY_LINKAGE STREQUAL "static")
     file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/bin" "${CURRENT_PACKAGES_DIR}/debug/bin")
-elseif(VCPKG_TARGET_IS_WINDOWS)
-    vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/bin/pcre2-config" "${CURRENT_PACKAGES_DIR}" "`dirname $0`/..")
-    if(EXISTS "${CURRENT_PACKAGES_DIR}/debug/bin/pcre2-config")
-        vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/debug/bin/pcre2-config" "${CURRENT_PACKAGES_DIR}" "`dirname $0`/../..")
-    endif()
 endif()
 
-file(INSTALL "${CMAKE_CURRENT_LIST_DIR}/usage" DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}")
-vcpkg_install_copyright(FILE_LIST "${SOURCE_PATH}/COPYING")
+file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/man)
+file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/share/doc)
+file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/include)
+file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/man)
+file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/share)
+file(COPY ${SOURCE_PATH}/COPYING DESTINATION ${CURRENT_PACKAGES_DIR}/share/pcre2)
+file(RENAME ${CURRENT_PACKAGES_DIR}/share/pcre2/COPYING ${CURRENT_PACKAGES_DIR}/share/pcre2/copyright)

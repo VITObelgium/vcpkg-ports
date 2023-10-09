@@ -1,0 +1,23 @@
+diff -Naur a/qtbase/cmake/FindWrapSystemPCRE2.cmake b/qtbase/cmake/FindWrapSystemPCRE2.cmake
+--- a/qtbase/cmake/FindWrapSystemPCRE2.cmake	2023-09-21 21:24:26.000000000 +0200
++++ b/qtbase/cmake/FindWrapSystemPCRE2.cmake	2023-10-09 20:30:22.947451000 +0200
+@@ -7,7 +7,7 @@
+ endif()
+ set(WrapSystemPCRE2_REQUIRED_VARS __pcre2_found)
+ 
+-find_package(PCRE2 ${${CMAKE_FIND_PACKAGE_NAME}_FIND_VERSION} COMPONENTS 16BIT QUIET)
++find_package(PCRE2 CONFIG COMPONENTS 16BIT REQUIRED)
+ 
+ set(__pcre2_target_name "PCRE2::16BIT")
+ if(PCRE2_FOUND AND TARGET "${__pcre2_target_name}")
+@@ -16,6 +16,9 @@
+   if(PCRE2_VERSION)
+       set(WrapSystemPCRE2_VERSION "${PCRE2_VERSION}")
+   endif()
++  message(INFO "------------ PCRE2 found ${PCRE2_VERSION}")
++else ()
++    message(FATAL_ERROR "Dit not find PCRE2")
+ endif()
+ 
+ if(NOT __pcre2_found)
+ 

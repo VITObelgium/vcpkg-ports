@@ -1,13 +1,13 @@
 set(MAJOR 6)
-set(MINOR 3)
-set(REVISION 2)
+set(MINOR 5)
+set(REVISION 3)
 set(VERSION ${MAJOR}.${MINOR}.${REVISION})
 set(PACKAGE qt-everywhere-src-${VERSION}.tar.xz)
 
 vcpkg_download_distfile(ARCHIVE
     URLS "http://download.qt.io/archive/qt/${MAJOR}.${MINOR}/${VERSION}/single/${PACKAGE}"
     FILENAME "${PACKAGE}"
-    SHA512 cc05f9d23027ceac6bd0f4fe056f950350f3a63d9159b3135f281e74ee572e1dde2f56573e5480682983faf69c108116c2b9655c6d327c0edc0c8ccbecea052b
+    SHA512 ca8ea3b81c121886636988275f7fa8ae6d19f7be02669e63ab19b4285b611057a41279db9532c25ae87baa3904b010e1db68b899cd0eda17a5a8d3d87098b4d5
 )
 
 vcpkg_extract_source_archive_ex(
@@ -18,6 +18,7 @@ vcpkg_extract_source_archive_ex(
         config_install.patch
         harfbuzz.patch
         angle.patch
+        eglcontext.patch
         allow_outside_prefix.patch
 )
 
@@ -102,7 +103,7 @@ if (FEATURE_tools OR FEATURE_qml)
     list (APPEND EXTRA_ARGS
         -DFEATURE_qml_profiler=OFF
         -DFEATURE_qml_debug=OFF
-        -DFEATURE_qml_itemmodel=OFF
+        -DFEATURE_qml_delegate_model=ON
     )
 endif ()
 
@@ -131,6 +132,7 @@ vcpkg_configure_cmake(
         -DFEATURE_clang=OFF
         -DFEATURE_clangcpp=OFF
         -DFEATURE_gssapi=OFF
+        -DFEATURE_textmarkdownreader=OFF
 
         -DINPUT_opengl=${OPENGL}
         -DINPUT_libjpeg=system
@@ -140,12 +142,14 @@ vcpkg_configure_cmake(
         -DFEATURE_system_pcre2=ON
 
         -DINPUT_freetype=${FREETYPE_HARFBUZZ}
+        -DINPUT_harfbuzz=${FREETYPE_HARFBUZZ}
         
+        -DBUILD_qtgrpc=OFF
         -DBUILD_qtdoc=OFF
         -DBUILD_qt3d=OFF
         -DBUILD_qtquick3d=OFF
+        -DBUILD_qtquickeffectmaker=OFF
         -DBUILD_qtquick3dphysics=OFF
-        -DBUILD_qtshadertools=OFF
         -DBUILD_qt5compat=OFF
         -DBUILD_qtcanvas3d=OFF
         -DBUILD_qtconnectivity=OFF
@@ -165,6 +169,7 @@ vcpkg_configure_cmake(
         -DBUILD_qtvirtualkeyboard=OFF
         -DBUILD_qtwebengine=OFF
         -DBUILD_qtwebchannel=OFF
+        -DBUILD_qthttpserver=OFF
         -DBUILD_qtwebsockets=OFF
         -DBUILD_qtwebview=OFF
         -DBUILD_qtcoap=OFF

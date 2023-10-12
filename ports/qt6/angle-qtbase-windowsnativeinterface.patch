@@ -1,0 +1,43 @@
+diff -Naur a/qtbase/src/plugins/platforms/windows/qwindowsnativeinterface.cpp b/qtbase/src/plugins/platforms/windows/qwindowsnativeinterface.cpp
+--- a/qtbase/src/plugins/platforms/windows/qwindowsnativeinterface.cpp	2023-09-13 18:02:48.000000000 +0200
++++ b/qtbase/src/plugins/platforms/windows/qwindowsnativeinterface.cpp	2023-10-12 09:53:01.856107500 +0200
+@@ -20,6 +20,9 @@
+ 
+ enum ResourceType {
+     RenderingContextType,
++    EglContextType,
++    EglDisplayType,
++    EglConfigType,
+     HandleType,
+     GlHandleType,
+     GetDCType,
+@@ -31,6 +34,9 @@
+ {
+     static const char *names[] = { // match ResourceType
+         "renderingcontext",
++        "eglcontext",
++        "egldisplay",
++        "eglconfig",        
+         "handle",
+         "glhandle",
+         "getdc",
+@@ -127,6 +133,19 @@
+         return nullptr;
+     }
+ 
++    auto *glcontext = static_cast<QWindowsOpenGLContext *>(context->handle());
++    switch (resourceType(resource)) {
++    case RenderingContextType: // Fall through.
++    // case EglContextType:
++    //     return glcontext->nativeContext();
++    case EglDisplayType:
++        return glcontext->nativeDisplay();
++    case EglConfigType:
++        return glcontext->nativeConfig();
++    default:
++        break;
++    }
++    
+     qWarning("%s: Invalid key '%s' requested.", __FUNCTION__, resource.constData());
+     return nullptr;
+ }

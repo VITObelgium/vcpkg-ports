@@ -1,13 +1,24 @@
 set(MAJOR 6)
-set(MINOR 5)
-set(REVISION 3)
+set(MINOR 6)
+set(REVISION 0)
 set(VERSION ${MAJOR}.${MINOR}.${REVISION})
 set(PACKAGE qt-everywhere-src-${VERSION}.tar.xz)
+
+vcpkg_find_acquire_program(PYTHON3)
+vcpkg_find_acquire_program(CLANG)
+
+get_filename_component(PYTHON_DIR ${PYTHON3} DIRECTORY)
+message(STATUS "Python directory: ${PYTHON_DIR}")
+vcpkg_add_to_path(${PYTHON_DIR})
+
+get_filename_component(CLANG_BIN_DIR ${CLANG} DIRECTORY)
+cmake_path(GET CLANG_BIN_DIR PARENT_PATH LLVM_DIR)
+message(STATUS "LLVM directory: ${LLVM_DIR}")
 
 vcpkg_download_distfile(ARCHIVE
     URLS "http://download.qt.io/archive/qt/${MAJOR}.${MINOR}/${VERSION}/single/${PACKAGE}"
     FILENAME "${PACKAGE}"
-    SHA512 ca8ea3b81c121886636988275f7fa8ae6d19f7be02669e63ab19b4285b611057a41279db9532c25ae87baa3904b010e1db68b899cd0eda17a5a8d3d87098b4d5
+    SHA512 75f3e0ff25599200b525e775575f3d40f340b0bdc107a91f6d3a30bd739b5f59b13fb9d7de2e41fe19f711403afb3e9784f6a2d90e3b7a54c7077482f1bec2fb
 )
 
 vcpkg_extract_source_archive_ex(
@@ -17,9 +28,17 @@ vcpkg_extract_source_archive_ex(
     PATCHES
         config_install.patch
         harfbuzz.patch
-        angle.patch
-        eglcontext.patch
         allow_outside_prefix.patch
+        angle-eglcontext.patch
+        angle-findegl.patch
+        angle-qtbase-direct2d-cmake.patch
+        angle-qtbase-gui-cmake.patch
+        angle-qtbase-gui-config.patch
+        angle-qtbase-opengl-cmake.patch
+        angle-qtbase-opengltester.patch
+        angle-qtbase-windows-cmake.patch
+        angle-qtbase-windowsintegration.patch
+        angle-qtbase-windowsnativeinterface.patch
 )
 
 vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
@@ -33,17 +52,6 @@ FEATURES
     "tiff"          FEATURE_tiff
     "angle"         FEATURE_angle
 )
-
-vcpkg_find_acquire_program(PYTHON3)
-vcpkg_find_acquire_program(PERL)
-
-get_filename_component(PYTHON_DIR ${PYTHON3} DIRECTORY)
-message(STATUS "Python directory: ${PYTHON_DIR}")
-vcpkg_add_to_path(${PYTHON_DIR})
-
-get_filename_component(PERL_DIR ${PERL} DIRECTORY)
-message(STATUS "Perl directory: ${PERL_DIR}")
-vcpkg_add_to_path(${PERL_DIR})
 
 set(EXTRA_ARGS)
 set(SECURETRANSPORT)
@@ -117,10 +125,12 @@ vcpkg_configure_cmake(
         -DINSTALL_LIBEXECDIR:STRING=bin
         -DINSTALL_PLUGINSDIR:STRING=${qt_plugindir}
         -DINSTALL_QMLDIR:STRING=${qt_qmldir}
+        
+        -DFEATURE_clangcpp=ON
+        -DLLVM_INSTALL_DIR="${LLVM_DIR}"
+        -DClang_DIR="${LLVM_DIR}/lib"
 
         -DVCPKG_ALLOW_SYSTEM_LIBS=${ALLOW_SYSTEM_LIBS}
-        -DQT_NO_MAKE_EXAMPLES:BOOL=TRUE
-        -DQT_NO_MAKE_TESTS:BOOL=TRUE
         -DFEATURE_cpus=OFF
         -DFEATURE_webp=OFF
         -DFEATURE_jasper=OFF
@@ -133,6 +143,7 @@ vcpkg_configure_cmake(
         -DFEATURE_clangcpp=OFF
         -DFEATURE_gssapi=OFF
         -DFEATURE_textmarkdownreader=OFF
+        -DFEATURE_androiddeployqt=OFF
 
         -DINPUT_opengl=${OPENGL}
         -DINPUT_libjpeg=system
@@ -147,6 +158,7 @@ vcpkg_configure_cmake(
         -DBUILD_qtgrpc=OFF
         -DBUILD_qtdoc=OFF
         -DBUILD_qt3d=OFF
+        -DBUILD_qtgraphs=OFF
         -DBUILD_qtquick3d=OFF
         -DBUILD_qtquickeffectmaker=OFF
         -DBUILD_qtquick3dphysics=OFF
@@ -239,7 +251,25 @@ vcpkg_configure_cmake(
         -DINSTALL_DESCRIPTIONSDIR:STRING=../share/Qt6/modules
         -DINSTALL_MKSPECSDIR:STRING=../share/Qt6/mkspecs
         -DINSTALL_TRANSLATIONSDIR:STRING=../translations/${QT6_DIRECTORY_PREFIX}
-        
+
+    MAYBE_UNUSED_VARIABLES
+        BUILD_qtcanvas3d
+        BUILD_qtpurchasing
+        BUILD_qtquickcontrols
+        BUILD_qtquickcontrols2
+        BUILD_qtscript
+        FEATURE_cpus
+        FEATURE_geoservices_here
+        FEATURE_geoservices_mapbox
+        FEATURE_geoservices_mapboxgl
+        FEATURE_sql_db2
+        FEATURE_sql_ibase
+        FEATURE_sql_mysql
+        FEATURE_sql_oci
+        FEATURE_sql_odbc
+        FEATURE_sql_psql
+        INPUT_sqlite
+        VCPKG_ALLOW_SYSTEM_LIBS
 )
 vcpkg_install_cmake()
 vcpkg_copy_pdbs()
@@ -282,6 +312,8 @@ if(VCPKG_LIBRARY_LINKAGE STREQUAL "static")
                                 "get_filename_component(_IMPORT_PREFIX \"\${CMAKE_CURRENT_LIST_FILE}\" PATH)\nget_filename_component(_IMPORT_PREFIX \"\${_IMPORT_PREFIX}\" PATH)")
     endforeach()
 endif()
+
+vcpkg_replace_string(${CURRENT_PACKAGES_DIR}/share/Qt6CoreTools/Qt6CoreToolsAdditionalTargetInfo.cmake "${PACKAGE_PREFIX_DIR}/bin" "${PACKAGE_PREFIX_DIR}/tools/qt6")
 
 file(GLOB BIN_FILES ${CURRENT_PACKAGES_DIR}/bin/*)
 file(COPY ${BIN_FILES} DESTINATION ${CURRENT_PACKAGES_DIR}/tools/qt6)

@@ -29,16 +29,6 @@ vcpkg_extract_source_archive_ex(
         config_install.patch
         harfbuzz.patch
         allow_outside_prefix.patch
-        angle-eglcontext.patch
-        angle-findegl.patch
-        angle-qtbase-direct2d-cmake.patch
-        angle-qtbase-gui-cmake.patch
-        angle-qtbase-gui-config.patch
-        angle-qtbase-opengl-cmake.patch
-        angle-qtbase-opengltester.patch
-        angle-qtbase-windows-cmake.patch
-        angle-qtbase-windowsintegration.patch
-        angle-qtbase-windowsnativeinterface.patch
 )
 
 vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
@@ -50,7 +40,6 @@ FEATURES
     "tools"         FEATURE_tools
     "charts"        FEATURE_charts
     "tiff"          FEATURE_tiff
-    "angle"         FEATURE_angle
 )
 
 set(EXTRA_ARGS)
@@ -58,19 +47,6 @@ set(SECURETRANSPORT)
 
 set (FREETYPE_HARFBUZZ system)
 set (OPENGL desktop)
-if (VCPKG_TARGET_IS_WINDOWS AND FEATURE_angle)
-    set (OPENGL es2)
-    list (APPEND EXTRA_ARGS
-        -DFEATURE_opengl_dynamic=OFF
-        -DFEATURE_opengles2=ON
-        -DFEATURE_egl=ON
-        -DFEATURE_eglfs=OFF
-    )
-else ()
-    list (APPEND EXTRA_ARGS
-        -DFEATURE_egl=OFF
-    )
-endif()
 
 if (VCPKG_TARGET_IS_OSX)
     set(ALLOW_SYSTEM_LIBS ON)
@@ -144,6 +120,7 @@ vcpkg_configure_cmake(
         -DFEATURE_gssapi=OFF
         -DFEATURE_textmarkdownreader=OFF
         -DFEATURE_androiddeployqt=OFF
+        -DFEATURE_egl=OFF
 
         -DINPUT_opengl=${OPENGL}
         -DINPUT_libjpeg=system

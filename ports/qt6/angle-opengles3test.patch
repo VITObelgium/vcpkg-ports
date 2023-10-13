@@ -1,0 +1,12 @@
+diff -Naur a/qtbase/src/gui/configure.cmake b/qtbase/src/gui/configure.cmake
+--- a/qtbase/src/gui/configure.cmake	2022-09-02 18:13:45.000000000 +0200
++++ b/qtbase/src/gui/configure.cmake	2023-10-12 14:37:04.215284700 +0200
+@@ -749,7 +749,7 @@
+ qt_feature_config("opengles2" QMAKE_PUBLIC_QT_CONFIG)
+ qt_feature("opengles3" PUBLIC
+     LABEL "OpenGL ES 3.0"
+-    CONDITION QT_FEATURE_opengles2 AND TEST_opengles3
++    CONDITION QT_FEATURE_opengles2
+ )
+ qt_feature("opengles31" PUBLIC
+     LABEL "OpenGL ES 3.1"

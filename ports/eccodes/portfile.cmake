@@ -47,6 +47,7 @@ vcpkg_configure_cmake(
         -DENABLE_JPG=${JPEG_OPT}
         -DENABLE_INSTALL_ECCODES_SAMPLES=OFF
         -DBUILD_SHARED_LIBS=OFF
+        -DENABLE_BUILD_TOOLS=OFF
         -DENABLE_AEC=OFF
         -DDISABLE_OS_CHECK=ON
         ${ENDIAN_OPTIONS}

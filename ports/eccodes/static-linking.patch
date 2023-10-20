@@ -16,7 +16,7 @@ diff -Naur a/cmake/FindNetCDF.cmake b/cmake/FindNetCDF.cmake
      # list( APPEND NETCDF_DEFINITIONS  ${HDF5_DEFINITIONS} )
 -    list( APPEND NETCDF_LIBRARIES    ${HDF5_HL_LIBRARIES} ${HDF5_LIBRARIES}  )
 -    list( APPEND NETCDF_INCLUDE_DIRS ${HDF5_INCLUDE_DIRS} )
-+    list( APPEND NETCDF_LIBRARIES    hdf5_hl-static hdf5-static)
++    list( APPEND NETCDF_LIBRARIES    hdf5::hdf5_hl-static hdf5::hdf5-static)
    endif()
  
    #ecbuild_debug_var( NETCDF_FOUND )

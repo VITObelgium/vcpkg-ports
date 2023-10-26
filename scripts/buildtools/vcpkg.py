@@ -313,7 +313,6 @@ def vcpkg_install_ports(
         "install",
         "--recurse",
         "--feature-flags=-manifests",
-        "--clean-packages-after-build",
     ]
 
     if clean_after_build:

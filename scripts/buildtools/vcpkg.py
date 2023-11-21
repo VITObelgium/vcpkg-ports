@@ -313,10 +313,12 @@ def vcpkg_install_ports(
         "install",
         "--recurse",
         "--feature-flags=-manifests",
-        "--clean-packages-after-build",
     ]
+
     if clean_after_build:
         args.append("--clean-after-build")
+    else:
+        args.append("--clean-packages-after-build")
 
     if overlay_ports:
         args.append(f"--overlay-ports={overlay_ports}")

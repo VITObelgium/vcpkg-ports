@@ -7,7 +7,22 @@
   },
   "configurePresets": [
     {
+      "name": "vcpkg-base",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/deps/vcpkg/scripts/buildsystems/vcpkg.cmake",
+        "VCPKG_APPLOCAL_DEPS": "OFF",
+        "VCPKG_MANIFEST_MODE": "OFF"
+      }
+    },
+    {
+      "name": "multi",
+      "generator": "Ninja Multi-Config",
+      "hidden": true
+    },
+    {
       "name": "windows-msvc-common",
+      "hidden": true,
       "architecture": {
         "value": "x64",
         "strategy": "external"
@@ -44,6 +59,7 @@
     {
       "name": "toolchain-windows",
       "hidden": true,
+      "inherits": "vcpkg-base",
       "cacheVariables": {
         "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/deps/vcpkg/scripts/toolchains/windows.cmake"
       },
@@ -103,6 +119,7 @@
       "hidden": true,
       "cacheVariables": {
         "VCPKG_TARGET_TRIPLET": "x64-windows-static-vs2022",
+        "VCPKG_INSTALLED_DIR": "${sourceDir}/vcpkgs-x64-windows-static-vs2022",
         "VCPKG_TARGET_ARCHITECTURE": "x64",
         "VCPKG_CRT_LINKAGE": "static",
         "VCPKG_PLATFORM_TOOLSET": "v143",
@@ -115,8 +132,39 @@
       "hidden": true,
       "cacheVariables": {
         "VCPKG_TARGET_TRIPLET": "x64-windows-static-asan-vs2022",
+        "VCPKG_INSTALLED_DIR": "${sourceDir}/vcpkgs-x64-windows-static-asan-vs2022",
         "VCPKG_C_FLAGS": "/fsanitize=address",
         "VCPKG_CXX_FLAGS": "/fsanitize=address"
+      }
+    },
+    {
+      "name": "triplet-x64-windows-static-ltcg-vs2022",
+      "inherits": "triplet-x64-windows-static-vs2022",
+      "hidden": true,
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-windows-static-ltcg-vs2022",
+        "VCPKG_C_FLAGS_RELEASE": "/GL",
+        "VCPKG_CXX_FLAGS_RELEASE": "/GL",
+        "VCPKG_LINKER_FLAGS_RELEASE": "/LTCG"
+      }
+    },
+    {
+      "name": "triplet-x64-windows-intel",
+      "inherits": [
+        "toolchain-windows"
+      ],
+      "hidden": true,
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-windows-intel",
+        "VCPKG_INSTALLED_DIR": "${sourceDir}/vcpkgs-x64-windows-intel",
+        "VCPKG_TARGET_ARCHITECTURE": "x64",
+        "VCPKG_CRT_LINKAGE": "dynamic",
+        "VCPKG_LIBRARY_LINKAGE": "static",
+        "VCPKG_PLATFORM_TOOLSET": "v143",
+        "VCPKG_SET_CHARSET_FLAG": "ON",
+        "VCPKG_INTEL_ONEAPI": "ON",
+        "VCPKG_POLICY_SKIP_ARCHITECTURE_CHECK": "enabled",
+        "VCPKG_ENV_PASSTHROUGH": "LIB;PATH;CPATH;ONEAPI_ROOT;INTEL_TARGET_ARCH;INTEL_TARGET_PLATFORM;USE_INTEL_LLVM;IFORT_COMPILER23;VARSDIR"
       }
     },
     {

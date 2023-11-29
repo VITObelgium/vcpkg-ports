@@ -45,10 +45,26 @@
     {
       "name": "toolchain-osx-appleclang",
       "hidden": true,
+      "inherits": "vcpkg-base",
       "cacheVariables": {
         "VCPKG_CMAKE_SYSTEM_NAME": "Darwin",
         "CMAKE_OSX_DEPLOYMENT_TARGET": "14.0",
         "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/deps/vcpkg/triplets/toolchain-osx-appleclang.cmake"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      }
+    },
+    {
+      "name": "toolchain-osx-homebrew",
+      "hidden": true,
+      "inherits": "vcpkg-base",
+      "cacheVariables": {
+        "VCPKG_CMAKE_SYSTEM_NAME": "Darwin",
+        "CMAKE_OSX_DEPLOYMENT_TARGET": "14.0",
+        "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/deps/vcpkg/triplets/toolchain-osx-homebrew.cmake"
       },
       "condition": {
         "type": "equals",
@@ -72,6 +88,7 @@
     {
       "name": "toolchain-linux",
       "hidden": true,
+      "inherits": "vcpkg-base",
       "cacheVariables": {
         "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/deps/vcpkg/scripts/toolchains/linux.cmake",
         "VCPKG_CMAKE_SYSTEM_NAME": "Linux"
@@ -102,6 +119,37 @@
       "hidden": true,
       "cacheVariables": {
         "VCPKG_TARGET_TRIPLET": "arm64-osx",
+        "VCPKG_OSX_ARCHITECTURES": "arm64",
+        "VCPKG_TARGET_ARCHITECTURE": "arm64",
+        "VCPKG_CRT_LINKAGE": "static",
+        "VCPKG_LIBRARY_LINKAGE": "static",
+        "VCPKG_C_FLAGS": "-fvisibility=hidden",
+        "VCPKG_CXX_FLAGS": "-fvisibility=hidden -fvisibility-inlines-hidden"
+      }
+    },
+    {
+      "name": "triplet-x64-osx-homebrew",
+      "inherits": "toolchain-osx-homebrew",
+      "hidden": true,
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-osx-homebrew",
+        "VCPKG_INSTALLED_DIR": "${sourceDir}/vcpkgs-x64-osx-homebrew",
+        "VCPKG_OSX_ARCHITECTURES": "x64",
+        "VCPKG_TARGET_ARCHITECTURE": "x64",
+        "VCPKG_CRT_LINKAGE": "static",
+        "VCPKG_LIBRARY_LINKAGE": "static",
+        "VCPKG_C_FLAGS": "-fvisibility=hidden",
+        "VCPKG_CXX_FLAGS": "-fvisibility=hidden -fvisibility-inlines-hidden"
+      }
+    },
+    {
+      "name": "triplet-arm64-osx-homebrew",
+      "inherits": "toolchain-osx-homebrew",
+      "hidden": true,
+      "cacheVariables": {
+        "VCPKG_ALLOW_SYSTEM_LIBS": "ON",
+        "VCPKG_TARGET_TRIPLET": "arm64-osx-homebrew",
+        "VCPKG_INSTALLED_DIR": "${sourceDir}/vcpkgs-arm64-osx-homebrew",
         "VCPKG_OSX_ARCHITECTURES": "arm64",
         "VCPKG_TARGET_ARCHITECTURE": "arm64",
         "VCPKG_CRT_LINKAGE": "static",

@@ -104,6 +104,7 @@
       "inherits": "toolchain-osx-appleclang",
       "hidden": true,
       "cacheVariables": {
+        "VCPKG_ALLOW_SYSTEM_LIBS": "ON",
         "VCPKG_TARGET_TRIPLET": "x64-osx",
         "VCPKG_OSX_ARCHITECTURES": "x86_64",
         "VCPKG_TARGET_ARCHITECTURE": "x64",
@@ -118,7 +119,9 @@
       "inherits": "toolchain-osx-appleclang",
       "hidden": true,
       "cacheVariables": {
+        "VCPKG_ALLOW_SYSTEM_LIBS": "ON",
         "VCPKG_TARGET_TRIPLET": "arm64-osx",
+        "VCPKG_INSTALLED_DIR": "${sourceDir}/vcpkgs-arm64-osx",
         "VCPKG_OSX_ARCHITECTURES": "arm64",
         "VCPKG_TARGET_ARCHITECTURE": "arm64",
         "VCPKG_CRT_LINKAGE": "static",

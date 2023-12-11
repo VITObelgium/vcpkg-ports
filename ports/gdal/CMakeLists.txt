@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.15)
 include(CMakeDependentOption)
 
 project(gdal
-    VERSION 3.6.3
+    VERSION 3.8.1
     LANGUAGES C CXX
 )
 
@@ -649,6 +649,9 @@ add_library(gcore OBJECT
     gcore/gdalhashsetbandblockcache.cpp
     gcore/gdalmultidim.cpp
     gcore/gdalmultidim_gridded.cpp
+    gcore/gdalmultidim_subsetdimension.cpp
+    gcore/gdalmultidim_gltorthorectification.cpp
+    gcore/gdalsubdatasetinfo.cpp
     gcore/gdalpython.cpp
     gcore/gdalpythondriverloader.cpp
 
@@ -677,6 +680,7 @@ set(GCORE_PUBLIC_HEADERS
     ${CMAKE_SOURCE_DIR}/gcore/gdaljp2abstractdataset.h
     ${CMAKE_SOURCE_DIR}/gcore/gdaljp2metadata.h
     ${CMAKE_SOURCE_DIR}/gcore/rawdataset.h
+    ${CMAKE_SOURCE_DIR}/gcore/gdalsubdatasetinfo.h
     
     # gnm.h
     # gnm_api.h
@@ -865,6 +869,18 @@ if (GDAL_FRMTS_GTIFF)
         frmts/gtiff/gt_overview.cpp
         frmts/gtiff/gt_wkt_srs.cpp
         frmts/gtiff/tifvsi.cpp
+        frmts/gtiff/gtiffbitmapband.cpp
+        frmts/gtiff/gtiffdataset.cpp
+        frmts/gtiff/gtiffdataset_read.cpp
+        frmts/gtiff/gtiffdataset_write.cpp
+        frmts/gtiff/gtiffjpegoverviewds.cpp
+        frmts/gtiff/gtiffoddbitsband.cpp
+        frmts/gtiff/gtiffrasterband.cpp
+        frmts/gtiff/gtiffrasterband_read.cpp
+        frmts/gtiff/gtiffrasterband_write.cpp
+        frmts/gtiff/gtiffrgbaband.cpp
+        frmts/gtiff/gtiffsplitband.cpp
+        frmts/gtiff/gtiffsplitbitmapband.cpp
     )
     target_include_directories(frmts PRIVATE
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/frmts/gtiff>
@@ -883,6 +899,8 @@ if (GDAL_FRMTS_HDF5)
         frmts/hdf5/iso19115_srs.cpp
         frmts/hdf5/hdf5multidim.cpp
         frmts/hdf5/hdf5eosparser.cpp
+        frmts/hdf5/s100.cpp
+        frmts/hdf5/s102dataset.cpp
     )
     target_link_libraries(frmts PRIVATE hdf5::hdf5-static hdf5::hdf5_hl-static)
     target_compile_definitions(frmts PRIVATE FRMT_hdf5)
@@ -1148,7 +1166,7 @@ add_library(ogr OBJECT
     ogr/ogr_geo_utils.cpp
     ogr/ogr_proj_p.cpp
     ogr/ogr_wkb.cpp
-    
+
     ogr/ogrsf_frmts/generic/ograrrowarrayhelper.cpp
     ogr/ogrsf_frmts/generic/ogrsfdriverregistrar.cpp
     ogr/ogrsf_frmts/generic/ogrlayer.cpp
@@ -1162,6 +1180,7 @@ add_library(ogr OBJECT
     ogr/ogrsf_frmts/generic/ogrwarpedlayer.cpp
     ogr/ogrsf_frmts/generic/ogrunionlayer.cpp
     ogr/ogrsf_frmts/generic/ogrlayerpool.cpp
+    ogr/ogrsf_frmts/generic/ogrlayerarrow.cpp
     ogr/ogrsf_frmts/generic/ogrmutexedlayer.cpp
     ogr/ogrsf_frmts/generic/ogrmutexeddatasource.cpp
     ogr/ogrsf_frmts/generic/ogremulatedtransaction.cpp
@@ -1183,6 +1202,7 @@ add_library(ogr OBJECT
     ogr/ogrsf_frmts/geojson/ogrtopojsondriver.cpp
     ogr/ogrsf_frmts/geojson/ogrtopojsonreader.cpp
     ogr/ogrsf_frmts/geojson/ogrgeojsonseqdriver.cpp
+    ogr/ogrsf_frmts/geojson/ogrjsoncollectionstreamingparser.cpp
     ogr/ogrsf_frmts/geojson/libjson/arraylist.c
     ogr/ogrsf_frmts/geojson/libjson/debug.c
     ogr/ogrsf_frmts/geojson/libjson/json_object.c
@@ -1325,6 +1345,7 @@ if (GDAL_OGR_FRMTS_GEOPKG OR GDAL_OGR_FRMTS_SQLITE)
         ogr/ogrsf_frmts/sqlite/ogrsqliteviewlayer.cpp
         ogr/ogrsf_frmts/sqlite/ogrsqlitevirtualogr.cpp
         ogr/ogrsf_frmts/sqlite/rasterlite2.cpp
+        ogr/ogrsf_frmts/sqlite/sqlite_rtree_bulk_load/wrapper.cpp
     )
     target_compile_definitions(ogr PRIVATE
         SQLITE_ENABLED
@@ -1478,6 +1499,7 @@ add_library(alg OBJECT
     alg/gdalrasterize.cpp
     alg/gdalgeoloc.cpp
     alg/gdalgeolocquadtree.cpp
+    alg/gdalgenericinverse.cpp
     alg/gdalgrid.cpp
     alg/gdalgridsse.cpp
     alg/gdalgridavx.cpp
@@ -1545,6 +1567,8 @@ add_library(gdal
     apps/gdal_grid_lib.cpp
     apps/gdal_rasterize_lib.cpp
     apps/gdalbuildvrt_lib.cpp
+    apps/nearblack_lib.cpp
+    apps/nearblack_lib_floodfill.cpp
     $<TARGET_OBJECTS:gcore>
     $<TARGET_OBJECTS:alg>
     $<TARGET_OBJECTS:frmts>

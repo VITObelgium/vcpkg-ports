@@ -100,6 +100,20 @@
       }
     },
     {
+      "name": "toolchain-linux-intel",
+      "hidden": true,
+      "inherits": "vcpkg-base",
+      "cacheVariables": {
+        "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/deps/vcpkg/triplets/toolchain-linux-intel.cmake",
+        "VCPKG_CMAKE_SYSTEM_NAME": "Linux"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
       "name": "triplet-x64-osx",
       "inherits": "toolchain-osx-appleclang",
       "hidden": true,
@@ -235,9 +249,25 @@
       "hidden": true,
       "cacheVariables": {
         "VCPKG_TARGET_TRIPLET": "x64-linux",
+        "VCPKG_INSTALLED_DIR": "${sourceDir}/vcpkgs-x64-linux",
         "VCPKG_TARGET_ARCHITECTURE": "x64",
         "VCPKG_CRT_LINKAGE": "static",
         "VCPKG_LIBRARY_LINKAGE": "static"
+      }
+    },
+    {
+      "name": "triplet-x64-linux-intel",
+      "inherits": "toolchain-linux-intel",
+      "hidden": true,
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-linux-inteloneapi",
+        "VCPKG_INSTALLED_DIR": "${sourceDir}/vcpkgs-x64-linux-inteloneapi",
+        "VCPKG_TARGET_ARCHITECTURE": "x64",
+        "VCPKG_CRT_LINKAGE": "static",
+        "VCPKG_LIBRARY_LINKAGE": "static",
+        "VCPKG_LINKER_FLAGS": "-fuse-ld=lld",
+        "VCPKG_C_FLAGS": "-fp-model=precise",
+        "VCPKG_CXX_FLAGS": "-fp-model=precise"
       }
     }
   ],

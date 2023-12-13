@@ -100,6 +100,20 @@
       }
     },
     {
+      "name": "toolchain-linux-cluster",
+      "hidden": true,
+      "inherits": "vcpkg-base",
+      "cacheVariables": {
+        "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/deps/vcpkg/triplets/toolchain-linux-cluster.cmake",
+        "VCPKG_CMAKE_SYSTEM_NAME": "Linux"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
       "name": "toolchain-linux-intel",
       "hidden": true,
       "inherits": "vcpkg-base",
@@ -256,6 +270,19 @@
       }
     },
     {
+      "name": "triplet-x64-linux-cluster",
+      "inherits": "toolchain-linux-cluster",
+      "hidden": true,
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-linux-cluster",
+        "VCPKG_INSTALLED_DIR": "${sourceDir}/vcpkgs-x64-linux-cluster",
+        "VCPKG_TARGET_ARCHITECTURE": "x64",
+        "VCPKG_CRT_LINKAGE": "dynamic",
+        "VCPKG_LIBRARY_LINKAGE": "static",
+        "VCPKG_LINKER_FLAGS": "-static-libstdc++ -static-libgcc"
+      }
+    },
+    {
       "name": "triplet-x64-linux-intel",
       "inherits": "toolchain-linux-intel",
       "hidden": true,
@@ -263,9 +290,9 @@
         "VCPKG_TARGET_TRIPLET": "x64-linux-inteloneapi",
         "VCPKG_INSTALLED_DIR": "${sourceDir}/vcpkgs-x64-linux-inteloneapi",
         "VCPKG_TARGET_ARCHITECTURE": "x64",
-        "VCPKG_CRT_LINKAGE": "static",
+        "VCPKG_CRT_LINKAGE": "dynamic",
         "VCPKG_LIBRARY_LINKAGE": "static",
-        "VCPKG_LINKER_FLAGS": "-fuse-ld=lld",
+        "VCPKG_LINKER_FLAGS": "-fuse-ld=lld -static-libstdc++ -static-libgcc",
         "VCPKG_C_FLAGS": "-fp-model=precise",
         "VCPKG_CXX_FLAGS": "-fp-model=precise"
       }

@@ -265,7 +265,7 @@
         "VCPKG_TARGET_TRIPLET": "x64-linux",
         "VCPKG_INSTALLED_DIR": "${sourceDir}/vcpkgs-x64-linux",
         "VCPKG_TARGET_ARCHITECTURE": "x64",
-        "VCPKG_CRT_LINKAGE": "static",
+        "VCPKG_CRT_LINKAGE": "dynamic",
         "VCPKG_LIBRARY_LINKAGE": "static"
       }
     },

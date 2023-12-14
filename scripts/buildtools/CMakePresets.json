@@ -270,6 +270,21 @@
       }
     },
     {
+      "name": "triplet-x64-linux-asan",
+      "inherits": "toolchain-linux",
+      "hidden": true,
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-linux",
+        "VCPKG_INSTALLED_DIR": "${sourceDir}/vcpkgs-x64-linux",
+        "VCPKG_TARGET_ARCHITECTURE": "x64",
+        "VCPKG_CRT_LINKAGE": "dynamic",
+        "VCPKG_LIBRARY_LINKAGE": "static",
+        "VCPKG_C_FLAGS": "-fsanitize=address",
+        "VCPKG_CXX_FLAGS": "-fsanitize=address",
+        "VCPKG_LINKER_FLAGS": "-fsanitize=address -static-libasan"
+      }
+    },
+    {
       "name": "triplet-x64-linux-cluster",
       "inherits": "toolchain-linux-cluster",
       "hidden": true,

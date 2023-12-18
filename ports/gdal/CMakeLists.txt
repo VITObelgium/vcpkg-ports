@@ -803,7 +803,7 @@ if (GDAL_FRMTS_GRIB)
         frmts/grib/degrib/degrib/grib2api.c
         frmts/grib/degrib/degrib/hazard.c
         frmts/grib/degrib/degrib/myassert.c
-        frmts/grib/degrib/degrib/myerror.c
+        frmts/grib/degrib/degrib/myerror.cpp
         frmts/grib/degrib/degrib/myutil.c
         frmts/grib/degrib/degrib/scan.c
         frmts/grib/degrib/degrib/weather.c
@@ -855,7 +855,7 @@ if (GDAL_FRMTS_GRIB)
         frmts/grib/degrib/g2clib/dec_jpeg2000.cpp
     )
 
-    target_include_directories(frmts PRIVATE frmts/grib/degrib/degrib frmts/grib/degrib/g2clib)
+    target_include_directories(frmts PRIVATE frmts/mem frmts/grib/degrib/degrib frmts/grib/degrib/g2clib)
     target_compile_definitions(frmts PRIVATE FRMT_grib)
 endif ()
 

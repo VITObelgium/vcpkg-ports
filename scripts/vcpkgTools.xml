@@ -15,11 +15,11 @@
         <archiveName>python-3.11.5.nupkg.zip</archiveName>
     </tool>
     <tool name="cmake" os="windows">
-        <version>3.27.1</version>
-        <exeRelativePath>cmake-3.28.1-windows-86_64/bin/cmake.exe</exeRelativePath>
+        <version>3.28.1</version>
+        <exeRelativePath>cmake-3.28.1-windows-x86_64/bin/cmake.exe</exeRelativePath>
         <url>https://cmake.org/files/v3.28/cmake-3.28.1-windows-x86_64.zip</url>
-        <sha512>671332249bc7cc7424523d6c2b5edd3e3de90a43b8b82e8782f42da4fe4c562d  </sha512>
-        <archiveName>cmake-3.27.1-windows-i386.zip</archiveName>
+        <sha512>0328bfcbc60b09c08062d6a05774d6c4f38199cf3ccc1058ebf812fe8980425910eb16d6648648597a142652b9b00ecbbf028a30e00d0832f077730340d13848</sha512>
+        <archiveName>cmake-3.28.1-windows-x86_64.zip</archiveName>
     </tool>
     <tool name="cmake" os="osx">
         <version>3.27.1</version>

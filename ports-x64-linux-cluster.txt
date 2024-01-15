@@ -29,7 +29,6 @@ libpqxx
 openssl
 libxlsxwriter
 lyra
-mapnik[gdal]
 mio
 netcdf-c
 netcdf-cxx4

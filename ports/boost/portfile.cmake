@@ -1,5 +1,5 @@
 set(MAJOR 1)
-set(MINOR 78)
+set(MINOR 82)
 set(REVISION 0)
 set(VERSION ${MAJOR}.${MINOR}.${REVISION})
 set(VERSION_UNDERSCORE ${MAJOR}_${MINOR}_${REVISION})
@@ -12,7 +12,7 @@ vcpkg_download_distfile(ARCHIVE
     URLS
         "https://boostorg.jfrog.io/artifactory/main/release/${VERSION}/source/${PACKAGE}"
     FILENAME "${PACKAGE}"
-    SHA512 fb9c50985f28972e0e083bb2c3be82270e3fdfb3bd9c6bf700d861406718363fedf1d514053af53bbb58aa12229dd601842f957f5f079aa23f2fef00d01806d8
+    SHA512 87dbf071dbea9bead5de531fe90d624dbcd097d25ab4c1b9e30dc933e4167e381e46e4004ede27297be205301d804456444fd22262783aa486543a008d155ebd
 )
 
 file(REMOVE_RECURSE ${BUILD_PATH_DEBUG})

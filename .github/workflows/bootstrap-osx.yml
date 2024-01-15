@@ -18,7 +18,7 @@ jobs:
         with:
           name: build-logs
           path: |
-            buildtrees/**/config*.log
-            buildtrees/**/build*.log
-            buildtrees/**/install*.log
+            buildtrees/**/*config*.log
+            buildtrees/**/*build*.log
+            buildtrees/**/*install*.log
             buildtrees/**/package*.log

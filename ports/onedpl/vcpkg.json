@@ -1,6 +1,6 @@
 {
   "name": "onedpl",
-  "version-semver": "2021.4.0",
+  "version-semver": "2022.3.0",
   "port-version": 0,
   "description": "oneAPI DPC++ Library (oneDPL)",
   "homepage": "https://github.com/oneapi-src/oneDPL"

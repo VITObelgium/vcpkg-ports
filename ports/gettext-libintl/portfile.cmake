@@ -1,3 +1,5 @@
+set(VCPKG_BUILD_TYPE release)
+
 if(VCPKG_TARGET_IS_LINUX)
     set(VCPKG_POLICY_EMPTY_PACKAGE enabled)
     if(NOT EXISTS "/usr/include/libintl.h")

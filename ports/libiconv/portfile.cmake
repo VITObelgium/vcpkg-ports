@@ -1,9 +1,11 @@
-if(NOT VCPKG_TARGET_IS_WINDOWS AND NOT VCPKG_TARGET_IS_ANDROID)
+if(NOT VCPKG_TARGET_IS_WINDOWS AND NOT VCPKG_TARGET_IS_ANDROID AND NOT VCPKG_TARGET_IS_IOS)
     set(VCPKG_POLICY_EMPTY_PACKAGE enabled)
     file(MAKE_DIRECTORY "${CURRENT_PACKAGES_DIR}/share/iconv")
     file(COPY "${CMAKE_CURRENT_LIST_DIR}/vcpkg-cmake-wrapper.cmake" DESTINATION "${CURRENT_PACKAGES_DIR}/share/iconv")
     return()
 endif()
+
+set(VCPKG_BUILD_TYPE release)
 
 vcpkg_download_distfile(ARCHIVE
     URLS "https://ftp.gnu.org/gnu/libiconv/libiconv-${VERSION}.tar.gz"

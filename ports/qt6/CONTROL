@@ -1,6 +1,6 @@
 Source: qt6
-Version: 6.3.2
-Port-Version: 1
+Version: 6.6.0
+Port-Version: 0
 Description: Complete software development framework
 Build-Depends: zlib, freetype, harfbuzz, libjpeg-turbo, libpng, pcre2
 
@@ -27,7 +27,3 @@ Description: enable the qtcharts component
 
 Feature: tools
 Description: enable the tools
-
-Feature: angle
-Description: build with angle support
-Build-Depends: angle (windows)

@@ -1,13 +1,24 @@
 set(MAJOR 6)
-set(MINOR 3)
-set(REVISION 2)
+set(MINOR 6)
+set(REVISION 0)
 set(VERSION ${MAJOR}.${MINOR}.${REVISION})
 set(PACKAGE qt-everywhere-src-${VERSION}.tar.xz)
+
+vcpkg_find_acquire_program(PYTHON3)
+vcpkg_find_acquire_program(CLANG)
+
+get_filename_component(PYTHON_DIR ${PYTHON3} DIRECTORY)
+message(STATUS "Python directory: ${PYTHON_DIR}")
+vcpkg_add_to_path(${PYTHON_DIR})
+
+get_filename_component(CLANG_BIN_DIR ${CLANG} DIRECTORY)
+cmake_path(GET CLANG_BIN_DIR PARENT_PATH LLVM_DIR)
+message(STATUS "LLVM directory: ${LLVM_DIR}")
 
 vcpkg_download_distfile(ARCHIVE
     URLS "http://download.qt.io/archive/qt/${MAJOR}.${MINOR}/${VERSION}/single/${PACKAGE}"
     FILENAME "${PACKAGE}"
-    SHA512 cc05f9d23027ceac6bd0f4fe056f950350f3a63d9159b3135f281e74ee572e1dde2f56573e5480682983faf69c108116c2b9655c6d327c0edc0c8ccbecea052b
+    SHA512 75f3e0ff25599200b525e775575f3d40f340b0bdc107a91f6d3a30bd739b5f59b13fb9d7de2e41fe19f711403afb3e9784f6a2d90e3b7a54c7077482f1bec2fb
 )
 
 vcpkg_extract_source_archive_ex(
@@ -17,7 +28,6 @@ vcpkg_extract_source_archive_ex(
     PATCHES
         config_install.patch
         harfbuzz.patch
-        angle.patch
         allow_outside_prefix.patch
 )
 
@@ -30,38 +40,13 @@ FEATURES
     "tools"         FEATURE_tools
     "charts"        FEATURE_charts
     "tiff"          FEATURE_tiff
-    "angle"         FEATURE_angle
 )
-
-vcpkg_find_acquire_program(PYTHON3)
-vcpkg_find_acquire_program(PERL)
-
-get_filename_component(PYTHON_DIR ${PYTHON3} DIRECTORY)
-message(STATUS "Python directory: ${PYTHON_DIR}")
-vcpkg_add_to_path(${PYTHON_DIR})
-
-get_filename_component(PERL_DIR ${PERL} DIRECTORY)
-message(STATUS "Perl directory: ${PERL_DIR}")
-vcpkg_add_to_path(${PERL_DIR})
 
 set(EXTRA_ARGS)
 set(SECURETRANSPORT)
 
 set (FREETYPE_HARFBUZZ system)
 set (OPENGL desktop)
-if (VCPKG_TARGET_IS_WINDOWS AND FEATURE_angle)
-    set (OPENGL es2)
-    list (APPEND EXTRA_ARGS
-        -DFEATURE_opengl_dynamic=OFF
-        -DFEATURE_opengles2=ON
-        -DFEATURE_egl=ON
-        -DFEATURE_eglfs=OFF
-    )
-else ()
-    list (APPEND EXTRA_ARGS
-        -DFEATURE_egl=OFF
-    )
-endif()
 
 if (VCPKG_TARGET_IS_OSX)
     set(ALLOW_SYSTEM_LIBS ON)
@@ -102,7 +87,7 @@ if (FEATURE_tools OR FEATURE_qml)
     list (APPEND EXTRA_ARGS
         -DFEATURE_qml_profiler=OFF
         -DFEATURE_qml_debug=OFF
-        -DFEATURE_qml_itemmodel=OFF
+        -DFEATURE_qml_delegate_model=ON
     )
 endif ()
 
@@ -116,10 +101,12 @@ vcpkg_configure_cmake(
         -DINSTALL_LIBEXECDIR:STRING=bin
         -DINSTALL_PLUGINSDIR:STRING=${qt_plugindir}
         -DINSTALL_QMLDIR:STRING=${qt_qmldir}
+        
+        -DFEATURE_clangcpp=ON
+        -DLLVM_INSTALL_DIR="${LLVM_DIR}"
+        -DClang_DIR="${LLVM_DIR}/lib"
 
         -DVCPKG_ALLOW_SYSTEM_LIBS=${ALLOW_SYSTEM_LIBS}
-        -DQT_NO_MAKE_EXAMPLES:BOOL=TRUE
-        -DQT_NO_MAKE_TESTS:BOOL=TRUE
         -DFEATURE_cpus=OFF
         -DFEATURE_webp=OFF
         -DFEATURE_jasper=OFF
@@ -131,6 +118,9 @@ vcpkg_configure_cmake(
         -DFEATURE_clang=OFF
         -DFEATURE_clangcpp=OFF
         -DFEATURE_gssapi=OFF
+        -DFEATURE_textmarkdownreader=OFF
+        -DFEATURE_androiddeployqt=OFF
+        -DFEATURE_egl=OFF
 
         -DINPUT_opengl=${OPENGL}
         -DINPUT_libjpeg=system
@@ -140,12 +130,15 @@ vcpkg_configure_cmake(
         -DFEATURE_system_pcre2=ON
 
         -DINPUT_freetype=${FREETYPE_HARFBUZZ}
+        -DINPUT_harfbuzz=${FREETYPE_HARFBUZZ}
         
+        -DBUILD_qtgrpc=OFF
         -DBUILD_qtdoc=OFF
         -DBUILD_qt3d=OFF
+        -DBUILD_qtgraphs=OFF
         -DBUILD_qtquick3d=OFF
+        -DBUILD_qtquickeffectmaker=OFF
         -DBUILD_qtquick3dphysics=OFF
-        -DBUILD_qtshadertools=OFF
         -DBUILD_qt5compat=OFF
         -DBUILD_qtcanvas3d=OFF
         -DBUILD_qtconnectivity=OFF
@@ -165,6 +158,7 @@ vcpkg_configure_cmake(
         -DBUILD_qtvirtualkeyboard=OFF
         -DBUILD_qtwebengine=OFF
         -DBUILD_qtwebchannel=OFF
+        -DBUILD_qthttpserver=OFF
         -DBUILD_qtwebsockets=OFF
         -DBUILD_qtwebview=OFF
         -DBUILD_qtcoap=OFF
@@ -234,7 +228,25 @@ vcpkg_configure_cmake(
         -DINSTALL_DESCRIPTIONSDIR:STRING=../share/Qt6/modules
         -DINSTALL_MKSPECSDIR:STRING=../share/Qt6/mkspecs
         -DINSTALL_TRANSLATIONSDIR:STRING=../translations/${QT6_DIRECTORY_PREFIX}
-        
+
+    MAYBE_UNUSED_VARIABLES
+        BUILD_qtcanvas3d
+        BUILD_qtpurchasing
+        BUILD_qtquickcontrols
+        BUILD_qtquickcontrols2
+        BUILD_qtscript
+        FEATURE_cpus
+        FEATURE_geoservices_here
+        FEATURE_geoservices_mapbox
+        FEATURE_geoservices_mapboxgl
+        FEATURE_sql_db2
+        FEATURE_sql_ibase
+        FEATURE_sql_mysql
+        FEATURE_sql_oci
+        FEATURE_sql_odbc
+        FEATURE_sql_psql
+        INPUT_sqlite
+        VCPKG_ALLOW_SYSTEM_LIBS
 )
 vcpkg_install_cmake()
 vcpkg_copy_pdbs()
@@ -277,6 +289,8 @@ if(VCPKG_LIBRARY_LINKAGE STREQUAL "static")
                                 "get_filename_component(_IMPORT_PREFIX \"\${CMAKE_CURRENT_LIST_FILE}\" PATH)\nget_filename_component(_IMPORT_PREFIX \"\${_IMPORT_PREFIX}\" PATH)")
     endforeach()
 endif()
+
+vcpkg_replace_string(${CURRENT_PACKAGES_DIR}/share/Qt6CoreTools/Qt6CoreToolsAdditionalTargetInfo.cmake "${PACKAGE_PREFIX_DIR}/bin" "${PACKAGE_PREFIX_DIR}/tools/qt6")
 
 file(GLOB BIN_FILES ${CURRENT_PACKAGES_DIR}/bin/*)
 file(COPY ${BIN_FILES} DESTINATION ${CURRENT_PACKAGES_DIR}/tools/qt6)

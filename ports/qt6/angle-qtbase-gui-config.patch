@@ -1,0 +1,28 @@
+diff -Naur a/qtbase/src/gui/configure.cmake b/qtbase/src/gui/configure.cmake
+--- a/qtbase/src/gui/configure.cmake	2023-09-13 18:02:48.000000000 +0200
++++ b/qtbase/src/gui/configure.cmake	2023-10-12 09:39:08.628346000 +0200
+@@ -56,7 +56,14 @@
+ endif()
+ qt_find_package(Mtdev PROVIDED_TARGETS PkgConfig::Mtdev MODULE_NAME gui QMAKE_LIB mtdev)
+ qt_find_package(WrapOpenGL PROVIDED_TARGETS WrapOpenGL::WrapOpenGL MODULE_NAME gui QMAKE_LIB opengl)
+-qt_find_package(GLESv2 PROVIDED_TARGETS GLESv2::GLESv2 MODULE_NAME gui QMAKE_LIB opengl_es2)
++if(WIN32)
++    qt_find_package(unofficial-angle PROVIDED_TARGETS unofficial::angle::libEGL unofficial::angle::libGLESv2 MODULE_NAME gui QMAKE_LIB opengl_es2)
++    if (TARGET unofficial::angle::libGLESv2)
++        set(GLESv2_FOUND TRUE)
++    endif ()
++else()
++    qt_find_package(GLESv2 PROVIDED_TARGETS GLESv2::GLESv2 MODULE_NAME gui QMAKE_LIB opengl_es2)
++endif()
+ qt_find_package(Tslib PROVIDED_TARGETS PkgConfig::Tslib MODULE_NAME gui QMAKE_LIB tslib)
+ qt_find_package(WrapVulkanHeaders PROVIDED_TARGETS WrapVulkanHeaders::WrapVulkanHeaders
+     MODULE_NAME gui QMAKE_LIB vulkan MARK_OPTIONAL)
+@@ -746,7 +753,7 @@
+ )
+ qt_feature("opengles2" PUBLIC
+     LABEL "OpenGL ES 2.0"
+-    CONDITION NOT WIN32 AND NOT WATCHOS AND NOT QT_FEATURE_opengl_desktop AND GLESv2_FOUND
++    CONDITION NOT WATCHOS AND NOT QT_FEATURE_opengl_desktop AND GLESv2_FOUND
+     ENABLE INPUT_opengl STREQUAL 'es2'
+     DISABLE INPUT_opengl STREQUAL 'desktop' OR INPUT_opengl STREQUAL 'dynamic' OR INPUT_opengl STREQUAL 'no'
+ )

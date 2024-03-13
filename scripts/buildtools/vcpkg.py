@@ -777,7 +777,7 @@ def run_tests(
 
     cwd = os.getcwd()
     os.chdir(build_dir)
-    args = [ctest_bin, "--output-on-failure"]
+    args = [ctest_bin, "-V", "--output-on-failure"]
 
     if config is not None:
         args.extend(["-C", config])

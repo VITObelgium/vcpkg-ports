@@ -54,12 +54,26 @@ def _args_to_array(args):
         return []
 
 
-def _create_vcpkg_command(triplet, vcpkg_args):
+def obtain_vcpkg_path(triplet):
     vcpkg = _vcpkg_executable_path()
     if not vcpkg or not _vcpkg_version_check(vcpkg):
-        bootstrap_vcpkg(triplet)
+        try:
+            # download a released vcpkg binary
+            download_vcpkg()
+        except RuntimeError as e:
+            # build from source if the download failed for whatever reason
+            print(f"Failed to download vcpkg: {e}")
+            if triplet is not None:
+                print(f"Build vcpkg from source")
+                bootstrap_vcpkg(triplet)
+
         vcpkg = _vcpkg_executable_path()
 
+    return vcpkg
+
+
+def _create_vcpkg_command(triplet, vcpkg_args):
+    vcpkg = obtain_vcpkg_path(triplet)
     vcpkg_root = os.path.join(os.path.dirname(__file__), "..", "..")
 
     args = [vcpkg, "--vcpkg-root", vcpkg_root]
@@ -108,6 +122,30 @@ def find_ninja_binary():
 
     # find ninja on the system
     return shutil.which("ninja")
+
+
+def download_vcpkg():
+    url_base = f"https://github.com/microsoft/vcpkg-tool/releases/download/{vcpkg_tool_version}/"
+    vcpkg_path = pathlib.Path(vcpkg_root_dir()) / "vcpkg"
+
+    if sysconfig.get_platform().startswith("win"):
+        url = url_base + "vcpkg.exe"
+        vcpkg_path = vcpkg_path.with_suffix(".exe")
+    elif sysconfig.get_platform().startswith("linux"):
+        url = url_base + "vcpkg-muslc"
+    elif sysconfig.get_platform().startswith("darwin"):
+        url = url_base + "vcpkg-macos"
+    else:
+        raise RuntimeError("Failed to determine platform")
+
+    print(f"Downloading vcpkg from {url}")
+    import urllib.request
+
+    urllib.request.urlretrieve(url, vcpkg_path)
+
+    if not sysconfig.get_platform().startswith("win"):
+        # make the file executable
+        os.chmod(vcpkg_path, 0o755)
 
 
 def bootstrap_vcpkg(triplet):

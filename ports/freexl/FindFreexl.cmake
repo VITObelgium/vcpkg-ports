@@ -7,7 +7,7 @@ find_path(Freexl_INCLUDE_DIR
 
 find_library(Freexl_LIBRARY NAMES freexl HINTS ${Freexl_ROOT_DIR}/lib)
 find_library(Freexl_LIBRARY_DEBUG NAMES freexld freexl HINTS ${Freexl_ROOT_DIR}/lib)
-find_package(iconv QUIET REQUIRED)
+find_package(Iconv QUIET REQUIRED)
 find_package(unofficial-minizip CONFIG REQUIRED)
 
 find_package_handle_standard_args(Freexl

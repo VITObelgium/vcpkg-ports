@@ -1,50 +1,50 @@
-set(MAJOR 2)
-set(MINOR 4)
-set(REVISION 4)
-set(VERSION R_${MAJOR}_${MINOR}_${REVISION})
+string(REPLACE "." "_" REF "R_${VERSION}")
+
+vcpkg_download_distfile(CVE-2024-28757
+    URLS "https://github.com/libexpat/libexpat/commit/5026213864ba1a11ef03ba2e8111af8654e9404d.diff?full_index=1"
+    FILENAME libexpat-CVE-2024-28757.patch
+    SHA512 0d697b26116c89dd72d946ad04eb8f02ace970a435bbd67ba31841a13309d6a43e2cfa2dea8f6e7d53b478a508f7642dd9ff8c8f367d0d0205e982041f62f849
+)
 
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO libexpat/libexpat
-    REF ${VERSION}
-    SHA512 d9934695e21d7e80fcafaa1f099b0fe850ad770ac1bec23cc321edafbc1e186c7c610d110f1d1448e1d0f1ccc5127a7dfc03da10a116e0b00cc204652e0f8386
+    REF "${REF}"
+    SHA512 cf6c64fc0ca55dd172ca8a6ca10d1fb2c915d0f941b0068f42cb90488022dea73e04119c49a1bd4ab9a5d425ddc132ae5f22260ff6d2e25204637a1169e7bd4f
     HEAD_REF master
-    PATCHES winpostfix.patch
+    PATCHES
+        ${CVE-2024-28757}
 )
 
-if(VCPKG_CMAKE_SYSTEM_NAME STREQUAL Emscripten)
-    # fix arc4random implicit declaration when using emscripten
-    message(STATUS "Applying arc4random patch")
-    vcpkg_replace_string(${SOURCE_PATH}/expat/lib/xmlparse.c "#include <stdio.h>" "unsigned int arc4random(void);\n#include <stdio.h>")
-endif()
+string(COMPARE EQUAL "${VCPKG_LIBRARY_LINKAGE}" "dynamic" EXPAT_LINKAGE)
+string(COMPARE EQUAL "${VCPKG_CRT_LINKAGE}" "static" EXPAT_CRT_LINKAGE)
 
-vcpkg_configure_cmake(
-    SOURCE_PATH ${SOURCE_PATH}/expat
-    PREFER_NINJA
+vcpkg_cmake_configure(
+    SOURCE_PATH "${SOURCE_PATH}/expat"
     OPTIONS
         -DEXPAT_BUILD_EXAMPLES=OFF
         -DEXPAT_BUILD_TESTS=OFF
         -DEXPAT_BUILD_TOOLS=OFF
         -DEXPAT_BUILD_DOCS=OFF
+        -DEXPAT_SHARED_LIBS=${EXPAT_LINKAGE}
+        -DEXPAT_MSVC_STATIC_CRT=${EXPAT_CRT_LINKAGE}
+        -DEXPAT_BUILD_PKGCONFIG=ON
+    MAYBE_UNUSED_VARIABLES
+        EXPAT_MSVC_STATIC_CRT
 )
 
-vcpkg_install_cmake()
-
-file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/include ${CURRENT_PACKAGES_DIR}/debug/lib/pkgconfig)
-file(INSTALL ${SOURCE_PATH}/expat/COPYING DESTINATION ${CURRENT_PACKAGES_DIR}/share/expat RENAME copyright)
-
-vcpkg_fixup_pkgconfig_mod()
+vcpkg_cmake_install()
 vcpkg_copy_pdbs()
+vcpkg_cmake_config_fixup(CONFIG_PATH "lib/cmake/expat-${VERSION}")
+vcpkg_fixup_pkgconfig()
 
-file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/lib/cmake")
-file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/lib/cmake")
+file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/include")
 file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/share")
 file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/share/doc")
 
-file(READ ${CURRENT_PACKAGES_DIR}/include/expat_external.h EXPAT_EXTERNAL_H)
 if(VCPKG_LIBRARY_LINKAGE STREQUAL "static")
-    string(REPLACE "!defined(XML_STATIC)" "/* vcpkg static build !defined(XML_STATIC) */ 0" EXPAT_EXTERNAL_H "${EXPAT_EXTERNAL_H}")
+    vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/include/expat_external.h" "! defined(XML_STATIC)" "0")
 endif()
-file(WRITE ${CURRENT_PACKAGES_DIR}/include/expat_external.h "${EXPAT_EXTERNAL_H}")
 
-vcpkg_test_cmake(PACKAGE_NAME EXPAT MODULE REQUIRED_HEADER expat.h TARGETS EXPAT::EXPAT)
+file(COPY "${CMAKE_CURRENT_LIST_DIR}/vcpkg-cmake-wrapper.cmake" DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}")
+vcpkg_install_copyright(FILE_LIST "${SOURCE_PATH}/expat/COPYING")

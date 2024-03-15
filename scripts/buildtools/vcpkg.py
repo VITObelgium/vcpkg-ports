@@ -226,7 +226,7 @@ def cmake_configure(
         # do not append build type for msvc builds, otherwise debug libraries are not found (multi-config build)
         args.append(f"-DCMAKE_BUILD_TYPE={build_config}")
 
-    if generator == "Ninja":
+    if generator.startswith("Ninja"):
         ninja_bin = find_ninja_binary()
         if not ninja_bin:
             raise RuntimeError("ninja executable could not be found")
@@ -284,7 +284,7 @@ def cmake_configure(
         args.append("-DVCPKG_MANIFEST_MODE=OFF")
 
     my_env = None
-    if generator == "Ninja" and "windows" in triplet:
+    if generator.startswith("Ninja") and "windows" in triplet:
         vspath = (
             subprocess.check_output(
                 [
@@ -753,9 +753,9 @@ def build_project_release(
         raise RuntimeError("Git status is not clean")
 
     if build_name:
-        build_dir = "{}-{}-dist".format(build_name, triplet)
+        build_dir = f"{build_name}-{triplet}-{build_config}-dist"
     else:
-        build_dir = "{}-dist".format(triplet)
+        build_dir = f"{triplet}-{build_config}-dist"
 
     build_dir = os.path.join(project_dir, "build", build_dir)
 

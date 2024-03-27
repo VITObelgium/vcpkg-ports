@@ -27,10 +27,8 @@
             "description": "Build against qt6",
             "dependencies": [
                 {
-                    "name": "qt6",
-                    "features": [
-                        "ssl"
-                    ]
+                    "name": "qtbase",
+                    "features": []
                 }
             ]
         }

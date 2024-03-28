@@ -57,9 +57,12 @@
     "freetype",
     "gui",
     "harfbuzz",
-    "icu",
     "jpeg",
     "network",
+    {
+      "name": "icu",
+      "platform": "linux"
+    },
     {
       "name": "opengl",
       "platform": "!ios"

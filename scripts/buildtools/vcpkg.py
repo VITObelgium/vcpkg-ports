@@ -60,7 +60,7 @@ def obtain_vcpkg_path(triplet):
         try:
             # download a released vcpkg binary
             download_vcpkg()
-        except RuntimeError as e:
+        except Exception as e:
             # build from source if the download failed for whatever reason
             print(f"Failed to download vcpkg: {e}")
             if triplet is not None:

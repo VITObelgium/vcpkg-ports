@@ -1,12 +1,13 @@
-diff -Naur a/CMakeLists.txt b/CMakeLists.txt
---- a/CMakeLists.txt	2022-12-30 16:25:10.000000000 +0100
-+++ b/CMakeLists.txt	2023-03-23 12:03:42.345221700 +0100
-@@ -219,7 +219,7 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 776c88a..ccc057d 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -219,7 +219,7 @@ enable_language(CXX)
  list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
  
  # ZLIB
 -find_package(ZLIB REQUIRED "1.0")
-+find_package(ZLIB REQUIRED)
++find_package(ZLIB "1.0" REQUIRED)
  list(APPEND LXW_PRIVATE_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS})
  message("zlib version: " ${ZLIB_VERSION})
  

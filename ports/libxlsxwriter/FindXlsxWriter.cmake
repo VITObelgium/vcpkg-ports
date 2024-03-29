@@ -1,4 +1,5 @@
 include(FindPackageHandleStandardArgs)
+include(CMakeFindDependencyMacro)
 
 find_path(XlsxWriter_INCLUDE_DIR
     NAMES xlsxwriter.h
@@ -7,6 +8,7 @@ find_path(XlsxWriter_INCLUDE_DIR
 
 find_library(XlsxWriter_LIBRARY NAMES xlsxwriter HINTS ${XlsxWriter_ROOT_DIR}/lib)
 find_library(XlsxWriter_LIBRARY_DEBUG NAMES xlsxwriterd HINTS ${XlsxWriter_ROOT_DIR}/debug/lib)
+find_dependency(MINIZIP NAMES unofficial-minizip CONFIG REQUIRED)
 
 message(STATUS "XlsxWriter library: ${XlsxWriter_LIBRARY}")
 
@@ -28,6 +30,7 @@ if(XlsxWriter_FOUND AND NOT TARGET XlsxWriter::XlsxWriter)
         IMPORTED_LINK_INTERFACE_LANGUAGES "C"
         INTERFACE_INCLUDE_DIRECTORIES "${XlsxWriter_INCLUDE_DIR}"
         IMPORTED_LOCATION ${XlsxWriter_LIBRARY}
+        INTERFACE_LINK_LIBRARIES "unofficial::minizip::minizip"
     )
 
     if(XlsxWriter_LIBRARY_DEBUG)

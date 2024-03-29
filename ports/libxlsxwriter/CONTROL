@@ -1,4 +1,0 @@
-Source: libxlsxwriter
-Version: 1.1.5
-Description: A C library for creating Excel XLSX files.
-Build-Depends: zlib

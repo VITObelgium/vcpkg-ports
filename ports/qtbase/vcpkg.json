@@ -69,13 +69,17 @@
     },
     {
       "name": "openssl",
-      "platform": "!ios"
+      "platform": "!(ios | windows)"
     },
     "pcre2",
     "png",
     {
       "name": "securetransport",
       "platform": "ios"
+    },
+    {
+      "name": "schannel",
+      "platform": "windows"
     },
     "thread",
     "widgets"
@@ -355,6 +359,10 @@
     "securetransport": {
       "description": "Enable Secure Transport",
       "supports": "ios | osx"
+    },
+    "schannel": {
+      "description": "Enable Secure Channel",
+      "supports": "windows"
     },
     "sql": {
       "description": "Qt Sql",

@@ -1,14 +1,11 @@
-# Package Information for pkg-config
-
-prefix=${pcfiledir}/../..
-exec_prefix=${pcfiledir}/../..
-libdir=${pcfiledir}/../../lib
-sharedlibdir=${pcfiledir}/../../lib
-includedir=${pcfiledir}/../../include
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
 
 Name: SQLite
 Description: SQL database engine
-Version: @VERSION@
+Version: @PKGCONFIG_VERSION@
 Libs: -L${libdir} -lsqlite3
-Libs.private: -lm -ldl -lpthread 
+Libs.private: @PKGCONFIG_LIBS_PRIVATE@
 Cflags: -I${includedir}

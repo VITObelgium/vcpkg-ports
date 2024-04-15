@@ -32,7 +32,7 @@ if (@GDAL_LIBXML2_SUPPORT@)
 endif ()
 
 if (@GDAL_OGR_FRMTS_SQLITE@)
-    find_dependency(sqlite3 CONFIG REQUIRED)
+    find_dependency(unofficial-sqlite3 CONFIG REQUIRED)
     find_dependency(libspatialite REQUIRED)
 endif ()
 

@@ -46,7 +46,7 @@ find_package_handle_standard_args(Sqlpp11_Postgresql
     ${Sqlpp11_NAME_MISMATCHED}
 )
 
-find_package(sqlite3 CONFIG QUIET)
+find_package(unofficial-sqlite3 CONFIG QUIET)
 find_package(PostgreSQL QUIET)
 
 mark_as_advanced(
@@ -73,7 +73,7 @@ if(TARGET sqlite3 AND Sqlpp11_Sqlite3_FOUND AND NOT TARGET Sqlpp11::Sqlite3)
     set_target_properties(Sqlpp11::Sqlite3 PROPERTIES
         IMPORTED_LINK_INTERFACE_LANGUAGES "CXX"
         INTERFACE_INCLUDE_DIRECTORIES "${Sqlpp11_Sqlite3_INCLUDE_DIR}"
-        INTERFACE_LINK_LIBRARIES sqlite3
+        INTERFACE_LINK_LIBRARIES unofficial::sqlite3::sqlite3
         IMPORTED_LOCATION ${Sqlpp11_Sqlite3_LIBRARY}
     )
 

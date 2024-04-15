@@ -1,6 +1,6 @@
 {
   "name": "sqlpp11",
-  "version-semver": "0.61.0-1",
+  "version-semver": "0.61.0-2",
   "port-version": 4,
   "description": "A type safe SQL template library for C++.",
   "homepage": "https://github.com/rbock/sqlpp11/",

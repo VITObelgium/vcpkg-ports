@@ -38,7 +38,7 @@ endif ()
 find_package(Iconv REQUIRED)
 find_package(LibXml2 REQUIRED)
 find_package(GEOS CONFIG REQUIRED)
-find_package(Sqlite3 CONFIG REQUIRED)
+find_package(unofficial-sqlite3 CONFIG REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(PROJ CONFIG REQUIRED)
 find_package(Threads REQUIRED)
@@ -336,7 +336,7 @@ PRIVATE
 
 target_link_libraries(spatialitecommon 
 PUBLIC
-    sqlite3
+    unofficial::sqlite3::sqlite3
 PRIVATE
     ${CMAKE_DL_LIBS}
     Threads::Threads

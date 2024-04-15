@@ -14,7 +14,7 @@ diff -Naur -x .DS_Store a/platform/qt/qt.cmake b/platform/qt/qt.cmake
  
  if(NOT MBGL_QT_WITH_INTERNAL_SQLITE)
 -    find_package(Qt${QT_VERSION_MAJOR}Sql REQUIRED)
-+    find_package(sqlite3 CONFIG REQUIRED)
++    find_package(unofficial-sqlite3 CONFIG REQUIRED)
  else()
      message(STATUS "Using internal sqlite")
      include(${PROJECT_SOURCE_DIR}/vendor/sqlite.cmake)
@@ -32,7 +32,7 @@ diff -Naur -x .DS_Store a/platform/qt/qt.cmake b/platform/qt/qt.cmake
          Qt${QT_VERSION_MAJOR}::Gui
          Qt${QT_VERSION_MAJOR}::Network
 -        $<IF:$<BOOL:${MBGL_QT_WITH_INTERNAL_SQLITE}>,mbgl-vendor-sqlite,Qt${QT_VERSION_MAJOR}::Sql>
-+        $<IF:$<BOOL:${MBGL_QT_WITH_INTERNAL_SQLITE}>,mbgl-vendor-sqlite,sqlite3>
++        $<IF:$<BOOL:${MBGL_QT_WITH_INTERNAL_SQLITE}>,mbgl-vendor-sqlite,unofficial::sqlite3::sqlite3>
          $<$<PLATFORM_ID:Linux>:$<IF:$<BOOL:${MBGL_QT_WITH_INTERNAL_ICU}>,mbgl-vendor-icu,ICU::uc>>
          mbgl-vendor-nunicode
  )
@@ -89,7 +89,7 @@ diff -Naur -x .DS_Store a/platform/qt/qt.cmake b/platform/qt/qt.cmake
          PUBLIC
 -            $<$<NOT:$<BOOL:${MBGL_QT_WITH_INTERNAL_SQLITE}>>:Qt${QT_VERSION_MAJOR}::Sql>
 -            $<$<NOT:$<OR:$<PLATFORM_ID:Windows>,$<PLATFORM_ID:Emscripten>>>:z>
-+            $<$<NOT:$<BOOL:${MBGL_QT_WITH_INTERNAL_SQLITE}>>:sqlite3>
++            $<$<NOT:$<BOOL:${MBGL_QT_WITH_INTERNAL_SQLITE}>>:unofficial::sqlite3::sqlite3>
 +            ZLIB::ZLIB
      )
  endif()
@@ -103,7 +103,7 @@ diff -Naur a/platform/qt/QMapLibreGLConfig.cmake.in b/platform/qt/QMapLibreGLCon
  if(@MBGL_QT_STATIC@ AND NOT @MBGL_QT_INSIDE_PLUGIN@ AND NOT @MBGL_QT_WITH_INTERNAL_SQLITE@)
 -  find_dependency(Qt@QT_VERSION_MAJOR@
 -                  COMPONENTS Sql @REQUIRED_QT_VERSION@)
-+  find_dependency(sqlite3 CONFIG REQUIRED)
++  find_dependency(unofficial-sqlite3 CONFIG REQUIRED)
  endif()
  
 +find_dependency(ZLIB REQUIRED)

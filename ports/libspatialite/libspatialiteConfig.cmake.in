@@ -7,7 +7,7 @@ find_dependency(Threads REQUIRED)
 find_dependency(Iconv REQUIRED)
 find_dependency(LibXml2 REQUIRED)
 find_dependency(GEOS CONFIG REQUIRED)
-find_dependency(Sqlite3 CONFIG REQUIRED)
+find_dependency(unofficial-sqlite3 CONFIG REQUIRED)
 find_dependency(ZLIB REQUIRED)
 find_dependency(PROJ CONFIG REQUIRED)
 

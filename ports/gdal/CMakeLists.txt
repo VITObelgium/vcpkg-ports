@@ -146,6 +146,7 @@ endif ()
 
 if (GDAL_OGR_FRMTS_SQLITE)
     find_package(libspatialite REQUIRED)
+    find_package(unofficial-sqlite3 REQUIRED)
     add_compile_definitions(HAVE_SQLITE SQLITE_ENABLED)
 endif ()
 
@@ -917,7 +918,7 @@ if (GDAL_FRMTS_MBTILES)
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/ogr/ogrsf_frmts/sqlite>
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/ogr/ogrsf_frmts/geojson/libjson>
     )
-    target_link_libraries(frmts PRIVATE $<TARGET_NAME_IF_EXISTS:GEOS::geos_c> sqlite3)
+    target_link_libraries(frmts PRIVATE $<TARGET_NAME_IF_EXISTS:GEOS::geos_c> unofficial::sqlite3::sqlite3)
     target_compile_definitions(frmts PRIVATE FRMT_mbtiles)
 endif ()
 
@@ -1308,7 +1309,7 @@ if (GDAL_OGR_FRMTS_MVT)
         ogr/ogrsf_frmts/mvt/mvt_tile.cpp
     )
     target_compile_definitions(ogr PRIVATE MVT_ENABLED)
-    target_link_libraries(ogr PRIVATE sqlite3)
+    target_link_libraries(ogr PRIVATE unofficial::sqlite3::sqlite3)
     target_include_directories(ogr PRIVATE
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/ogr/ogrsf_frmts/osm>
     )

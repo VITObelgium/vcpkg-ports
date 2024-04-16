@@ -127,13 +127,13 @@ def find_ninja_binary():
 def download_vcpkg():
     url_base = f"https://github.com/microsoft/vcpkg-tool/releases/download/{vcpkg_tool_version}/"
     vcpkg_path = pathlib.Path(vcpkg_root_dir()) / "vcpkg"
-
-    if sysconfig.get_platform().startswith("win"):
+    platform = sysconfig.get_platform()
+    if platform.startswith("win"):
         url = url_base + "vcpkg.exe"
         vcpkg_path = vcpkg_path.with_suffix(".exe")
-    elif sysconfig.get_platform().startswith("linux"):
+    elif platform.startswith("linux"):
         url = url_base + "vcpkg-muslc"
-    elif sysconfig.get_platform().startswith("darwin"):
+    elif platform.startswith("darwin") or platform.startswith("macosx"):
         url = url_base + "vcpkg-macos"
     else:
         raise RuntimeError("Failed to determine platform")

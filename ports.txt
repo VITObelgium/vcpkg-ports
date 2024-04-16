@@ -1,6 +1,5 @@
 asio
 benchmark
-boost
 csv-parser
 doctest
 eigen3

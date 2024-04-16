@@ -21,7 +21,7 @@
       "description": "Postgresql connector",
       "dependencies": [
         "libpq",
-        "boost"
+        "boost-preprocessor"
       ]
     }
   }

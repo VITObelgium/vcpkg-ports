@@ -11,7 +11,7 @@ jobs:
       - name: Bootstrap the ports on OSX
         run: |
           brew install nasm ninja automake autoconf autoconf-archive
-          python3 scripts/buildtools/vcpkg.py --triplet x64-osx-10_15 --ports-dir . --clean-after-build
+          python3 scripts/buildtools/vcpkg.py --triplet x64-osx --ports-dir . --clean-after-build
       - name: Archive build logs
         if: ${{ failure() }}
         uses: actions/upload-artifact@v4

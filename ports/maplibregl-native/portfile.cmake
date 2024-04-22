@@ -20,9 +20,9 @@ if (FEATURE_qt5 EQUAL FEATURE_qt6)
 endif ()
 
 vcpkg_from_git_mod(
-    URL https://github.com/maplibre/maplibre-gl-native.git
+    URL https://github.com/maplibre/maplibre-native.git
     OUT_SOURCE_PATH SOURCE_PATH
-    REF  android-v10.0.2
+    REF a35fa30ce1b831304b5386872368a28a46650b02
     HEAD_REF main
 )
 
@@ -69,6 +69,8 @@ vcpkg_configure_cmake(
         -DMBGL_QT_LIBRARY_ONLY=ON
         -DMBGL_QT_STATIC=ON
         ${ADDITIONAL_ARGS}
+    MAYBE_UNUSED_VARIABLES
+        VCPKG_ALLOW_SYSTEM_LIBS
 )
 
 vcpkg_install_cmake()

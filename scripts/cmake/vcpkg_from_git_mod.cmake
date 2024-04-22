@@ -91,14 +91,31 @@ function(vcpkg_from_git_mod)
 
         string(REPLACE "/" "-" SANITIZED_REF "${_vdud_REF}")
         set(LOGNAME clone-${TARGET_TRIPLET}-${_vdud_REF})
-        set(GIT_COMMAND ${GIT_EXECUTABLE} clone ${RECURSE_ARG} --branch ${_vdud_REF} --single-branch ${_vdud_URL})
+        
+
+        set(VCPKG_VERBOSE ON)
+        set(GIT_CLONE_COMMAND ${GIT_EXECUTABLE} clone ${RECURSE_ARG} --branch ${_vdud_HEAD_REF} ${_vdud_URL} git-src)
+        set(GIT_CHECKOUT_COMMAND ${GIT_EXECUTABLE} checkout ${_vdud_REF})
+        
         if (VCPKG_VERBOSE)
-            string(JOIN " " GIT_COMMAND_STRING ${GIT_COMMAND})
+            string(JOIN " " GIT_COMMAND_STRING ${GIT_CLONE_COMMAND})
             message(STATUS "${GIT_COMMAND_STRING}")
         endif ()
 
-        execute_process(COMMAND ${GIT_COMMAND}
+        if (VCPKG_VERBOSE)
+            string(JOIN " " GIT_COMMAND_STRING ${GIT_CHECKOUT_COMMAND})
+            message(STATUS "${GIT_COMMAND_STRING}")
+        endif ()
+
+        execute_process(COMMAND ${GIT_CLONE_COMMAND}
             WORKING_DIRECTORY ${WORKING_DIRECTORY}
+            OUTPUT_FILE ${CURRENT_BUILDTREES_DIR}/${LOGNAME}-out.log
+            ERROR_FILE ${CURRENT_BUILDTREES_DIR}/${LOGNAME}-err.log
+            RESULT_VARIABLE git_error_code
+        )
+
+        execute_process(COMMAND ${GIT_CHECKOUT_COMMAND}
+            WORKING_DIRECTORY ${WORKING_DIRECTORY}/git-src
             OUTPUT_FILE ${CURRENT_BUILDTREES_DIR}/${LOGNAME}-out.log
             ERROR_FILE ${CURRENT_BUILDTREES_DIR}/${LOGNAME}-err.log
             RESULT_VARIABLE git_error_code

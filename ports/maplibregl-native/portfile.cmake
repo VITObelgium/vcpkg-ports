@@ -22,7 +22,7 @@ endif ()
 vcpkg_from_git_mod(
     URL https://github.com/maplibre/maplibre-native.git
     OUT_SOURCE_PATH SOURCE_PATH
-    REF a35fa30ce1b831304b5386872368a28a46650b02
+    REF android-v10.1.0
     HEAD_REF main
 )
 
@@ -50,11 +50,7 @@ vcpkg_execute_required_process(
 vcpkg_apply_patches(
     SOURCE_PATH ${SOURCE_PATH}
     PATCHES
-        cmake-fixes-main.patch
-        cmake-fixes-qt.patch
-        compression-zlib.patch
-        cmake-install-vendor-headers.patch
-        glyph-rasterizer.patch
+        cmake-changes.patch
 )
     
 vcpkg_configure_cmake(
@@ -62,12 +58,13 @@ vcpkg_configure_cmake(
     PREFER_NINJA
     OPTIONS
         -DVCPKG_ALLOW_SYSTEM_LIBS=ON
-        -DMBGL_WITH_RTTI=ON
-        -DMBGL_WITH_QT=ON
-        -DMBGL_WITH_COVERAGE=OFF
-        -DMBGL_WITH_WERROR=OFF
-        -DMBGL_QT_LIBRARY_ONLY=ON
-        -DMBGL_QT_STATIC=ON
+        -DMLN_WITH_RTTI=ON
+        -DMLN_WITH_COVERAGE=OFF
+        -DMLN_WITH_WERROR=OFF
+        -DMLN_WITH_QT=ON
+        -DMLN_QT_LIBRARY_ONLY=ON
+        -DMLN_QT_STATIC=ON
+        -DMLN_QT_WITH_INTERNAL_SQLITE=ON
         ${ADDITIONAL_ARGS}
     MAYBE_UNUSED_VARIABLES
         VCPKG_ALLOW_SYSTEM_LIBS

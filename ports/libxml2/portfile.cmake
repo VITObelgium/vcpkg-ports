@@ -10,6 +10,12 @@ vcpkg_from_gitlab(
         fix_cmakelist.patch
 )
 
+set(EXTRA_ARGS)
+if (VCPKG_TARGET_IS_OSX)
+    # find the system iconv on osx
+    list(APPEND EXTRA_ARGS -DVCPKG_ALLOW_SYSTEM_LIBS=ON)
+endif ()
+
 vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
     FEATURES
         "ftp" LIBXML2_WITH_FTP
@@ -50,6 +56,7 @@ vcpkg_cmake_configure(
         -DLIBXML2_WITH_XINCLUDE=ON
         -DLIBXML2_WITH_XPATH=ON
         -DLIBXML2_WITH_XPTR=ON
+        ${EXTRA_ARGS}
 )
 
 vcpkg_cmake_install()

@@ -1,57 +1,89 @@
-vcpkg_from_github(
+vcpkg_from_gitlab(
+    GITLAB_URL https://gitlab.gnome.org/
     OUT_SOURCE_PATH SOURCE_PATH
     REPO GNOME/libxml2
-    REF v2.9.10
-    SHA512 de8d7c6c90f9d0441747deec320c4887faee1fd8aff9289115caf7ce51ab73b6e2c4628ae7eaad4a33a64561d23a92fd5e8a5afa7fa74183bdcd9a7b06bc67f1
+    REF "v${VERSION}"
+    SHA512 289d8e30a894a3efde78e06d1cedadc1491f4abdc2c0b653bb5410be48338aacec29e0ca23e1f1cac2725fd4e2114a8d20dcdaa80cf7f5b34302342d6f5efe10
     HEAD_REF master
+    PATCHES
+        disable-docs.patch
+        fix_cmakelist.patch
 )
 
-file(COPY ${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt DESTINATION ${SOURCE_PATH})
-
-if (VCPKG_TARGET_IS_UWP)
-    message(WARNING "Feature network couldn't be enabled on UWP, disable http and ftp automatically.")
-    set(ENABLE_NETWORK 0)
-else()
-    set(ENABLE_NETWORK 1)
-endif()
-
-set(EXTRA_ARGS)
-if (VCPKG_TARGET_IS_OSX)
-    # find the system iconv on osx
-    list(APPEND EXTRA_ARGS -DVCPKG_ALLOW_SYSTEM_LIBS=ON)
-endif ()
-
-vcpkg_configure_cmake(
-    SOURCE_PATH ${SOURCE_PATH}
-    PREFER_NINJA
+vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
+    FEATURES
+        "ftp" LIBXML2_WITH_FTP
+        "http" LIBXML2_WITH_HTTP
+        "iconv" LIBXML2_WITH_ICONV
+        "legacy" LIBXML2_WITH_LEGACY
+        "lzma" LIBXML2_WITH_LZMA
+        "zlib" LIBXML2_WITH_ZLIB
+        "tools" LIBXML2_WITH_PROGRAMS
+        "icu"  LIBXML2_WITH_ICU
+)
+vcpkg_cmake_configure(
+    SOURCE_PATH "${SOURCE_PATH}"
     OPTIONS
-        -DPORT_DIR=${CMAKE_CURRENT_LIST_DIR}
-        -DWITH_HTTP=${ENABLE_NETWORK}
-        -DWITH_FTP=${ENABLE_NETWORK}
-        ${EXTRA_ARGS}
-    OPTIONS_DEBUG
-        -DINSTALL_HEADERS=OFF
+        ${FEATURE_OPTIONS}
+        -DLIBXML2_WITH_TESTS=OFF
+        -DLIBXML2_WITH_HTML=ON
+        -DLIBXML2_WITH_C14N=ON
+        -DLIBXML2_WITH_CATALOG=ON
+        -DLIBXML2_WITH_DEBUG=ON
+        -DLIBXML2_WITH_ISO8859X=ON
+        -DLIBXML2_WITH_MEM_DEBUG=OFF
+        -DLIBXML2_WITH_MODULES=ON
+        -DLIBXML2_WITH_OUTPUT=ON
+        -DLIBXML2_WITH_PATTERN=ON
+        -DLIBXML2_WITH_PUSH=ON
+        -DLIBXML2_WITH_PYTHON=OFF
+        -DLIBXML2_WITH_READER=ON
+        -DLIBXML2_WITH_REGEXPS=ON
+        -DLIBXML2_WITH_SAX1=ON
+        -DLIBXML2_WITH_SCHEMAS=ON
+        -DLIBXML2_WITH_SCHEMATRON=ON
+        -DLIBXML2_WITH_THREADS=ON
+        -DLIBXML2_WITH_THREAD_ALLOC=OFF
+        -DLIBXML2_WITH_TREE=ON
+        -DLIBXML2_WITH_VALID=ON
+        -DLIBXML2_WITH_WRITER=ON
+        -DLIBXML2_WITH_XINCLUDE=ON
+        -DLIBXML2_WITH_XPATH=ON
+        -DLIBXML2_WITH_XPTR=ON
 )
 
-vcpkg_install_cmake()
+vcpkg_cmake_install()
 
-if(VCPKG_TARGET_IS_WINDOWS)
-    if(NOT VCPKG_BUILD_TYPE OR VCPKG_BUILD_TYPE STREQUAL "debug")
-        vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/debug/lib/pkgconfig/libxml-2.0.pc" "-lxml2" "-llibxml2d")
-    endif()
-    vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/lib/pkgconfig/libxml-2.0.pc" "-lxml2" "-llibxml2")
-endif ()
-if(NOT VCPKG_BUILD_TYPE OR VCPKG_BUILD_TYPE STREQUAL "debug")
-    vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/debug/lib/pkgconfig/libxml-2.0.pc" "\nRequires:\n" "\nRequires.private: liblzma zlib\n")
-endif()
-vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/lib/pkgconfig/libxml-2.0.pc" "\nRequires:\n" "\nRequires.private: liblzma zlib\n")
+vcpkg_cmake_config_fixup(CONFIG_PATH "lib/cmake/libxml2")
 vcpkg_fixup_pkgconfig()
 
 vcpkg_copy_pdbs()
 
-if(VCPKG_LIBRARY_LINKAGE STREQUAL "static")
-    file(COPY ${CMAKE_CURRENT_LIST_DIR}/vcpkg-cmake-wrapper.cmake DESTINATION ${CURRENT_PACKAGES_DIR}/share/${PORT})
+if("tools" IN_LIST FEATURES)
+    vcpkg_copy_tools(TOOL_NAMES xmllint xmlcatalog AUTO_CLEAN)
 endif()
 
-file(COPY ${CMAKE_CURRENT_LIST_DIR}/usage DESTINATION ${CURRENT_PACKAGES_DIR}/share/${PORT})
-file(INSTALL ${SOURCE_PATH}/Copyright DESTINATION ${CURRENT_PACKAGES_DIR}/share/${PORT} RENAME copyright)
+if(VCPKG_LIBRARY_LINKAGE STREQUAL "static")
+    file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/bin" "${CURRENT_PACKAGES_DIR}/debug/bin")
+endif()
+
+if(VCPKG_LIBRARY_LINKAGE STREQUAL static)
+    set(_file "${CURRENT_PACKAGES_DIR}/include/libxml2/libxml/xmlexports.h")
+    file(READ "${_file}" _contents)
+    string(REPLACE "#ifdef LIBXML_STATIC" "#undef LIBXML_STATIC\n#define LIBXML_STATIC\n#ifdef LIBXML_STATIC" _contents "${_contents}")
+    file(WRITE "${_file}" "${_contents}")
+endif()
+
+file(COPY "${CURRENT_PACKAGES_DIR}/include/libxml2/" DESTINATION "${CURRENT_PACKAGES_DIR}/include") # TODO: Fix usage in all dependent ports hardcoding the wrong include path.
+
+# Cleanup
+file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/include")
+file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/share")
+file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/lib/xml2Conf.sh" "${CURRENT_PACKAGES_DIR}/debug/lib/xml2Conf.sh")
+
+file(COPY
+    "${CMAKE_CURRENT_LIST_DIR}/vcpkg-cmake-wrapper.cmake"
+    "${CMAKE_CURRENT_LIST_DIR}/usage"
+    DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}"
+)
+vcpkg_install_copyright(FILE_LIST "${SOURCE_PATH}/Copyright")

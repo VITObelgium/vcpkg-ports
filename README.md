@@ -16,4 +16,4 @@ e.g. Debian based system
 #### Build the vcpkg binary
 ```cmake -P bootstrap.cmake```
 #### Install packages
-```./bin/vcpkg install gdal[spatialite]```
+```./bin/vcpkg install gdal[libspatialite]```

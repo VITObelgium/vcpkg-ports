@@ -10,7 +10,7 @@ doctest
 eigen3
 expat
 fmt
-gdal[tools,geos,expat,sqlite]
+gdal[tools,geos,expat,sqlite3]
 gsl
 gtest
 hdf5[cpp]

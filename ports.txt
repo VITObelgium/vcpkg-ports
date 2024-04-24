@@ -5,7 +5,7 @@ doctest
 eigen3
 fmt
 freetype
-gdal[geos,sqlite,png,jpeg,gif,expat,pcraster,network,tools]
+gdal[geos,libspatialite,sqlite3,png,jpeg,gif,expat,curl,tools]
 gsl
 harfbuzz
 hdf5[cpp]

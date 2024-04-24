@@ -1,15 +1,16 @@
 set(VERSION_MAJOR 3)
 set(VERSION_MINOR 12)
-set(VERSION_REVISION 0)
+set(VERSION_REVISION 1)
 set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_REVISION})
 set(PACKAGE_NAME ${PORT}-${VERSION})
 set(PACKAGE ${PACKAGE_NAME}.tar.bz2)
 
 
 vcpkg_download_distfile(ARCHIVE
-    URLS "http://download.osgeo.org/geos/${PACKAGE}"
+    URLS "https://github.com/libgeos/geos/releases/download/${VERSION}/${PACKAGE}"
+         "http://download.osgeo.org/geos/${PACKAGE}"
     FILENAME "${PACKAGE}"
-    SHA512 cc67d9516d24ada2ceaf7c81ff9df40033bb15123160bf7e70fdff97b72c798f4b9ba8223c1eaebac0f33dcb530bc8cf42af000af3491f3227420290d89332d5
+    SHA512 192eba83c651e935b3c9a5cc19321285e4d28b9da9d7a1fa15d9471803027e630db7a7ecea96343d9c5f9846d279062ca3694fe47916a4ebf5698ae66dd5210d
 )
 vcpkg_extract_source_archive_ex(
     OUT_SOURCE_PATH SOURCE_PATH

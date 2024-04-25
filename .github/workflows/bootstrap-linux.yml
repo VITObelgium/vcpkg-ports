@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install nasm
-        run: sudo apt-get install nasm openssl ninja-build autoconf-archive
+        run: sudo apt-get install nasm openssl ninja-build autoconf-archive linux-libc-dev
       - name: Bootstrap the ports
         run: python3 scripts/buildtools/vcpkg.py --triplet x64-linux --ports-dir . --clean-after-build
       - name: Archive build logs

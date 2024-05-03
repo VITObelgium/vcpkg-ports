@@ -6,6 +6,7 @@ vcpkg_from_github(
     HEAD_REF 1.4
     PATCHES 
        correct_cmake_config_path.patch
+       asm.patch
 )
 
 vcpkg_cmake_configure(

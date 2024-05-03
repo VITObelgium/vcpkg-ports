@@ -159,6 +159,20 @@ index cd90220129..fb035e6ea7 100644
          $<BUILD_INTERFACE:mbgl-vendor-parsedate>
          $<BUILD_INTERFACE:mbgl-vendor-nunicode>
          $<BUILD_INTERFACE:mbgl-vendor-csscolorparser>
+diff --git a/platform/qt/src/mbgl/local_glyph_rasterizer.cpp b/platform/qt/src/mbgl/local_glyph_rasterizer.cpp
+index 3a3e7c278c..a0c0ea5c16 100644
+--- a/platform/qt/src/mbgl/local_glyph_rasterizer.cpp
++++ b/platform/qt/src/mbgl/local_glyph_rasterizer.cpp
+@@ -40,8 +40,7 @@ LocalGlyphRasterizer::LocalGlyphRasterizer(const std::optional<std::string>& fon
+ LocalGlyphRasterizer::~LocalGlyphRasterizer() {}
+ 
+ bool LocalGlyphRasterizer::canRasterizeGlyph(const FontStack&, GlyphID glyphID) {
+-    return impl->isConfigured() && impl->metrics->inFont(glyphID) &&
+-           util::i18n::allowsFixedWidthGlyphGeneration(glyphID);
++    return impl->isConfigured() && impl->metrics->inFont(glyphID);
+ }
+ 
+ Glyph LocalGlyphRasterizer::rasterizeGlyph(const FontStack&, GlyphID glyphID) {
 diff --git a/platform/windows/vendor/vcpkg b/platform/windows/vendor/vcpkg
 index 501db0f17e..37fce29a26 160000
 --- a/platform/windows/vendor/vcpkg

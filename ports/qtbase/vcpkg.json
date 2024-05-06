@@ -1,7 +1,6 @@
 {
   "name": "qtbase",
-  "version": "6.6.1",
-  "port-version": 11,
+  "version": "6.6.3",
   "description": "Qt Base (Core, Gui, Widgets, Network, ...)",
   "homepage": "https://www.qt.io/",
   "license": null,
@@ -51,25 +50,24 @@
     "zlib"
   ],
   "default-features": [
+    "brotli",
     "concurrent",
+    "dbus",
     "default-features",
     "doubleconversion",
     "freetype",
     "gui",
     "harfbuzz",
+    "icu",
     "jpeg",
     "network",
-    {
-      "name": "icu",
-      "platform": "linux"
-    },
     {
       "name": "opengl",
       "platform": "!ios"
     },
     {
       "name": "openssl",
-      "platform": "!(ios | windows)"
+      "platform": "!ios"
     },
     "pcre2",
     "png",
@@ -81,8 +79,13 @@
       "name": "schannel",
       "platform": "windows"
     },
+    "sql",
+    "sql-psql",
+    "sql-sqlite",
+    "testlib",
     "thread",
-    "widgets"
+    "widgets",
+    "zstd"
   ],
   "features": {
     "appstore-compliant": {

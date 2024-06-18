@@ -1,25 +1,29 @@
 #header-only library
-vcpkg_download_distfile(
-	ARCHIVE_FILE
-	URLS "https://netix.dl.sourceforge.net/project/asio/asio/1.12.2%20%28Stable%29/asio-1.12.2.zip"
-	FILENAME "asio-1.12.2.zip"
-	SHA512 f0e945a7c7bc25c15b375b76f3aaff7c6c2c2ca981d1ee207990d14425b23aee2365d295ae78c216b67d6f70cc9d99a8558a879f5c2cd882dc91f56e7e643cc4
+
+vcpkg_from_github(
+    OUT_SOURCE_PATH SOURCE_PATH
+    REPO chriskohlhoff/asio
+    REF asio-1-30-2
+    SHA512 cfba1998d4f666156e751c4cab1e504441b368efbf344e22de30f8b983670a88d045d3ca82f197b95522a2026262274f93bc3061210781ce30c35c71a386ce6e
+    HEAD_REF master
 )
-
-vcpkg_extract_source_archive(
-	${ARCHIVE_FILE}
-)
-
-set(SOURCE_PATH ${CURRENT_BUILDTREES_DIR}/src/asio-1.12.2)
-
-# Handle copyright
-file(COPY ${SOURCE_PATH}/COPYING DESTINATION ${CURRENT_PACKAGES_DIR}/share/${PORT})
-file(RENAME ${CURRENT_PACKAGES_DIR}/share/${PORT}/COPYING ${CURRENT_PACKAGES_DIR}/share/${PORT}/copyright)
-
-# Copy the asio header files
-file(INSTALL ${SOURCE_PATH}/include DESTINATION ${CURRENT_PACKAGES_DIR} FILES_MATCHING PATTERN "*.hpp" PATTERN "*.ipp")
 
 # Always use "ASIO_STANDALONE" to avoid boost dependency
-file(READ "${CURRENT_PACKAGES_DIR}/include/asio/detail/config.hpp" _contents)
-string(REPLACE "defined(ASIO_STANDALONE)" "!defined(VCPKG_DISABLE_ASIO_STANDALONE)" _contents "${_contents}")
-file(WRITE "${CURRENT_PACKAGES_DIR}/include/asio/detail/config.hpp" "${_contents}")
+vcpkg_replace_string("${SOURCE_PATH}/asio/include/asio/detail/config.hpp" "defined(ASIO_STANDALONE)" "!defined(VCPKG_DISABLE_ASIO_STANDALONE)")
+
+# CMake install
+file(COPY "${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt" DESTINATION "${SOURCE_PATH}")
+vcpkg_cmake_configure(
+    SOURCE_PATH "${SOURCE_PATH}"
+)
+vcpkg_cmake_install()
+
+vcpkg_cmake_config_fixup()
+file(INSTALL
+    "${CMAKE_CURRENT_LIST_DIR}/asio-config.cmake"
+    DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}"
+)
+file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug")
+
+# Handle copyright
+vcpkg_install_copyright(FILE_LIST "${SOURCE_PATH}/asio/LICENSE_1_0.txt")

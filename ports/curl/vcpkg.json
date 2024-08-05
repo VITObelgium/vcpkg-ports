@@ -1,10 +1,9 @@
 {
   "name": "curl",
-  "version": "7.84.0",
-  "port-version": 2,
+  "version": "8.9.1",
   "description": "A library for transferring data with URLs",
   "homepage": "https://curl.se/",
-  "license": null,
+  "license": "curl AND ISC AND BSD-3-Clause",
   "dependencies": [
     {
       "name": "vcpkg-cmake",
@@ -31,6 +30,32 @@
       "description": "c-ares support",
       "dependencies": [
         "c-ares"
+      ]
+    },
+    "gnutls": {
+      "description": "SSL support (gnutls)",
+      "dependencies": [
+        {
+          "name": "libgnutls",
+          "platform": "!windows | mingw"
+        },
+        {
+          "name": "shiftmedia-libgnutls",
+          "platform": "windows & !mingw"
+        }
+      ]
+    },
+    "gsasl": {
+      "description": "GSASL support (libgsasl)",
+      "dependencies": [
+        "gsasl"
+      ]
+    },
+    "gssapi": {
+      "description": "krb5 support",
+      "supports": "!windows",
+      "dependencies": [
+        "krb5"
       ]
     },
     "http2": {
@@ -73,6 +98,23 @@
         "libidn2"
       ]
     },
+    "ldap": {
+      "description": "LDAP support",
+      "supports": "!uwp",
+      "dependencies": [
+        {
+          "name": "curl",
+          "default-features": false,
+          "features": [
+            "non-http"
+          ]
+        },
+        {
+          "name": "openldap",
+          "platform": "!windows"
+        }
+      ]
+    },
     "mbedtls": {
       "description": "SSL support (mbedTLS)",
       "dependencies": [
@@ -88,8 +130,15 @@
         "openssl"
       ]
     },
+    "psl": {
+      "description": "Use psl support (libpsl)",
+      "dependencies": [
+        "libpsl"
+      ]
+    },
     "schannel": {
       "description": "SSL support (Secure Channel)",
+      "supports": "windows & !uwp",
       "dependencies": [
         {
           "name": "curl",
@@ -101,7 +150,8 @@
       ]
     },
     "sectransp": {
-      "description": "SSL support (sectransp)"
+      "description": "SSL support (sectransp)",
+      "supports": "osx | ios"
     },
     "ssh": {
       "description": "SSH support via libssh2",
@@ -153,28 +203,35 @@
       ]
     },
     "sspi": {
-      "description": "SSPI support"
+      "description": "SSPI support",
+      "supports": "windows & !uwp"
     },
     "tool": {
-      "description": "Builds curl executable"
+      "description": "Builds curl executable",
+      "supports": "!uwp"
+    },
+    "websockets": {
+      "description": "WebSocket support (experimental)"
     },
     "winidn": {
-      "description": "WinIDN support"
+      "description": "WinIDN support",
+      "supports": "windows"
     },
     "winldap": {
-      "description": "LDAP support (WinLDAP). This feature does not include LDAPS support.",
+      "description": "Obsolete. Use feature 'ldap' instead.",
       "dependencies": [
         {
           "name": "curl",
           "default-features": false,
           "features": [
-            "non-http"
+            "ldap"
           ]
         }
       ]
     },
     "winssl": {
       "description": "Legacy name for schannel",
+      "supports": "windows & !uwp",
       "dependencies": [
         {
           "name": "curl",
@@ -189,6 +246,12 @@
       "description": "SSL support (wolfSSL)",
       "dependencies": [
         "wolfssl"
+      ]
+    },
+    "zstd": {
+      "description": "ZStandard support (zstd)",
+      "dependencies": [
+        "zstd"
       ]
     }
   }

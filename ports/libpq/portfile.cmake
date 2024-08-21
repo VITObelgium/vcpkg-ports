@@ -122,11 +122,9 @@ else()
                 7550b843964744607f736a7138f10c6cd92489406a1b84ac71d9a9d8aa16bc69048aa1b24e1f49291b010347047008194c334ca9c632e17fa8245e85549e3c7a
         OPTIONS
             --with-includes=${CURRENT_INSTALLED_DIR}/include
-            ${BUILD_OPTS}
-        OPTIONS_RELEASE
             --with-libs=${CURRENT_INSTALLED_DIR}/lib
+            ${BUILD_OPTS}
         OPTIONS_DEBUG
-            --with-libs=${CURRENT_INSTALLED_DIR}/debug/lib
             --enable-debug
     )
 

@@ -180,6 +180,7 @@ def cmake_configure(
     install_root=None,
     manifest_dir=None,
     build_targets=None,
+    git_hash=None,
 ):
     cmake_bin = find_cmake_binary()
     if not cmake_bin:
@@ -270,6 +271,9 @@ def cmake_configure(
         args.append("-DVCPKG_VERBOSE=ON")
     args.extend(cmake_args)
     args.extend(["-S", f'"{source_dir}"', "-B", f'"{build_dir}"'])
+
+    if git_hash:
+        args.append(f"-DPACKAGE_VERSION_COMMITHASH={git_hash}")
 
     if manifest_dir is not None:
         manifest_path = pathlib.Path(manifest_dir) / "vcpkg.json"
@@ -685,6 +689,7 @@ def build_project(
     build_config="Release",
     install_root=None,
     manifest_dir=None,
+    git_hash=None,
 ):
     if triplet is None:
         triplet = prompt_for_triplet()
@@ -717,6 +722,7 @@ def build_project(
             install_root=install_root,
             manifest_dir=manifest_dir,
             build_targets=targets,
+            git_hash=git_hash
         )
     except subprocess.CalledProcessError as e:
         raise RuntimeError("Build failed: {}".format(e))
@@ -748,8 +754,9 @@ def build_project_release(
     install_root=None,
     manifest_dir=None,
     dry_run=False,
+    git_hash=None,
 ):
-    if not dry_run and not git_status_is_clean():
+    if not dry_run and not git_status_is_clean() and not git_hash:
         raise RuntimeError("Git status is not clean")
 
     if build_name:
@@ -762,8 +769,9 @@ def build_project_release(
     if os.path.exists(build_dir):
         shutil.rmtree(build_dir, ignore_errors=True)
 
-    git_hash = git_revision_hash()
-    cmake_args.append("-DPACKAGE_VERSION_COMMITHASH=" + git_hash)
+    if git_hash is None:
+        git_hash = git_revision_hash()
+
     build_project(
         project_dir,
         triplet,
@@ -774,6 +782,7 @@ def build_project_release(
         install_dir=install_dir,
         install_root=install_root,
         manifest_dir=manifest_dir,
+        git_hash=git_hash,
     )
 
     if run_tests_after_build:
@@ -903,6 +912,11 @@ def build_argparser():
         "--test-arguments",
         dest="test_args",
         help="additonal arguments to pass to ctest",
+    )
+    parser.add_argument(
+        "--git-hash",
+        dest="git_hash",
+        help="The git hash of the working directory",
     )
 
     return parser

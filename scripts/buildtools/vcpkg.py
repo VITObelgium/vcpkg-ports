@@ -756,7 +756,7 @@ def build_project_release(
     dry_run=False,
     git_hash=None,
 ):
-    if not dry_run and not git_status_is_clean() and not git_hash:
+    if not git_hash and not dry_run and not git_status_is_clean():
         raise RuntimeError("Git status is not clean")
 
     if build_name:

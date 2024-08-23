@@ -1,0 +1,12 @@
+diff -Naur a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt	2022-12-30 16:25:10.000000000 +0100
++++ b/CMakeLists.txt	2024-08-23 13:22:16.521079100 +0200
+@@ -182,7 +182,7 @@
+     elseif(MINGW OR MSYS)
+         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -static -static-libgcc -Wno-char-subscripts -Wno-long-long")
+         list(APPEND LXW_PRIVATE_COMPILE_DEFINITIONS USE_FILE32API)
+-    elseif(MSVC)
++    elseif(FALSE)
+         set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /Fd\"${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pdb\"")
+         set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /Ox /Zi /Fd\"${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pdb\"")
+         set(CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL} /Zi /Fd\"${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pdb\"")

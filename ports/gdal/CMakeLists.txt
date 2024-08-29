@@ -735,18 +735,21 @@ add_library(frmts OBJECT
     frmts/hfa/hfadataset.cpp
     frmts/hfa/hfa_overviews.cpp
 
+    frmts/vrt/gdaltileindexdataset.cpp
     frmts/vrt/vrtdataset.cpp
     frmts/vrt/vrtrasterband.cpp
     frmts/vrt/vrtdriver.cpp
     frmts/vrt/vrtsources.cpp
     frmts/vrt/vrtfilters.cpp
+    frmts/vrt/vrtprocesseddataset.cpp
+    frmts/vrt/vrtprocesseddatasetfunctions.cpp
     frmts/vrt/vrtsourcedrasterband.cpp
     frmts/vrt/vrtrawrasterband.cpp
     frmts/vrt/vrtwarped.cpp
     frmts/vrt/vrtderivedrasterband.cpp
     frmts/vrt/vrtpansharpened.cpp
-    frmts/vrt/pixelfunctions.cpp
     frmts/vrt/vrtmultidim.cpp
+    frmts/vrt/pixelfunctions.cpp
 
     frmts/mem/memdataset.cpp
 )
@@ -760,7 +763,7 @@ set (FRMTS_PUBLIC_HEADERS
 target_compile_definitions(frmts PRIVATE FRMT_mem  FRMT_vrt FRMT_hfa)
 
 if (TARGET PNG::PNG)
-    target_sources(frmts PRIVATE frmts/png/pngdataset.cpp)
+    target_sources(frmts PRIVATE frmts/png/pngdataset.cpp frmts/png/pngdrivercore.cpp)
     target_link_libraries(frmts PRIVATE PNG::PNG)
     target_compile_definitions(frmts PRIVATE FRMT_png)
 endif ()
@@ -781,6 +784,7 @@ if (GDAL_FRMTS_GIF)
         frmts/gif/biggifdataset.cpp
         frmts/gif/gifabstractdataset.cpp
         frmts/gif/gifdataset.cpp
+        frmts/gif/gifdrivercore.cpp
     )
     target_link_libraries(frmts PRIVATE GIF::GIF)
     target_compile_definitions(frmts PRIVATE FRMT_gif)
@@ -894,14 +898,19 @@ if (GDAL_FRMTS_HDF5)
     find_package(HDF5 CONFIG REQUIRED)
     target_sources(frmts PRIVATE 
         frmts/hdf5/hdf5dataset.cpp
+        frmts/hdf5/hdf5drivercore.cpp
         frmts/hdf5/hdf5imagedataset.cpp
         frmts/hdf5/bagdataset.cpp
         frmts/hdf5/gh5_convenience.cpp
         frmts/hdf5/iso19115_srs.cpp
         frmts/hdf5/hdf5multidim.cpp
         frmts/hdf5/hdf5eosparser.cpp
+        frmts/hdf5/rat.cpp
         frmts/hdf5/s100.cpp
         frmts/hdf5/s102dataset.cpp
+        frmts/hdf5/s100.cpp
+        frmts/hdf5/s104dataset.cpp
+        frmts/hdf5/s111dataset.cpp
     )
     target_link_libraries(frmts PRIVATE hdf5::hdf5-static hdf5::hdf5_hl-static)
     target_compile_definitions(frmts PRIVATE FRMT_hdf5)
@@ -927,6 +936,7 @@ if (GDAL_FRMTS_NETCDF)
     target_sources(frmts PRIVATE
         frmts/netcdf/netcdf_sentinel3_sral_mwr.cpp
         frmts/netcdf/netcdfdataset.cpp
+        frmts/netcdf/netcdfdrivercore.cpp
         frmts/netcdf/netcdflayer.cpp
         frmts/netcdf/netcdflayersg.cpp
         frmts/netcdf/netcdfmultidim.cpp
@@ -942,6 +952,7 @@ endif ()
 if (GDAL_FRMTS_PCRASTER)
     target_sources(frmts PRIVATE 
         frmts/pcraster/pcrasterdataset.cpp
+        frmts/pcraster/pcrasterdrivercore.cpp
         frmts/pcraster/pcrastermisc.cpp
         frmts/pcraster/pcrasterrasterband.cpp
         frmts/pcraster/pcrasterutil.cpp
@@ -1121,6 +1132,7 @@ add_library(ogr OBJECT
     ogr/ogrutils.cpp
     ogr/ogrgeometry.cpp
     ogr/ogrgeometrycollection.cpp
+    ogr/ogrgeomcoordinateprecision.cpp
     ogr/ogrmultipolygon.cpp
     ogr/ogrmultipoint.cpp
     ogr/ogrmultilinestring.cpp
@@ -1140,6 +1152,7 @@ add_library(ogr OBJECT
     ogr/ogr_fromepsg.cpp
     ogr/ogrct.cpp
     ogr/ogrfeaturestyle.cpp
+    ogr/ogr_srs_cf1.cpp
     ogr/ogr_srs_esri.cpp
     ogr/ogrfeaturequery.cpp
     ogr/ogr_srs_xml.cpp
@@ -1263,6 +1276,7 @@ set(OGR_PUBLIC_HEADERS
     ${CMAKE_SOURCE_DIR}/ogr/ogr_featurestyle.h
     ${CMAKE_SOURCE_DIR}/ogr/ogr_geocoding.h
     ${CMAKE_SOURCE_DIR}/ogr/ogr_geometry.h
+    ${CMAKE_SOURCE_DIR}/ogr/ogr_geomcoordinateprecision.h
     ${CMAKE_SOURCE_DIR}/ogr/ogr_p.h
     ${CMAKE_SOURCE_DIR}/ogr/ogr_spatialref.h
     ${CMAKE_SOURCE_DIR}/ogr/ogr_srs_api.h
@@ -1282,15 +1296,15 @@ endif ()
 
 if (GDAL_OGR_FRMTS_SHAPE)
     target_sources(ogr PRIVATE
-        ogr/ogrsf_frmts/shape/dbfopen_wrapper.c
+        ogr/ogrsf_frmts/shape/dbfopen_wrapper.cpp
         ogr/ogrsf_frmts/shape/ogrshapedatasource.cpp
         ogr/ogrsf_frmts/shape/ogrshapedriver.cpp
         ogr/ogrsf_frmts/shape/ogrshapelayer.cpp
-        ogr/ogrsf_frmts/shape/sbnsearch_wrapper.c
+        ogr/ogrsf_frmts/shape/sbnsearch_wrapper.cpp
         ogr/ogrsf_frmts/shape/shape2ogr.cpp
         ogr/ogrsf_frmts/shape/shp_vsi.c
-        ogr/ogrsf_frmts/shape/shpopen_wrapper.c
-        ogr/ogrsf_frmts/shape/shptree_wrapper.c
+        ogr/ogrsf_frmts/shape/shpopen_wrapper.cpp
+        ogr/ogrsf_frmts/shape/shptree_wrapper.cpp
     )
     target_compile_definitions(ogr
     PRIVATE
@@ -1558,6 +1572,7 @@ target_link_libraries(alg PRIVATE
 ############################################################################################
 add_library(gdal
     apps/commonutils.cpp
+    apps/gdalargumentparser.cpp
     apps/gdalinfo_lib.cpp
     apps/gdal_translate_lib.cpp
     apps/gdalwarp_lib.cpp

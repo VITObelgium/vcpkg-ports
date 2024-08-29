@@ -1,6 +1,6 @@
 set(MAJOR 3)
-set(MINOR 8)
-set(REVISION 3)
+set(MINOR 9)
+set(REVISION 2)
 set(VERSION ${MAJOR}.${MINOR}.${REVISION})
 set(PACKAGE_NAME ${PORT}-${VERSION})
 set(PACKAGE ${PACKAGE_NAME}.tar.gz)
@@ -9,7 +9,7 @@ vcpkg_download_distfile(ARCHIVE
     URLS "http://download.osgeo.org/${PORT}/${VERSION}/${PACKAGE}"
          "https://github.com/OSGeo/gdal/releases/download/v${VERSION}/${PACKAGE}"
     FILENAME "${PACKAGE}"
-    SHA512 45ad52be884d9557bf1cb2ca3cc0e651a6f25d9fa1cfa7e817a5cbb3bd21e7942d7e3a17701c87532c93ab1b587987505c0fdb52d732f7126cd172e7de7c05e6
+    SHA512 0801bfecda6b4cb68871047d7c64dd66deaa76efff6567b6923f06216e84897acb46eee7180c14f96af57b05067d59540f9b46e38c800152f151dc8203673031
 )
 
 vcpkg_extract_source_archive_ex(

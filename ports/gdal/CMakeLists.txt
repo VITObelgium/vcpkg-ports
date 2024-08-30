@@ -1040,6 +1040,7 @@ if (GDAL_FRMTS_POSTGIS)
         frmts/postgisraster/postgisrasterdataset.cpp
         frmts/postgisraster/postgisrasterrasterband.cpp
         frmts/postgisraster/postgisrasterdriver.cpp
+        frmts/postgisraster/postgisrasterdrivercore.cpp
         frmts/postgisraster/postgisrastertiledataset.cpp
         frmts/postgisraster/postgisrastertilerasterband.cpp
         frmts/postgisraster/postgisrastertools.cpp
@@ -1375,6 +1376,7 @@ endif ()
 if (GDAL_OGR_FRMTS_POSTGIS)
     target_sources(ogr PRIVATE
         ogr/ogrsf_frmts/pg/ogrpgdriver.cpp
+        ogr/ogrsf_frmts/pg/ogrpgdrivercore.cpp
         ogr/ogrsf_frmts/pg/ogrpgdatasource.cpp
         ogr/ogrsf_frmts/pg/ogrpglayer.cpp
         ogr/ogrsf_frmts/pg/ogrpgtablelayer.cpp

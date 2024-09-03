@@ -1654,7 +1654,6 @@ if (GDAL_BUILD_TOOLS)
     add_gdal_app(gdallocationinfo)
 
     add_gdal_app(gdal_contour)
-    add_gdal_app(gdaltindex)
     add_gdal_app(ogrtindex)
     add_gdal_app(ogrlineref)
 endif ()

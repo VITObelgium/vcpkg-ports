@@ -7,7 +7,7 @@ index 9701bdc..39e96ee 100644
  	target_link_libraries(LibXml2 PRIVATE ICU::data ICU::i18n ICU::uc)
  	if(WIN32)
 -		set(ICU_LIBS "-licudt -licuin -licuuc")
-+		set(ICU_LIBS  "icu-i18n")
++		set(ICU_LIBS "icu-i18n")
  	else()
 -		set(ICU_LIBS "-licudata -licui18n -licuuc")
 +		set(ICU_LIBS "icu-i18n")

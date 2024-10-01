@@ -1,31 +1,24 @@
-
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO pybind/pybind11
-    REF v2.10.1
-    SHA512 040f109ec870516acdaebc5133ccbba9e3ed7ff93214a66997cf4b8366c209322f3c902c283040826c7e585c3ea2259caf62d90d0b475bfa33d21e459dd54df1
+    REF "v${VERSION}"
+    SHA512 497c25b33b09a9c42f67131ab82e35d689e8ce089dd7639be997305ff9a6d502447b79c824508c455d559e61f0186335b54dd2771d903a7c1621833930622d1a
     HEAD_REF master
 )
 
-vcpkg_configure_cmake(
-    SOURCE_PATH ${SOURCE_PATH}
-    PREFER_NINJA
+vcpkg_cmake_configure(
+    SOURCE_PATH "${SOURCE_PATH}"
     OPTIONS
         -DPYBIND11_TEST=OFF
-        -DPYBIND11_NOPYTHON=ON # This is a header only library, no need to search for a python interpreter at dependency build time. Only causes problems
-    OPTIONS_RELEASE
-        -DPYTHON_IS_DEBUG=OFF
-    OPTIONS_DEBUG
-        -DPYTHON_IS_DEBUG=ON
+        # Disable all Python searching, Python required only for tests
+        -DPYBIND11_NOPYTHON=ON
 )
 
-vcpkg_install_cmake()
-vcpkg_fixup_cmake_targets(CONFIG_PATH share/cmake/${PORT})
+vcpkg_cmake_install()
+vcpkg_cmake_config_fixup(CONFIG_PATH "share/cmake/pybind11")
+vcpkg_fixup_pkgconfig()
 
-file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/)
+file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/")
 
-vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/share/pybind11/pybind11Tools.cmake" 
-                    [=[find_package(PythonLibsNew ${PYBIND11_PYTHON_VERSION} MODULE REQUIRED ${_pybind11_quiet})]=]
-                    [=[find_package(PythonLibs ${PYBIND11_PYTHON_VERSION} MODULE REQUIRED ${_pybind11_quiet})]=]) # CMake's PythonLibs works better with vcpkg 
-
-vcpkg_install_copyright(FILE_LIST ${SOURCE_PATH}/LICENSE)
+file(INSTALL "${CMAKE_CURRENT_LIST_DIR}/usage" DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}")
+vcpkg_install_copyright(FILE_LIST "${SOURCE_PATH}/LICENSE")

@@ -382,6 +382,7 @@ def vcpkg_install_ports(
         or "vs2022" in triplet
         or "cluster" in triplet
         or "musl" in triplet
+        or "oneapi" in triplet
     ):
         args.append(f"--host-triplet={triplet}")
 
@@ -434,6 +435,7 @@ def vcpkg_install_manifest(
         or "vs2022" in triplet
         or "cluster" in triplet
         or "musl" in triplet
+        or "oneapi" in triplet
     ):
         args.append(f"--host-triplet={triplet}")
 

@@ -3,5 +3,8 @@
   "version-semver": "2021.10.0",
   "port-version": 0,
   "description": "oneAPI Threading Building Blocks",
-  "homepage": "https://github.com/oneapi-src/oneTBB"
+  "homepage": "https://github.com/oneapi-src/oneTBB",
+  "dependencies": [
+    "hwloc"
+  ]
 }

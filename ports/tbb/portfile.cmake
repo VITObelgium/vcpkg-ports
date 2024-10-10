@@ -16,7 +16,6 @@ vcpkg_configure_cmake(
         -DTBB_STRICT=OFF
         -DTBB4PY_BUILD=OFF
         -DTBB_CPF=OFF
-        -DTBB_DISABLE_HWLOC_AUTOMATIC_SEARCH=ON
         -DTBB_ENABLE_IPO=OFF
 )
 

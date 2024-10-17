@@ -7,6 +7,11 @@ vcpkg_from_github(
     PATCHES threads-target.patch
 )
 
+vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
+    INVERTED_FEATURES
+        hwloc TBB_DISABLE_HWLOC_AUTOMATIC_SEARCH
+)
+
 vcpkg_configure_cmake(
     SOURCE_PATH ${SOURCE_PATH}
     PREFER_NINJA
@@ -17,6 +22,7 @@ vcpkg_configure_cmake(
         -DTBB4PY_BUILD=OFF
         -DTBB_CPF=OFF
         -DTBB_ENABLE_IPO=OFF
+        ${FEATURE_OPTIONS}
 )
 
 vcpkg_install_cmake()

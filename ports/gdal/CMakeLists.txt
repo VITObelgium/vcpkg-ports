@@ -794,6 +794,7 @@ if (GDAL_FRMTS_GRIB)
     target_sources(frmts PRIVATE 
         frmts/grib/gribdataset.cpp
         frmts/grib/gribcreatecopy.cpp
+        frmts/grib/gribdrivercore.cpp
 
         frmts/grib/degrib/degrib/degrib1.cpp
         frmts/grib/degrib/degrib/degrib2.cpp

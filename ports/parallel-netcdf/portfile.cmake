@@ -1,8 +1,8 @@
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO  Parallel-NetCDF/PnetCDF
-    REF checkpoint.1.12.1
-    SHA512 54b12f8a59af547124fb7b92e47f556e53e9dfe3cb738c13181ae86842325e2bc633c22ecc28c214179d7f5a7b9103717d8b0e9a490d24584c9c873088ec3ca3
+    REF checkpoint.1.12.3
+    SHA512 9972979c21649e4f13bf55b8c4841eb200be111ea74f7ea4fb8e76b4bedd9f423d0edded15fc36edc1e8d1b620b461aecdb4a7b33ab262b9dd974b6135c63dfc
     HEAD_REF master
 )
 
@@ -34,11 +34,13 @@ if (UNIX)
             MPICXX=${CURRENT_INSTALLED_DIR}/tools/openmpi/bin/mpicxx
             MPIF77=${CURRENT_INSTALLED_DIR}/tools/openmpi/bin/mpif77
             MPIF90=${CURRENT_INSTALLED_DIR}/tools/openmpi/bin/mpif90
+            FCFLAGS=-fallow-argument-mismatch
             --with-mpi=${CURRENT_INSTALLED_DIR}
             --enable-netcdf4
             --bindir=${CURRENT_PACKAGES_DIR}/tools
             --disable-silent-rules
             ${CONFIG_OPTS}
+            ac_cv_search_nc_open=-lnetcdf
     )
 
     vcpkg_install_autotools()

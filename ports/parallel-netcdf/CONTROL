@@ -1,5 +1,5 @@
 Source: parallel-netcdf
-Version: 1.12.1
+Version: 1.12.3
 Homepage: https://parallel-netcdf.github.io
 Description: A Parallel I/O Library for NetCDF File Access.
 Supports: !(windows|uwp)

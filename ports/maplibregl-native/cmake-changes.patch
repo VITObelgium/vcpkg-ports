@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 0ecfa338a6..92f08cd7b9 100644
+index 0ecfa338a6..67adf1973e 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -1,4 +1,4 @@
@@ -18,7 +18,15 @@ index 0ecfa338a6..92f08cd7b9 100644
  
  if(NOT CMAKE_BUILD_TYPE)
      set(CMAKE_BUILD_TYPE Release)
-@@ -1134,6 +1136,17 @@ else()
+@@ -95,6 +97,7 @@ target_compile_options(
+         $<$<AND:$<NOT:$<CXX_COMPILER_ID:MSVC>>,$<PLATFORM_ID:Windows>>:-D_USE_MATH_DEFINES>
+         $<$<CXX_COMPILER_ID:MSVC>:/D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS>
+         $<$<CXX_COMPILER_ID:MSVC>:/D_CRT_SECURE_NO_WARNINGS>
++        $<$<CXX_COMPILER_ID:AppleClang>:-D_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION>
+ )
+ 
+ target_link_libraries(
+@@ -1134,6 +1137,17 @@ else()
      message(FATAL_ERROR "Unsupported target platform: " ${CMAKE_SYSTEM_NAME})
  endif()
  

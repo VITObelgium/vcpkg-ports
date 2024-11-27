@@ -65,7 +65,7 @@
     "concurrent",
     {
       "name": "dbus",
-      "platform": "!(static & windows)"
+      "platform": "linux"
     },
     "default-features",
     "dnslookup",

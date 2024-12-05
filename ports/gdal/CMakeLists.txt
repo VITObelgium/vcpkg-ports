@@ -1436,6 +1436,7 @@ if (GDAL_OGR_FRMTS_XLS)
     target_sources(ogr PRIVATE
         ogr/ogrsf_frmts/xls/ogrxlsdatasource.cpp
         ogr/ogrsf_frmts/xls/ogrxlsdriver.cpp
+        ogr/ogrsf_frmts/xls/ogrxlsdrivercore.cpp
         ogr/ogrsf_frmts/xls/ogrxlslayer.cpp
     )
     target_compile_definitions(ogr PRIVATE XLS_ENABLED)

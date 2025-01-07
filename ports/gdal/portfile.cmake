@@ -49,7 +49,7 @@ endif()
 
 set(WITH_ICONV ON)
 
-if(MINGW)
+if(VCPKG_TARGET_IS_MINGW)
     set(WITH_ICONV OFF)
 endif()
 

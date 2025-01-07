@@ -37,7 +37,7 @@ if(CMAKE_VERSION VERSION_LESS Z_VCPKG_CMAKE_REQUIRED_MINIMUM_VERSION)
     message(FATAL_ERROR "vcpkg.cmake requires at least CMake ${Z_VCPKG_CMAKE_REQUIRED_MINIMUM_VERSION}.")
 endif()
 cmake_policy(PUSH)
-cmake_policy(VERSION 3.7.2)
+cmake_policy(VERSION 3.16)
 
 include(CMakeDependentOption)
 
@@ -364,6 +364,8 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows" OR (NOT CMAKE_SYSTEM_NAME AND CMAKE_
     endif()
 elseif(CMAKE_SYSTEM_NAME STREQUAL "FreeBSD" OR (NOT CMAKE_SYSTEM_NAME AND CMAKE_HOST_SYSTEM_NAME STREQUAL "FreeBSD"))
     set(Z_VCPKG_TARGET_TRIPLET_PLAT freebsd)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "OpenBSD" OR (NOT CMAKE_SYSTEM_NAME AND CMAKE_HOST_SYSTEM_NAME STREQUAL "OpenBSD"))
+    set(Z_VCPKG_TARGET_TRIPLET_PLAT openbsd)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Android" OR (NOT CMAKE_SYSTEM_NAME AND CMAKE_HOST_SYSTEM_NAME STREQUAL "Android"))
     set(Z_VCPKG_TARGET_TRIPLET_PLAT android)
 endif()
@@ -450,11 +452,6 @@ if(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE STREQUAL "ONLY" OR
 endif()
 
 set(VCPKG_CMAKE_FIND_ROOT_PATH "${CMAKE_FIND_ROOT_PATH}")
-# MOD START
-list(APPEND CMAKE_MODULE_PATH
-    ${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/share/cmake
-)
-# MOD END
 
 # CMAKE_EXECUTABLE_SUFFIX is not yet defined
 if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
@@ -595,8 +592,6 @@ if(VCPKG_SETUP_CMAKE_PROGRAM_PATH)
 endif()
 
 cmake_policy(POP)
-
-# Any policies applied to the below macros and functions appear to leak into consumers
 
 function(add_executable)
     z_vcpkg_function_arguments(ARGS)
@@ -880,7 +875,7 @@ macro("${VCPKG_OVERRIDE_FIND_PACKAGE_NAME}" z_vcpkg_find_package_package_name)
 endmacro()
 
 cmake_policy(PUSH)
-cmake_policy(VERSION 3.7.2)
+cmake_policy(VERSION 3.16)
 
 set(VCPKG_TOOLCHAIN ON)
 set(Z_VCPKG_UNUSED "${CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION}")
@@ -894,10 +889,15 @@ if(NOT Z_VCPKG_CMAKE_IN_TRY_COMPILE)
     list(APPEND CMAKE_TRY_COMPILE_PLATFORM_VARIABLES
         VCPKG_TARGET_TRIPLET
         VCPKG_TARGET_ARCHITECTURE
-        VCPKG_APPLOCAL_DEPS
+        VCPKG_HOST_TRIPLET
+        VCPKG_INSTALLED_DIR
+        VCPKG_PREFER_SYSTEM_LIBS
+        # VCPKG_APPLOCAL_DEPS # This should be off within try_compile!
         VCPKG_CHAINLOAD_TOOLCHAIN_FILE
         Z_VCPKG_ROOT_DIR
     )
+else()
+    set(VCPKG_APPLOCAL_DEPS OFF)
 endif()
 
 if(Z_VCPKG_HAS_FATAL_ERROR)

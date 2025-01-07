@@ -246,7 +246,6 @@ function(vcpkg_configure_cmake)
         "-DZ_VCPKG_ROOT_DIR=${VCPKG_ROOT_DIR}"
         "-D_VCPKG_INSTALLED_DIR=${_VCPKG_INSTALLED_DIR}"
         "-DVCPKG_MANIFEST_INSTALL=OFF"
-        "-DCMAKE_POLICY_DEFAULT_CMP0056=NEW" # Honor link flags in try_compile() source-file signature (otherwise onapi toolchain fails)
         "-DCMAKE_POLICY_DEFAULT_CMP0063=NEW"
         "-DFETCHCONTENT_FULLY_DISCONNECTED=OFF"
     )

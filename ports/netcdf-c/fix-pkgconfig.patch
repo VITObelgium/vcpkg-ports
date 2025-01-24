@@ -1,7 +1,8 @@
-diff -Naur a/CMakeLists.txt b/CMakeLists.txt
---- a/CMakeLists.txt	2023-03-14 21:34:25.000000000 +0100
-+++ b/CMakeLists.txt	2023-04-06 15:34:18.778065200 +0200
-@@ -2472,6 +2472,21 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 390ac0a..4bcd909 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -2100,6 +2100,21 @@ STRING(REPLACE ";" " " LINKFLAGS "${LINKFLAGS}")
  SET(LIBS ${NC_LIBS})
  SET(NC_LIBS "-lnetcdf")
  
@@ -16,18 +17,19 @@ diff -Naur a/CMakeLists.txt b/CMakeLists.txt
 +replace_pkgconfig_module("-lhdf5_hl"   "hdf5_hl")
 +replace_pkgconfig_module("-lhdf5"      "hdf5")
 +replace_pkgconfig_module("-lmpi"       "ompi-c")
-+replace_pkgconfig_module("-lzip"       "libzip")
++replace_pkgconfig_module("-lzip::zip"  "libzip")
 +replace_pkgconfig_module("-lCURL[^ ]*" "libcurl")
 +replace_pkgconfig_module("-lZLIB[^ ]*" "zlib")
 +
  configure_file(
    ${netCDF_SOURCE_DIR}/netcdf.pc.in
    ${netCDF_BINARY_DIR}/netcdf.pc @ONLY)
-diff -Naur a/netcdf.pc.in b/netcdf.pc.in
---- a/netcdf.pc.in	2023-03-14 21:34:25.000000000 +0100
-+++ b/netcdf.pc.in	2023-04-06 15:34:41.646930000 +0200
-@@ -9,5 +9,6 @@
- URL: https://www.unidata.ucar.edu/netcdf
+diff --git a/netcdf.pc.in b/netcdf.pc.in
+index 22b5594..a48b7c2 100644
+--- a/netcdf.pc.in
++++ b/netcdf.pc.in
+@@ -9,5 +9,6 @@ Description: NetCDF Client Library for C
+ URL: http://www.unidata.ucar.edu/netcdf
  Version: @PACKAGE_VERSION@
  Libs: -L${libdir} @NC_LIBS@
 -Libs.private: @LIBS@

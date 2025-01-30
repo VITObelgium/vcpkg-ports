@@ -15,8 +15,7 @@
     }
   ],
   "default-features": [
-    "netcdf-4",
-    "platform-default-features"
+    "netcdf-4"
   ],
   "features": {
     "dap": {

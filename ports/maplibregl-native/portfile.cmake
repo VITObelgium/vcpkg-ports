@@ -26,7 +26,7 @@ vcpkg_from_git_mod(
     HEAD_REF main
 )
 
-if (CMAKE_HOST_WIN32)
+if (VCPKG_HOST_IS_WIN32)
     # fix git long path issue on windows
     vcpkg_execute_required_process(
         COMMAND  ${GIT_EXECUTABLE} config core.longpaths true
@@ -51,6 +51,7 @@ vcpkg_apply_patches(
     SOURCE_PATH ${SOURCE_PATH}
     PATCHES
         cmake-changes.patch
+        timer-overflow.patch
 )
     
 vcpkg_configure_cmake(

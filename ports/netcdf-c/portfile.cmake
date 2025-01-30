@@ -46,6 +46,10 @@ else()
     list(APPEND FEATURE_OPTIONS "-DCMAKE_REQUIRE_FIND_PACKAGE_CURL=ON")
 endif()
 
+if (VCPKG_TARGET_IS_OSX)
+    list(APPEND FEATURE_OPTIONS "-DVCPKG_ALLOW_SYSTEM_LIBS=ON")
+endif ()
+
 if(ENABLE_HDF5)
     # Fix hdf5 szip support detection for static linkage.
     x_vcpkg_pkgconfig_get_modules(

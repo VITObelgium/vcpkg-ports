@@ -47,7 +47,7 @@ function(vcpkg_from_git_mod)
     set(multipleValuesArgs PATCHES)
     cmake_parse_arguments(_vdud "${zeroValueArgs}" "${oneValueArgs}" "${multipleValuesArgs}" ${ARGN})
 
-    if (WIN32)
+    if (VCPKG_HOST_IS_WIN32)
         vcpkg_add_to_path($ENV{ProgramFiles}/git/bin)
     endif ()
     find_package(Git)

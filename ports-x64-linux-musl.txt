@@ -27,7 +27,7 @@ libpng
 libpqxx
 openssl
 libxlsxwriter
-lyra
+bfgroup-lyra
 mio
 netcdf-c
 netcdf-cxx4

@@ -12,7 +12,7 @@ hdf5[cpp]
 http-parser
 icu
 indicators
-lyra
+bfgroup-lyra
 mio
 netcdf-c
 netcdf-cxx4

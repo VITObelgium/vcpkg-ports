@@ -2,13 +2,14 @@ vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO OSGeo/PROJ
     REF "${VERSION}"
-    SHA512 5bc53723a81d9950599d6c47a837de5e9052aa56f943951e3ad0911cbeb71585bac648f37b9b626f32bb5d0b481ce5aef9be0833910e53b4b015b573808b8981
+    SHA512 45d8bfb883431c62c2627cecf583a4374efda7f109c2b43d3fe8ef18136f30cf57682d6e6c44256ba099533754392c87f71e940a41018a577f540310001e0f05
     HEAD_REF master
     PATCHES
-        fix-win-output-name.patch
         fix-proj4-targets-cmake.patch
         remove_toolset_restriction.patch
+        sqlite.diff
         inteloneapi.patch
+        embed-data-winfix.patch # included in next release
 )
 
 vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
@@ -16,6 +17,8 @@ vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
         net   ENABLE_CURL
         tiff  ENABLE_TIFF
         tools BUILD_APPS
+        embed-data EMBED_RESOURCE_FILES
+        embed-data USE_ONLY_EMBEDDED_RESOURCE_FILES
 )
 
 vcpkg_list(SET TOOL_NAMES cct cs2cs geod gie invgeod invproj proj projinfo projsync)
@@ -33,7 +36,9 @@ vcpkg_cmake_configure(
         ${FEATURE_OPTIONS}
         -DNLOHMANN_JSON=external
         -DBUILD_TESTING=OFF
+        -DBUILD_EXAMPLES=OFF
         "-DEXE_SQLITE3=${EXE_SQLITE3}"
+        -DPROJ_DATA_ENV_VAR_TRIED_LAST=ON
     OPTIONS_DEBUG
         -DBUILD_APPS=OFF
 )
@@ -70,4 +75,4 @@ if(NOT DEFINED VCPKG_BUILD_TYPE AND VCPKG_TARGET_IS_WINDOWS AND NOT VCPKG_TARGET
 endif()
 
 file(INSTALL "${CMAKE_CURRENT_LIST_DIR}/usage" DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}")
-file(INSTALL "${SOURCE_PATH}/COPYING" DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}" RENAME copyright)
+vcpkg_install_copyright(FILE_LIST "${SOURCE_PATH}/COPYING")

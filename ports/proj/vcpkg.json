@@ -1,6 +1,6 @@
 {
   "name": "proj",
-  "version": "9.4.0",
+  "version": "9.6.0",
   "description": "PROJ library for cartographic projections",
   "homepage": "https://proj.org/",
   "license": "MIT",
@@ -28,6 +28,7 @@
     }
   ],
   "default-features": [
+    "net",
     "tiff"
   ],
   "features": {
@@ -49,6 +50,10 @@
           ]
         }
       ]
+    },
+    "embed-data": {
+      "description": "Embed the projection data in the library",
+      "dependencies": []
     },
     "tools": {
       "description": "Build tools"

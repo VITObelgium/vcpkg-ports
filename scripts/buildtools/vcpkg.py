@@ -160,7 +160,9 @@ def bootstrap_vcpkg(triplet):
 
 
 def run_vcpkg(triplet, vcpkg_args):
-    subprocess.check_call(_create_vcpkg_command(triplet, vcpkg_args))
+    my_env = os.environ
+    my_env["VCPKG_FORCE_DOWNLOADED_BINARIES"] = "TRUE"
+    subprocess.check_call(_create_vcpkg_command(triplet, vcpkg_args), env=my_env)
 
 
 def run_vcpkg_output(triplet, vcpkg_args):
@@ -724,7 +726,7 @@ def build_project(
             install_root=install_root,
             manifest_dir=manifest_dir,
             build_targets=targets,
-            git_hash=git_hash
+            git_hash=git_hash,
         )
     except subprocess.CalledProcessError as e:
         raise RuntimeError("Build failed: {}".format(e))

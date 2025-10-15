@@ -9,31 +9,17 @@
         "icu",
         "libjpeg-turbo",
         "libpng",
-        "sqlite3"
-    ],
-    "features": {
-        "qt5": {
-            "description": "Build against qt5",
-            "dependencies": [
-                {
-                    "name": "qt5",
-                    "features": [
-                        "ssl"
-                    ]
-                }
-            ]
-        },
-        "qt6": {
-            "description": "Build against qt6",
-            "dependencies": [
-                {
-                    "name": "qtbase",
-                    "features": []
-                }
-            ]
+        "sqlite3",
+        {
+            "name": "qtbase",
+            "features": [
+                "network",
+                "opengl",
+                "png",
+                "widgets",
+                "openssl"
+            ],
+            "default-features": false
         }
-    },
-    "default-features": [
-        "qt6"
     ]
 }
